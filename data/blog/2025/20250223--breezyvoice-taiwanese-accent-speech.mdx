@@ -19,12 +19,55 @@ images: ['/static/images/2025/DALL%C2%B7E%202025-02-23%2018.58.27%20-%20A%20mode
 
 合成語音效果，有的一開始停頓兩秒才開始 (音檔一開頭就靜音兩秒)，有的中間有莫名其妙的短停頓 (不流暢)，有的在靜音階段有怪雜音 (似乎像呼吸? 但總之就是不自然)，也還是有稍微大陸口音的感覺。
 
-附上原始範例來源音檔 example.wav，以及三個範例輸出 out\*.wav。這些是官方範例感覺比較正常，比較少上述的問題。也許是我的錄音品質較差?
+附上原始範例來源音檔:
 
-我先前曾試過的 [E2/F5-TTS](https://huggingface.co/spaces/mrfakename/E2-F5-TTS)，也附上相同參考音檔的結果 (\*\_audio.wav)。這個語速較快 (可以調，我直接用預設)，開頭會有怪音，E2 中英混雜較差，大陸腔較重。
+<AudioPlayer
+  title="example.wav"
+  src="/static/audio/2025/breezyvoice-taiwanese-accent-speech/example.wav"
+/>
+
+以及三個範例輸出:
+
+<AudioPlayer
+  title="out-BreezyVoice.wav"
+  src="/static/audio/2025/breezyvoice-taiwanese-accent-speech/out-BreezyVoice.wav"
+/>
+
+<AudioPlayer
+  title="out-weather.wav"
+  src="/static/audio/2025/breezyvoice-taiwanese-accent-speech/out-weather.wav"
+/>
+
+<AudioPlayer
+  title="out-wiki.mp3"
+  src="/static/audio/2025/breezyvoice-taiwanese-accent-speech/out-wiki.mp3"
+/>
+
+這些是官方範例感覺比較正常，比較少上述的問題。也許是我的錄音品質較差?
+
+我先前曾試過的 [E2/F5-TTS](https://huggingface.co/spaces/mrfakename/E2-F5-TTS)，也附上相同參考音檔的結果:
+
+<AudioPlayer
+  title="E2_audio.wav"
+  src="/static/audio/2025/breezyvoice-taiwanese-accent-speech/E2_audio.wav"
+/>
+
+<AudioPlayer
+  title="F5_audio.wav"
+  src="/static/audio/2025/breezyvoice-taiwanese-accent-speech/F5_audio.wav"
+/>
+
+這個語速較快 (可以調，我直接用預設)，開頭會有怪音，E2 中英混雜較差，大陸腔較重。
 
 就我先前做語音交談的經驗來說，在最複雜的情境下，對方講完話，要趕快 STT/LLM/TTS 三步做完之後才能播放回答語音。因此語音前面的靜音時間最好是 0，也就是語音一開始播就要有聲音出來。像前面有開頭兩秒靜音的例子，就會導致有明顯回答遲緩的感覺。而且產出兩秒靜音，也是完全浪費 GPU 運算資源。我猜在預備訓練資料時可能沒有特別注意這個 (應該要能快速反應的) 目標，沒有特別處理這個問題。
 
 另這個專案是由阿里巴巴 [FunAudioLLM/CosyVoice](https://github.com/FunAudioLLM/CosyVoice) 一代之延伸，有看到有人反應 [Any Plans for CosyVoice 2 Upgrade or Dataset Release?](https://github.com/mtkresearch/BreezyVoice/issues/2) 是否預計要支援 CosyVoice 2，但官方回覆是不保證。我覺得這種台灣自產的東西，經常就有這種跟不太上別人最新成果的問題，好像也很難克服。
 
-我再由 [CosyVoice2-0.5B - Studios](https://www.modelscope.cn/studios/iic/CosyVoice2-0.5B) 產出，結果覺得還不錯，倒也沒有明顯大陸口音。(網頁播放只有一次，不曉得下載檔案為何播放兩次)
+我再由 [CosyVoice2-0.5B - Studios](https://www.modelscope.cn/studios/iic/CosyVoice2-0.5B) 產出，結果覺得還不錯，倒也沒有明顯大陸口音:
+
+<AudioPlayer
+  title="CosyVoice2_0.5B_audio.wav"
+  src="/static/audio/2025/breezyvoice-taiwanese-accent-speech/CosyVoice2_0.5B_audio.wav"
+/>
+
+(網頁播放只有一次，不曉得下載檔案為何播放兩次)
