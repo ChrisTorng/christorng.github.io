@@ -19,7 +19,7 @@ export default function Home({ posts }) {
           </p>
         </div>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {!posts.length && 'No posts found.'}
+          {!posts.length && '沒有找到文章。'}
           {posts.slice(0, MAX_DISPLAY).map((post) => {
             const { slug, date, title, subtitle, summary, tags } = post
             return (
@@ -27,7 +27,7 @@ export default function Home({ posts }) {
                 <article>
                   <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
                     <dl>
-                      <dt className="sr-only">Published on</dt>
+                      <dt className="sr-only">發佈於</dt>
                       <dd className="text-base leading-6 font-medium text-gray-500 dark:text-gray-400">
                         <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
                       </dd>
@@ -62,7 +62,7 @@ export default function Home({ posts }) {
                         <Link
                           href={`/blog/${slug}`}
                           className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                          aria-label={`Read more: "${title}"`}
+                          aria-label={`繼續閱讀：「${title}」`}
                         >
                           進入閱讀 &rarr;
                         </Link>
@@ -80,7 +80,7 @@ export default function Home({ posts }) {
           <Link
             href="/blog"
             className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-            aria-label="All posts"
+            aria-label="所有文章"
           >
             所有文章 &rarr;
           </Link>

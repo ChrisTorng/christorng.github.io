@@ -10,7 +10,7 @@ const Card = ({ title, description, imgSrc, href }) => (
     >
       {imgSrc &&
         (href ? (
-          <Link href={href} aria-label={`Link to ${title}`}>
+          <Link href={href} aria-label={`前往 ${title}`}>
             <Image
               alt={title}
               src={imgSrc}
@@ -31,7 +31,7 @@ const Card = ({ title, description, imgSrc, href }) => (
       <div className="p-6">
         <h2 className="mb-3 text-2xl leading-8 font-bold tracking-tight">
           {href ? (
-            <Link href={href} aria-label={`Link to ${title}`}>
+            <Link href={href} aria-label={`前往 ${title}`}>
               {title}
             </Link>
           ) : (
@@ -43,7 +43,7 @@ const Card = ({ title, description, imgSrc, href }) => (
           <Link
             href={href}
             className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 text-base leading-6 font-medium"
-            aria-label={`Link to ${title}`}
+            aria-label={`前往 ${title}`}
           >
             前往了解 &rarr;
           </Link>

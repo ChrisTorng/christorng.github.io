@@ -29,7 +29,7 @@ function Pagination({ totalPages, currentPage, basePath }: PaginationProps) {
       <nav className="flex justify-between">
         {!prevPage && (
           <button className="cursor-auto disabled:opacity-50" disabled={!prevPage}>
-            Previous
+            上一頁
           </button>
         )}
         {prevPage && (
@@ -37,20 +37,20 @@ function Pagination({ totalPages, currentPage, basePath }: PaginationProps) {
             href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
             rel="prev"
           >
-            Previous
+            上一頁
           </Link>
         )}
         <span>
-          {currentPage} of {totalPages}
+          {currentPage}/{totalPages}
         </span>
         {!nextPage && (
           <button className="cursor-auto disabled:opacity-50" disabled={!nextPage}>
-            Next
+            下一頁
           </button>
         )}
         {nextPage && (
           <Link href={`/${basePath}/page/${currentPage + 1}`} rel="next">
-            Next
+            下一頁
           </Link>
         )}
       </nav>
@@ -105,7 +105,7 @@ export default function ListLayoutWithTags({
                         <Link
                           href={`/tags/${slug(t)}`}
                           className="hover:text-primary-500 dark:hover:text-primary-500 px-3 py-2 text-sm font-medium text-gray-500 uppercase dark:text-gray-300"
-                          aria-label={`View posts tagged ${t}`}
+                          aria-label={`檢視標籤為 ${t} 的文章`}
                         >
                           {`${t} (${tagCounts[t]})`}
                         </Link>
@@ -124,7 +124,7 @@ export default function ListLayoutWithTags({
                   <li key={path} className="py-5">
                     <article className="flex flex-col space-y-2 xl:space-y-0">
                       <dl>
-                        <dt className="sr-only">Published on</dt>
+                        <dt className="sr-only">發佈於</dt>
                         <dd className="text-base leading-6 font-medium text-gray-500 dark:text-gray-400">
                           <time dateTime={date} suppressHydrationWarning>
                             {formatDate(date, siteMetadata.locale)}

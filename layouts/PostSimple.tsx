@@ -28,7 +28,7 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
             <div className="space-y-1 border-b border-gray-200 pb-10 text-center dark:border-gray-700">
               <dl>
                 <div>
-                  <dt className="sr-only">Published on</dt>
+                  <dt className="sr-only">發佈於</dt>
                   <dd className="text-base leading-6 font-medium text-gray-500 dark:text-gray-400">
                     <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
                   </dd>
@@ -60,7 +60,7 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
                     <Link
                       href={`/${prev.path}`}
                       className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                      aria-label={`Previous post: ${prev.title}`}
+                      aria-label={`前一篇文章：${prev.title}`}
                     >
                       &larr; {prev.title}
                     </Link>
@@ -71,7 +71,7 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
                     <Link
                       href={`/${next.path}`}
                       className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                      aria-label={`Next post: ${next.title}`}
+                      aria-label={`下一篇文章：${next.title}`}
                     >
                       {next.title} &rarr;
                     </Link>

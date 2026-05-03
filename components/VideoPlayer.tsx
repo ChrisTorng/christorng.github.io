@@ -15,7 +15,7 @@ const VideoPlayer = ({ src, title }: VideoPlayerProps) => (
       controls
       preload="metadata"
       src={withBasePath(src)}
-      aria-label={title || 'Video'}
+      aria-label={title || '影片'}
     >
       <a href={withBasePath(src)}>{title || src}</a>
     </video>

@@ -15,7 +15,7 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => (
       controls
       preload="metadata"
       src={withBasePath(src)}
-      aria-label={title || 'Audio'}
+      aria-label={title || '音訊'}
     >
       <a href={withBasePath(src)}>{title || src}</a>
     </audio>

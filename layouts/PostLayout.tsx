@@ -72,7 +72,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                           src={author.avatar}
                           width={38}
                           height={38}
-                          alt="avatar"
+                          alt="作者頭像"
                           className="h-10 w-10 rounded-full"
                         />
                       )}
@@ -102,10 +102,10 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               <div className="prose dark:prose-invert max-w-none pt-10 pb-8">{children}</div>
               {/* <div className="pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300">
                 <Link href={discussUrl(path)} rel="nofollow">
-                  Discuss on Twitter
+                  在 Twitter 討論
                 </Link>
                 {` • `}
-                <Link href={editUrl(filePath)}>View on GitHub</Link>
+                <Link href={editUrl(filePath)}>在 GitHub 檢視</Link>
               </div> */}
               {siteMetadata.comments && (
                 <div
@@ -159,7 +159,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                 <Link
                   href={`/${basePath}`}
                   className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                  aria-label="Back to the blog"
+                  aria-label="回到文章列表"
                 >
                   &larr; 回到文章列表
                 </Link>

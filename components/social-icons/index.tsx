@@ -28,6 +28,21 @@ const components = {
   bluesky: Bluesky,
 }
 
+const labels: Record<keyof typeof components, string> = {
+  mail: '電子郵件',
+  github: 'GitHub',
+  facebook: 'Facebook',
+  youtube: 'YouTube',
+  linkedin: 'LinkedIn',
+  twitter: 'Twitter',
+  x: 'X',
+  mastodon: 'Mastodon',
+  threads: 'Threads',
+  instagram: 'Instagram',
+  medium: 'Medium',
+  bluesky: 'Bluesky',
+}
+
 type SocialIconProps = {
   kind: keyof typeof components
   href: string | undefined
@@ -50,7 +65,7 @@ const SocialIcon = ({ kind, href, size = 8 }: SocialIconProps) => {
       rel="noopener noreferrer"
       href={href}
     >
-      <span className="sr-only">{kind}</span>
+      <span className="sr-only">{labels[kind]}</span>
       <SocialSvg
         className={`hover:text-primary-500 dark:hover:text-primary-400 fill-current text-gray-700 dark:text-gray-200 h-${size} w-${size}`}
       />

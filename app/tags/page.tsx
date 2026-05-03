@@ -19,7 +19,7 @@ export default async function Page() {
           </h1>
         </div>
         <div className="flex max-w-lg flex-wrap">
-          {tagKeys.length === 0 && 'No tags found.'}
+          {tagKeys.length === 0 && '沒有找到類別。'}
           {sortedTags.map((t) => {
             return (
               <div key={t} className="mt-2 mr-5 mb-2">
@@ -27,7 +27,7 @@ export default async function Page() {
                 <Link
                   href={`/tags/${slug(t)}`}
                   className="-ml-2 text-sm font-semibold text-gray-600 uppercase dark:text-gray-300"
-                  aria-label={`View posts tagged ${t}`}
+                  aria-label={`檢視標籤為 ${t} 的文章`}
                 >
                   {` (${tagCounts[t]})`}
                 </Link>
