@@ -7,13 +7,18 @@ import { notFound } from 'next/navigation'
 
 const POSTS_PER_PAGE = 5
 
+function getDisplayTag(tagSlug: string) {
+  const tagCounts = tagData as Record<string, number>
+  return Object.keys(tagCounts).find((tag) => slug(tag) === tagSlug)
+}
+
 export const generateStaticParams = async () => {
   const tagCounts = tagData as Record<string, number>
   return Object.keys(tagCounts).flatMap((tag) => {
     const postCount = tagCounts[tag]
     const totalPages = Math.max(1, Math.ceil(postCount / POSTS_PER_PAGE))
     return Array.from({ length: totalPages }, (_, i) => ({
-      tag: encodeURI(tag),
+      tag: encodeURI(slug(tag)),
       page: (i + 1).toString(),
     }))
   })
@@ -21,15 +26,18 @@ export const generateStaticParams = async () => {
 
 export default async function TagPage(props: { params: Promise<{ tag: string; page: string }> }) {
   const params = await props.params
-  const tag = decodeURI(params.tag)
-  const title = tag[0].toUpperCase() + tag.split(' ').join('-').slice(1)
+  const tagSlug = decodeURI(params.tag)
+  const title = getDisplayTag(tagSlug)
+  if (!title) {
+    return notFound()
+  }
   const pageNumber = parseInt(params.page)
   const publishedBlogs = allBlogs.filter(
     (post) => process.env.NODE_ENV !== 'production' || !post.draft
   )
   const filteredPosts = allCoreContent(
     sortPosts(
-      publishedBlogs.filter((post) => post.tags && post.tags.map((t) => slug(t)).includes(tag))
+      publishedBlogs.filter((post) => post.tags && post.tags.map((t) => slug(t)).includes(tagSlug))
     )
   )
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE)
@@ -45,7 +53,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string; pa
   const pagination = {
     currentPage: pageNumber,
     totalPages: totalPages,
-    basePath: `tags/${tag}`,
+    basePath: `tags/${tagSlug}`,
   }
 
   return (
@@ -54,7 +62,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string; pa
       initialDisplayPosts={initialDisplayPosts}
       pagination={pagination}
       title={title}
-      activePath={`/tags/${tag}`}
+      activePath={`/tags/${tagSlug}`}
     />
   )
 }

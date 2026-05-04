@@ -1,7 +1,6 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/source-files'
 import { writeFileSync } from 'fs'
 import readingTime from 'reading-time'
-import { slug } from 'github-slugger'
 import path from 'path'
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
 // Remark packages
@@ -74,11 +73,10 @@ async function createTagCount(allBlogs) {
   allBlogs.forEach((file) => {
     if (file.tags && file.draft !== true) {
       file.tags.forEach((tag) => {
-        const formattedTag = slug(tag)
-        if (formattedTag in tagCount) {
-          tagCount[formattedTag] += 1
+        if (tag in tagCount) {
+          tagCount[tag] += 1
         } else {
-          tagCount[formattedTag] = 1
+          tagCount[tag] = 1
         }
       })
     }

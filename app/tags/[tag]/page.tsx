@@ -6,21 +6,28 @@ import { allBlogs } from 'contentlayer/generated'
 import tagData from 'app/tag-data.json'
 import { genPageMetadata } from 'app/seo'
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 
 const POSTS_PER_PAGE = 5
+
+function getDisplayTag(tagSlug: string) {
+  const tagCounts = tagData as Record<string, number>
+  return Object.keys(tagCounts).find((tag) => slug(tag) === tagSlug)
+}
 
 export async function generateMetadata(props: {
   params: Promise<{ tag: string }>
 }): Promise<Metadata> {
   const params = await props.params
-  const tag = decodeURI(params.tag)
+  const tagSlug = decodeURI(params.tag)
+  const tag = getDisplayTag(tagSlug) ?? tagSlug
   return genPageMetadata({
     title: tag,
     description: `${siteMetadata.title} ${tag} tagged content`,
     alternates: {
       canonical: './',
       types: {
-        'application/rss+xml': `${siteMetadata.siteUrl}/tags/${tag}/feed.xml`,
+        'application/rss+xml': `${siteMetadata.siteUrl}/tags/${tagSlug}/feed.xml`,
       },
     },
   })
@@ -30,20 +37,23 @@ export const generateStaticParams = async () => {
   const tagCounts = tagData as Record<string, number>
   const tagKeys = Object.keys(tagCounts)
   return tagKeys.map((tag) => ({
-    tag: encodeURI(tag),
+    tag: encodeURI(slug(tag)),
   }))
 }
 
 export default async function TagPage(props: { params: Promise<{ tag: string }> }) {
   const params = await props.params
-  const tag = decodeURI(params.tag)
-  const title = tag[0].toUpperCase() + tag.split(' ').join('-').slice(1)
+  const tagSlug = decodeURI(params.tag)
+  const title = getDisplayTag(tagSlug)
+  if (!title) {
+    return notFound()
+  }
   const publishedBlogs = allBlogs.filter(
     (post) => process.env.NODE_ENV !== 'production' || !post.draft
   )
   const filteredPosts = allCoreContent(
     sortPosts(
-      publishedBlogs.filter((post) => post.tags && post.tags.map((t) => slug(t)).includes(tag))
+      publishedBlogs.filter((post) => post.tags && post.tags.map((t) => slug(t)).includes(tagSlug))
     )
   )
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE)
@@ -51,7 +61,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
   const pagination = {
     currentPage: 1,
     totalPages: totalPages,
-    basePath: `tags/${tag}`,
+    basePath: `tags/${tagSlug}`,
   }
 
   return (
@@ -60,7 +70,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
       initialDisplayPosts={initialDisplayPosts}
       pagination={pagination}
       title={title}
-      activePath={`/tags/${tag}`}
+      activePath={`/tags/${tagSlug}`}
     />
   )
 }

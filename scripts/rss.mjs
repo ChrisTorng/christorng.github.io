@@ -47,9 +47,13 @@ async function generateRSS(config, allBlogs, page = 'feed.xml') {
 
   if (publishPosts.length > 0) {
     for (const tag of Object.keys(tagData)) {
-      const filteredPosts = allBlogs.filter((post) => post.tags.map((t) => slug(t)).includes(tag))
-      const rss = generateRss(config, filteredPosts, `tags/${tag}/${page}`)
-      const rssPath = path.join(outputFolder, 'tags', tag)
+      const tagSlug = slug(tag)
+      const filteredPosts = sortPosts(
+        publishPosts.filter((post) => post.tags.map((t) => slug(t)).includes(tagSlug))
+      )
+      if (filteredPosts.length === 0) continue
+      const rss = generateRss(config, filteredPosts, `tags/${tagSlug}/${page}`)
+      const rssPath = path.join(outputFolder, 'tags', tagSlug)
       mkdirSync(rssPath, { recursive: true })
       writeFileSync(path.join(rssPath, page), rss)
     }
