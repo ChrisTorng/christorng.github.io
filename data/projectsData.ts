@@ -16,7 +16,7 @@ const projectCategories: ProjectCategory[] = [
     title: 'Tampermonkey 腳本',
     projects: [
       {
-        title: 'TampermonkeyScripts',
+        title: 'Tampermonkey Scripts',
         description:
           '個人常用的 Tampermonkey 腳本集合，包含閱讀輔助、網站重導、頁面整理、YouTube 工具、行動版版面改善與暗色模式等瀏覽器自動化功能。',
         href: 'https://github.com/ChrisTorng/TampermonkeyScripts',
@@ -35,7 +35,7 @@ const projectCategories: ProjectCategory[] = [
     title: '賞鳥',
     projects: [
       {
-        title: 'eBirdScripts',
+        title: 'eBird Scripts',
         description:
           '改善 eBird 網站操作體驗的 Tampermonkey 腳本，會在熱門鳥點等頁面補上最近鳥種與最近紀錄等快速入口。',
         href: 'https://github.com/ChrisTorng/eBirdScripts',
@@ -43,7 +43,7 @@ const projectCategories: ProjectCategory[] = [
         imgSrc: 'https://raw.githubusercontent.com/ChrisTorng/eBirdScripts/main/demo.png',
       },
       {
-        title: 'eBird',
+        title: 'eBird 工具',
         description:
           '整理 eBird 最近熱門地點與鳥訊快報的工具，將純文字鳥訊依地點群組、清理中外文混雜內容，讓鳥種與紀錄更容易瀏覽。',
         href: 'https://github.com/ChrisTorng/eBird',
@@ -63,7 +63,7 @@ const projectCategories: ProjectCategory[] = [
         href: 'https://github.com/ChrisTorng/pdf-print2pdf',
       },
       {
-        title: 'mermaid2svg',
+        title: 'Mermaid SVG Exporter',
         description:
           '純前端 Mermaid SVG 匯出工具，可上傳或貼上 Markdown，自動偵測 Mermaid 區塊並逐一下載 SVG 或批次打包。',
         href: 'https://github.com/ChrisTorng/mermaid2svg',
@@ -92,7 +92,7 @@ const projectCategories: ProjectCategory[] = [
         href: 'https://github.com/ChrisTorng/cli-tools',
       },
       {
-        title: 'dotfiles-cli-tools',
+        title: 'CLI Tools',
         description:
           '跨 Shell 的小型命令列工具整理，涵蓋 shell、Python、PowerShell、CMD 等版本，方便加入 PATH 或選擇性使用。',
         href: 'https://github.com/ChrisTorng/dotfiles-cli-tools',
@@ -116,7 +116,7 @@ const projectCategories: ProjectCategory[] = [
     title: '媒體',
     projects: [
       {
-        title: 'ImageMeasurer2',
+        title: 'Photo Distortion Correction Tool',
         description:
           '照片透視校正網頁工具，可在圖片上選取四邊形區域並校正為矩形，同時保留完整轉換後影像供匯出。',
         href: 'https://github.com/ChrisTorng/ImageMeasurer2',
@@ -129,7 +129,7 @@ const projectCategories: ProjectCategory[] = [
         href: 'https://github.com/ChrisTorng/reduce-mp4-size',
       },
       {
-        title: 'video-cutting',
+        title: '影片切割工具 (Video Cutting Tool)',
         description:
           '基於 FFmpeg 的影片切割工具，支援多種時間格式、品質保留、淡入淡出、字幕校正與 YouTube 章節調整。',
         href: 'https://github.com/ChrisTorng/video-cutting',
@@ -140,7 +140,7 @@ const projectCategories: ProjectCategory[] = [
         href: 'https://github.com/ChrisTorng/Nef2Jpg',
       },
       {
-        title: 'zoom-chat-to-srt',
+        title: 'Zoom Chat to Subtitle',
         description:
           '將 Zoom 會議儲存的聊天紀錄轉換為 SRT 字幕，修正時間軸並加入繁體中文使用情境的調整。',
         href: 'https://github.com/ChrisTorng/zoom-chat-to-srt',
@@ -148,7 +148,7 @@ const projectCategories: ProjectCategory[] = [
           'https://raw.githubusercontent.com/rasyidev/zoom-chat-to-subtitle/main/demo-zoom-chat-to-subtitle.gif',
       },
       {
-        title: 'zoom-chat-to-subtitle',
+        title: 'Zoom Chat to Subtitle',
         description: '將 Zoom 會議聊天文字檔轉為字幕檔，讓錄影播放時可以同步顯示會議聊天內容。',
         href: 'https://github.com/ChrisTorng/zoom-chat-to-subtitle',
         imgSrc:
@@ -160,7 +160,7 @@ const projectCategories: ProjectCategory[] = [
     title: '3D',
     projects: [
       {
-        title: 'demo-mediapipe',
+        title: 'MediaPipe 虛擬眼鏡試戴示範',
         description:
           '使用 Google MediaPipe 即時人臉偵測並疊加虛擬眼鏡的純前端示範，支援多種眼鏡樣式與行動裝置。',
         href: 'https://github.com/ChrisTorng/demo-mediapipe',
@@ -193,7 +193,7 @@ const projectCategories: ProjectCategory[] = [
     title: '音樂',
     projects: [
       {
-        title: 'audio-browser-kiro',
+        title: 'Audio Browser',
         description:
           '大量音檔的網頁管理與瀏覽工具，支援自動掃描、波形與頻譜視覺化、鍵盤導航、評分、描述與快速篩選。',
         href: 'https://github.com/ChrisTorng/audio-browser-kiro',
@@ -206,21 +206,21 @@ const projectCategories: ProjectCategory[] = [
         demoHref: 'https://christorng.github.io/SongsRemixDemo/',
       },
       {
-        title: 'MixerGame',
+        title: 'MixerGame 混音遊戲',
         description:
           '混音能力練習遊戲，讓使用者在未知多軌音源中調整音量與混音，訓練聽辨與音控判斷。',
         href: 'https://github.com/ChrisTorng/MixerGame',
         demoHref: 'https://christorng.github.io/MixerGame/src/',
       },
       {
-        title: 'MultistepMetronome',
+        title: 'Multistep Metronome',
         description:
           '可在同一首曲子中設定多種拍號與速度變化的網頁節拍器，適合練習拍號與速度轉換複雜的樂曲。',
         href: 'https://github.com/ChrisTorng/MultistepMetronome',
         demoHref: 'https://christorng.github.io/MultistepMetronome/',
       },
       {
-        title: 'AudioTest',
+        title: 'Tone Generator',
         description: '產生週期性純正弦波音訊的測試工具，可用於音訊設備、播放鏈路與訊號處理測試。',
         href: 'https://github.com/ChrisTorng/AudioTest',
         demoHref: 'https://christorng.github.io/AudioTest/',
@@ -286,7 +286,7 @@ const projectCategories: ProjectCategory[] = [
     title: '其他',
     projects: [
       {
-        title: 'gd2md-html',
+        title: 'Docs to HTML Converter',
         description:
           'Google Docs 外掛，可將 Google 文件轉換為簡化的 Markdown 或 HTML，作為文件轉換流程的基礎工具。',
         href: 'https://github.com/ChrisTorng/gd2md-html',
@@ -299,7 +299,7 @@ const projectCategories: ProjectCategory[] = [
         demoHref: 'https://christorng.github.io/DocsConverter/',
       },
       {
-        title: 'AI-Tools',
+        title: 'ChrisTorng AI Tools',
         description:
           '收集以 AI 生成並少量人工調整的小工具，包括踩地雷、圖片比較、泛音產生器與勞基法遊戲等實驗作品。',
         href: 'https://github.com/ChrisTorng/AI-Tools',
