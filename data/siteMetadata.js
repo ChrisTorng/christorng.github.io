@@ -10,8 +10,8 @@ const siteMetadata = {
   theme: 'system', // system, dark or light
   siteUrl: `https://christorng.github.io${basePath}`,
   siteRepo: 'https://github.com/ChrisTorng/christorng.github.io',
-  siteLogo: `${basePath}/static/images/avatar.png`,
-  socialBanner: `${basePath}/static/images/avatar.png`,
+  siteLogo: `${basePath}/static/images/logo.png`,
+  socialBanner: `${basePath}/static/images/logo.png`,
   //mastodon: 'https://mastodon.social/@mastodonuser',
   //email: 'address@yoursite.com',
   github: 'https://github.com/ChrisTorng',
