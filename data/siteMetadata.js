@@ -1,4 +1,6 @@
 /** @type {import("pliny/config").PlinyConfig } */
+const basePath = process.env.BASE_PATH || ''
+
 const siteMetadata = {
   title: 'ChrisTorng 個人網站',
   author: 'ChrisTorng',
@@ -6,10 +8,10 @@ const siteMetadata = {
   description: '收集 ChrisTorng 個人相關資訊網站',
   language: 'zh-Hant',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://main-site-q1c3jxrom-christorngs-projects.vercel.app',
-  siteRepo: 'https://github.com/ChrisTorng/main-site',
-  siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
-  socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
+  siteUrl: `https://christorng.github.io${basePath}`,
+  siteRepo: 'https://github.com/ChrisTorng/christorng.github.io',
+  siteLogo: `${basePath}/static/images/avatar.png`,
+  socialBanner: `${basePath}/static/images/avatar.png`,
   //mastodon: 'https://mastodon.social/@mastodonuser',
   //email: 'address@yoursite.com',
   github: 'https://github.com/ChrisTorng',
@@ -87,7 +89,7 @@ const siteMetadata = {
   search: {
     provider: 'kbar', // kbar or algolia
     kbarConfig: {
-      searchDocumentsPath: `${process.env.BASE_PATH || ''}/search.json`, // path to load documents to search
+      searchDocumentsPath: `${basePath}/search.json`, // path to load documents to search
     },
     // provider: 'algolia',
     // algoliaConfig: {

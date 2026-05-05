@@ -1,6 +1,6 @@
-# ChrisTorng main site
+# ChrisTorng 個人網站
 
-[ChrisTorng 個人網站](https://christorng.github.io/main-site/)
+[ChrisTorng 個人網站](https://christorng.github.io/)
 
 Based on [Tailwind Nextjs Starter Blog](https://github.com/timlrx/tailwind-nextjs-starter-blog)
 

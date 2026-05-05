@@ -11292,9 +11292,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-nextjs-starter-blog@workspace:.":
+"christorng.github.io@workspace:.":
   version: 0.0.0-use.local
-  resolution: "tailwind-nextjs-starter-blog@workspace:."
+  resolution: "christorng.github.io@workspace:."
   dependencies:
     "@eslint/eslintrc": ^3.3.3
     "@eslint/js": ^9.18.0
