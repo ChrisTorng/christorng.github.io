@@ -9,7 +9,7 @@ export default function Projects() {
     <>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
-          <h1 className="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14 dark:text-gray-100">
+          <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             專案
           </h1>
           {/* <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
@@ -22,7 +22,7 @@ export default function Projects() {
               <div className="mb-6 border-b border-gray-200 pb-3 dark:border-gray-700">
                 <h2
                   id={`project-category-${category.title}`}
-                  className="text-2xl leading-8 font-bold tracking-tight text-gray-900 dark:text-gray-100"
+                  className="text-2xl leading-8 font-bold tracking-tight text-gray-800 dark:text-gray-200"
                 >
                   {category.title}
                 </h2>

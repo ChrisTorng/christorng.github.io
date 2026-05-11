@@ -26,12 +26,20 @@ interface CardLinkProps {
   ariaLabel: string
   children: ReactNode
   className?: string
+  variant?: 'accent' | 'primary'
 }
 
-const CardLink = ({ href, ariaLabel, children, className }: CardLinkProps) => (
+const cardLinkVariants = {
+  accent:
+    'text-accent-700 hover:text-accent-800 dark:text-accent-500 dark:hover:text-accent-300 decoration-accent-500/40 hover:decoration-accent-700 dark:decoration-accent-500/50 dark:hover:decoration-accent-300',
+  primary:
+    'text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 decoration-primary-500/40 hover:decoration-primary-600 dark:decoration-primary-400/40 dark:hover:decoration-primary-400',
+}
+
+const CardLink = ({ href, ariaLabel, children, className, variant = 'primary' }: CardLinkProps) => (
   <Link
     href={href}
-    className={`text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 decoration-primary-500/40 hover:decoration-primary-600 dark:decoration-primary-400/40 dark:hover:decoration-primary-400 inline-flex items-center leading-6 font-medium underline underline-offset-4 transition-colors ${className ?? ''}`}
+    className={`${cardLinkVariants[variant]} inline-flex items-center leading-6 font-medium underline underline-offset-4 transition-colors ${className ?? ''}`}
     aria-label={ariaLabel}
   >
     <span>{children}</span>
@@ -73,11 +81,12 @@ const Card = ({ title, description, imgSrc, href, demoHref }) => (
               href={href}
               ariaLabel={`前往 ${title}`}
               className="text-2xl leading-8 font-bold"
+              variant="accent"
             >
               {title}
             </CardLink>
           ) : (
-            title
+            <span className="text-accent-700 dark:text-accent-500">{title}</span>
           )}
         </h2>
         <p className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400">{description}</p>
@@ -87,7 +96,12 @@ const Card = ({ title, description, imgSrc, href, demoHref }) => (
               前往了解
             </CardLink>
             {demoHref && (
-              <CardLink href={demoHref} ariaLabel={`開啟 ${title} 線上展示`} className="shrink-0">
+              <CardLink
+                href={demoHref}
+                ariaLabel={`開啟 ${title} 線上展示`}
+                className="shrink-0"
+                variant="accent"
+              >
                 線上展示
               </CardLink>
             )}

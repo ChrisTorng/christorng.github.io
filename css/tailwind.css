@@ -1,40 +1,90 @@
 @import 'tailwindcss';
-@plugin "@tailwindcss/forms";
+@plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @source '../node_modules/pliny';
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+  Editable color anchors.
+  Change these few values to retune the whole site palette. The Tailwind
+  50-950 ramps below are generated from these anchors with OKLCH mixing.
+*/
+:root {
+  --site-light-background: oklch(0.985 0.002 247.839);
+  --site-light-foreground: oklch(0.278 0.033 256.848);
+  --site-dark-background: oklch(0.21 0.034 264.665);
+  --site-dark-foreground: oklch(0.928 0.006 264.531);
+  --site-primary: #e6a62d;
+  --site-accent: #73c9e6;
+}
+
 /* Core theme configuration */
 @theme {
   /* Font families */
-  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+  --font-sans:
+    var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   /* Colors */
-  /* Copied from https://tailwindcss.com/docs/theme#default-theme-variable-reference */
-  --color-primary-50: oklch(0.971 0.014 343.198);
-  --color-primary-100: oklch(0.948 0.028 342.258);
-  --color-primary-200: oklch(0.899 0.061 343.231);
-  --color-primary-300: oklch(0.823 0.12 346.018);
-  --color-primary-400: oklch(0.718 0.202 349.761);
-  --color-primary-500: oklch(0.656 0.241 354.308);
-  --color-primary-600: oklch(0.592 0.249 0.584);
-  --color-primary-700: oklch(0.525 0.223 3.958);
-  --color-primary-800: oklch(0.459 0.187 3.815);
-  --color-primary-900: oklch(0.408 0.153 2.432);
-  --color-primary-950: oklch(0.284 0.109 3.907);
+  --color-primary-50: color-mix(in oklch, white 95%, var(--site-primary));
+  --color-primary-100: color-mix(in oklch, white 88%, var(--site-primary));
+  --color-primary-200: color-mix(in oklch, white 74%, var(--site-primary));
+  --color-primary-300: color-mix(in oklch, white 58%, var(--site-primary));
+  --color-primary-400: color-mix(in oklch, white 35%, var(--site-primary));
+  --color-primary-500: var(--site-primary);
+  --color-primary-600: color-mix(in oklch, black 12%, var(--site-primary));
+  --color-primary-700: color-mix(in oklch, black 25%, var(--site-primary));
+  --color-primary-800: color-mix(in oklch, black 38%, var(--site-primary));
+  --color-primary-900: color-mix(in oklch, black 48%, var(--site-primary));
+  --color-primary-950: color-mix(in oklch, black 68%, var(--site-primary));
 
-  --color-gray-50: oklch(0.985 0.002 247.839);
-  --color-gray-100: oklch(0.967 0.003 264.542);
-  --color-gray-200: oklch(0.928 0.006 264.531);
-  --color-gray-300: oklch(0.872 0.01 258.338);
-  --color-gray-400: oklch(0.707 0.022 261.325);
-  --color-gray-500: oklch(0.551 0.027 264.364);
-  --color-gray-600: oklch(0.446 0.03 256.802);
-  --color-gray-700: oklch(0.373 0.034 259.733);
-  --color-gray-800: oklch(0.278 0.033 256.848);
-  --color-gray-900: oklch(0.21 0.034 264.665);
-  --color-gray-950: oklch(0.13 0.028 261.692);
+  --color-accent-50: color-mix(in oklch, white 95%, var(--site-accent));
+  --color-accent-100: color-mix(in oklch, white 88%, var(--site-accent));
+  --color-accent-200: color-mix(in oklch, white 74%, var(--site-accent));
+  --color-accent-300: color-mix(in oklch, white 58%, var(--site-accent));
+  --color-accent-400: color-mix(in oklch, white 35%, var(--site-accent));
+  --color-accent-500: var(--site-accent);
+  --color-accent-600: color-mix(in oklch, black 12%, var(--site-accent));
+  --color-accent-700: color-mix(in oklch, black 25%, var(--site-accent));
+  --color-accent-800: color-mix(in oklch, black 38%, var(--site-accent));
+  --color-accent-900: color-mix(in oklch, black 48%, var(--site-accent));
+  --color-accent-950: color-mix(in oklch, black 68%, var(--site-accent));
+
+  --color-gray-50: var(--site-light-background);
+  --color-gray-100: color-mix(
+    in oklch,
+    var(--site-light-background) 72%,
+    var(--site-dark-foreground)
+  );
+  --color-gray-200: var(--site-dark-foreground);
+  --color-gray-300: color-mix(
+    in oklch,
+    var(--site-dark-foreground) 72%,
+    var(--site-light-foreground)
+  );
+  --color-gray-400: color-mix(
+    in oklch,
+    var(--site-dark-foreground) 45%,
+    var(--site-light-foreground)
+  );
+  --color-gray-500: color-mix(
+    in oklch,
+    var(--site-dark-foreground) 26%,
+    var(--site-light-foreground)
+  );
+  --color-gray-600: color-mix(
+    in oklch,
+    var(--site-light-foreground) 82%,
+    var(--site-dark-background)
+  );
+  --color-gray-700: color-mix(
+    in oklch,
+    var(--site-light-foreground) 55%,
+    var(--site-dark-background)
+  );
+  --color-gray-800: var(--site-light-foreground);
+  --color-gray-900: var(--site-dark-background);
+  --color-gray-950: color-mix(in oklch, black 35%, var(--site-dark-background));
 
   /* Line heights */
   --line-height-11: 2.75rem;
@@ -79,6 +129,32 @@
 }
 
 @layer utilities {
+  .heading-accent {
+    color: var(--color-accent-800);
+  }
+
+  .dark .heading-accent {
+    color: var(--color-accent-200);
+  }
+
+  .title-link {
+    color: var(--color-accent-700);
+    transition-property: color;
+    transition-duration: 150ms;
+  }
+
+  .title-link:hover {
+    color: var(--color-accent-800);
+  }
+
+  .dark .title-link {
+    color: var(--color-accent-300);
+  }
+
+  .dark .title-link:hover {
+    color: var(--color-accent-200);
+  }
+
   .prose {
     & a {
       color: var(--color-primary-500);
@@ -92,6 +168,9 @@
     & :where(h1, h2) {
       font-weight: 700;
       letter-spacing: var(--tracking-tight);
+    }
+    & :where(h1, h2, h3, h4, h5, h6) {
+      color: var(--color-gray-800);
     }
     & h3 {
       font-weight: 600;
@@ -112,7 +191,7 @@
       }
     }
     & :where(h1, h2, h3, h4, h5, h6) {
-      color: var(--color-gray-100);
+      color: var(--color-gray-200);
     }
   }
 }
