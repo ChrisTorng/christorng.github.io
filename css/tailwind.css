@@ -14,8 +14,8 @@
   --site-light-foreground: oklch(0.278 0.033 256.848);
   --site-dark-background: oklch(0.21 0.034 264.665);
   --site-dark-foreground: oklch(0.928 0.006 264.531);
-  --site-accent: #9191E9;
-  --site-primary: #457EAC;
+  --site-accent: #06b6d4;
+  --site-primary: #2563eb;
 }
 
 /* Core theme configuration */
@@ -157,12 +157,12 @@
 
   .prose {
     & a {
-      color: var(--color-primary-500);
+      color: var(--color-primary-600);
       &:hover {
-        color: var(--color-primary-600);
+        color: var(--color-primary-700);
       }
       & code {
-        color: var(--color-primary-400);
+        color: var(--color-primary-600);
       }
     }
     & :where(h1, h2) {
@@ -182,12 +182,12 @@
 
   .prose-invert {
     & a {
-      color: var(--color-primary-500);
+      color: var(--color-primary-300);
       &:hover {
-        color: var(--color-primary-400);
+        color: var(--color-primary-200);
       }
       & code {
-        color: var(--color-primary-400);
+        color: var(--color-primary-300);
       }
     }
     & :where(h1, h2, h3, h4, h5, h6) {
