@@ -86,13 +86,15 @@ async function createTagCount(allBlogs) {
 }
 
 function createSearchIndex(allBlogs) {
+  const publishedBlogs = allBlogs.filter((post) => post.draft !== true)
+
   if (
     siteMetadata?.search?.provider === 'kbar' &&
     siteMetadata.search.kbarConfig.searchDocumentsPath
   ) {
     writeFileSync(
       `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
-      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
+      JSON.stringify(allCoreContent(sortPosts(publishedBlogs)))
     )
     console.log('Local search index generated...')
   }

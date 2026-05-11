@@ -4,6 +4,7 @@ import ListLayout from '@/layouts/ListLayoutWithTags'
 import { allBlogs } from 'contentlayer/generated'
 import tagData from 'app/tag-data.json'
 import { notFound } from 'next/navigation'
+import { getPublishedBlogs } from 'app/blog-utils'
 
 const POSTS_PER_PAGE = 5
 
@@ -32,9 +33,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string; pa
     return notFound()
   }
   const pageNumber = parseInt(params.page)
-  const publishedBlogs = allBlogs.filter(
-    (post) => process.env.NODE_ENV !== 'production' || !post.draft
-  )
+  const publishedBlogs = getPublishedBlogs(allBlogs)
   const filteredPosts = allCoreContent(
     sortPosts(
       publishedBlogs.filter((post) => post.tags && post.tags.map((t) => slug(t)).includes(tagSlug))

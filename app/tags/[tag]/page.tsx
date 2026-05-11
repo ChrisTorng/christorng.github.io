@@ -7,6 +7,7 @@ import tagData from 'app/tag-data.json'
 import { genPageMetadata } from 'app/seo'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { getPublishedBlogs } from 'app/blog-utils'
 
 const POSTS_PER_PAGE = 5
 
@@ -48,9 +49,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
   if (!title) {
     return notFound()
   }
-  const publishedBlogs = allBlogs.filter(
-    (post) => process.env.NODE_ENV !== 'production' || !post.draft
-  )
+  const publishedBlogs = getPublishedBlogs(allBlogs)
   const filteredPosts = allCoreContent(
     sortPosts(
       publishedBlogs.filter((post) => post.tags && post.tags.map((t) => slug(t)).includes(tagSlug))

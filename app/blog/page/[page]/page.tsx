@@ -2,13 +2,12 @@ import ListLayout from '@/layouts/ListLayoutWithTags'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer'
 import { allBlogs } from 'contentlayer/generated'
 import { notFound } from 'next/navigation'
+import { getPublishedBlogs } from 'app/blog-utils'
 
 const POSTS_PER_PAGE = 5
 
 export const generateStaticParams = async () => {
-  const publishedBlogs = allBlogs.filter(
-    (post) => process.env.NODE_ENV !== 'production' || !post.draft
-  )
+  const publishedBlogs = getPublishedBlogs(allBlogs)
   const totalPages = Math.ceil(publishedBlogs.length / POSTS_PER_PAGE)
   const paths = Array.from({ length: totalPages }, (_, i) => ({ page: (i + 1).toString() }))
 
@@ -17,9 +16,7 @@ export const generateStaticParams = async () => {
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
   const params = await props.params
-  const publishedBlogs = allBlogs.filter(
-    (post) => process.env.NODE_ENV !== 'production' || !post.draft
-  )
+  const publishedBlogs = getPublishedBlogs(allBlogs)
   const posts = allCoreContent(sortPosts(publishedBlogs))
   const pageNumber = parseInt(params.page as string)
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE)

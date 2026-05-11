@@ -4,7 +4,7 @@ import 'katex/dist/katex.css'
 import PageTitle from '@/components/PageTitle'
 import { components } from '@/components/MDXComponents'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
-import { sortPosts, coreContent, allCoreContent } from 'pliny/utils/contentlayer'
+import { sortPosts, coreContent } from 'pliny/utils/contentlayer'
 import { allBlogs, allAuthors } from 'contentlayer/generated'
 import type { Authors, Blog } from 'contentlayer/generated'
 import PostSimple from '@/layouts/PostSimple'
@@ -13,6 +13,7 @@ import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { notFound } from 'next/navigation'
+import { getDraftBlogs, getPublishedBlogs } from 'app/blog-utils'
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -26,10 +27,7 @@ export async function generateMetadata(props: {
 }): Promise<Metadata | undefined> {
   const params = await props.params
   const slug = decodeURI(params.slug.join('/'))
-  const publishedBlogs = allBlogs.filter(
-    (post) => process.env.NODE_ENV !== 'production' || !post.draft
-  )
-  const post = publishedBlogs.find((p) => p.slug === slug)
+  const post = allBlogs.find((p) => p.slug === slug)
   const authorList = post?.authors || ['default']
   const authorDetails = authorList.map((author) => {
     const authorResults = allAuthors.find((p) => p.slug === author)
@@ -73,23 +71,24 @@ export async function generateMetadata(props: {
       description: post.summary,
       images: imageList,
     },
+    robots: post.draft ? { index: false, follow: false } : undefined,
   }
 }
 
 export const generateStaticParams = async () => {
-  const publishedBlogs = allBlogs.filter(
-    (post) => process.env.NODE_ENV !== 'production' || !post.draft
-  )
-  return publishedBlogs.map((p) => ({ slug: p.slug.split('/').map((name) => decodeURI(name)) }))
+  return allBlogs.map((p) => ({ slug: p.slug.split('/').map((name) => decodeURI(name)) }))
 }
 
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
   const params = await props.params
   const slug = decodeURI(params.slug.join('/'))
-  const publishedBlogs = allBlogs.filter(
-    (post) => process.env.NODE_ENV !== 'production' || !post.draft
-  )
-  const sortedCoreContents = allCoreContent(sortPosts(publishedBlogs))
+  const post = allBlogs.find((p) => p.slug === slug) as Blog | undefined
+  if (!post) {
+    return notFound()
+  }
+
+  const navigationBlogs = post.draft ? getDraftBlogs(allBlogs) : getPublishedBlogs(allBlogs)
+  const sortedCoreContents = sortPosts(navigationBlogs).map((post) => coreContent(post))
   const postIndex = sortedCoreContents.findIndex((p) => p.slug === slug)
   if (postIndex === -1) {
     return notFound()
@@ -97,7 +96,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
 
   const prev = sortedCoreContents[postIndex + 1]
   const next = sortedCoreContents[postIndex - 1]
-  const post = publishedBlogs.find((p) => p.slug === slug) as Blog
   const authorList = post?.authors || ['default']
   const authorDetails = authorList.map((author) => {
     const authorResults = allAuthors.find((p) => p.slug === author)
