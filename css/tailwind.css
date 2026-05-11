@@ -14,8 +14,8 @@
   --site-light-foreground: oklch(0.278 0.033 256.848);
   --site-dark-background: oklch(0.21 0.034 264.665);
   --site-dark-foreground: oklch(0.928 0.006 264.531);
-  --site-primary: #e6a62d;
-  --site-accent: #73c9e6;
+  --site-accent: #9191E9;
+  --site-primary: #457EAC;
 }
 
 /* Core theme configuration */
@@ -130,11 +130,11 @@
 
 @layer utilities {
   .heading-accent {
-    color: var(--color-accent-800);
+    color: var(--color-accent-600);
   }
 
   .dark .heading-accent {
-    color: var(--color-accent-200);
+    color: var(--color-accent-300);
   }
 
   .title-link {
