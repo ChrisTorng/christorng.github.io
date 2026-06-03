@@ -1,0 +1,28 @@
+---
+title: 'MCP 贏了'
+subtitle: 'Anthropic 贏得開發者的心'
+date: '2025-03-28'
+lastmod: '2025-03-28'
+tags: ['AI']
+draft: false
+summary: 'Anthropic 贏得開發者的心'
+images: ['/static/images/2025/2025-03-28-mcp-wins-01.webp']
+---
+
+![](/static/images/2025/2025-03-28-mcp-wins-01.webp)
+
+[Model context protocol (MCP) - OpenAI Agents SDK](https://openai.github.io/openai-agents-python/mcp/)<br />連 OpenAI 也推出使用 MCP 的 Agents SDK，代表 MCP 已經贏了。不知何時 Google 會推出官方支援?
+
+[microsoft/playwright-mcp: Playwright Tools for MCP](https://github.com/microsoft/playwright-mcp)<br />微軟推出官方的 Playwright MCP 工具，裡面有直接安裝到 VSCode Insider 的連結，點下去就裝到好，就不用像先前需要自己編輯 json 了。不過我本機另外還是有 npx/uvx 安裝方面的問題。
+
+而且昨天更新的新版 VSCode Insider，還會自動抓 Claude Desktop 已經設定的 MCP Servers 並詢問是否自動匯入。這個由 Claude Desktop 匯入設定的做法應該已經是各 AI 工具常態的樣子。
+
+[modelcontextprotocol/servers: Model Context Protocol Servers](https://github.com/modelcontextprotocol/servers)<br />我實際算了一下，已有 327 種 MCP Servers 列在這裡了!
+
+[LaurieWired/GhidraMCP: MCP Server for Ghidra](https://github.com/LaurieWired/GhidraMCP)<br />昨天看到還有自動逆向工程的 MCP (沒列在上面的清單)，這下不用自己學，叫 AI 來幫你逆向工程，拓展了很大的想像空間呢!
+
+[Model context protocol (MCP) - OpenAI Agents SDK](https://openai.github.io/openai-agents-python/mcp/) 這裡看到有 stdio (本機 CLI) 及 http 兩類工具，基本上 http 工具就有機密資料外流的風險，而 stdio 本機 CLI 雖說執行在本機，但還是要再了解是否有另外呼叫外部服務。
+
+由上面才發現有正式的官網 [Model Context Protocol](https://modelcontextprotocol.io/)。其中 [Roadmap](https://modelcontextprotocol.io/development/) 裡的 Server Registry 是我最期待的，應該就是方便搜尋並一鍵下載安裝完成的服務...
+
+Anthropic 一直以開發者為中心 (如 Claude 3.5 Sonnet 在開發者中好評，我也跳過去一陣子，如今有 MCP 一統天下)，OpenAI 著重消費者，Microsoft 抓企業，Google/Amazon 則還在夾縫中找機會...以上是我的評論...

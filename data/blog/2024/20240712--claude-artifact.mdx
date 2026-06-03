@@ -1,0 +1,37 @@
+---
+title: 'Claude Artifact 網頁踩地雷'
+date: '2024-07-12'
+lastmod: '2024-07-12'
+tags: ['AI']
+draft: false
+summary: 'UPDATE:'
+images: ['/static/images/2024/2024-07-12-claude-artifact-01.png']
+---
+
+![](/static/images/2024/2024-07-12-claude-artifact-01.png)
+
+UPDATE:
+
+這裡可以看看別人以及分享自己的創作: [Claude Artifacts Showcase | Share Your AI Creations](https://claudeartifacts.com/)
+
+我上傳了[改良版踩地雷](https://claude.site/artifacts/75e17dd0-541d-487d-b729-8efc4e992544)。看上圖好像還有點問題…
+
+---
+
+[Claude Artifact 網頁踩地雷](https://claude.site/artifacts/8088b521-d46f-46aa-a946-13bc95eb302f)
+
+現在 Claude 可以分享可互動執行之 Artifact，不用登入也可玩。
+
+我也做了個踩地雷，還有支援一起按左右鍵自動揭示已完成標示地雷之功能。
+
+還可以 Remix this Artifact，只要登入免費帳號就可以接續修改內容。
+
+OpenAI 的 Code Interpreter (現在是 Advanced Data Analysis) 是執行 server 端 Python 程式，只能自己玩，限制在 sandbox 內。Claude 的 Artifact 是瀏覽器端執行 HTML/JavaScript，可以做這些小互動，還可以分享給無帳號的人使用，我覺得是很酷的東西。
+
+我覺得它很可靠，每次生的東西都可以直接用，很少遇到 (像 ChatGPT) 每次生會有錯這錯那的問題。不過對於會寫程式的人而言，要改一些小東西 (比如說我想改遊戲標題，以及第一次點永遠不會觸發地雷)，只能請它重頭生一個，會怕觸發 token 數上限問題。
+
+(看 [About Claude Pro usage | Anthropic Help Center](https://support.anthropic.com/en/articles/8324991-about-claude-pro-usage) 說明，它是計算 token 總使用量，不像 ChatGPT 計算對話次數。超量要等五小時。它每次都會反覆讀先前傳的所有檔案或長文，因此儘量一次多問一些問題，它可以只讀一次就回答多個問題。然後若開始離題了就要新增對話，避免一直參考先前的檔案或長文，浪費寶貴的 token 數。)
+
+我再試 Remix 功能，它主動建議了幾個修改：選難度、增加時間及最高分 (最短時間)、不同外觀主題及動畫。我再加碼改標題，利用寬螢幕空間。然後就出錯了，只能貼錯誤訊息請它修正。最後發現，是觸發單次生成長度上限，也就是生成的程式太長被截斷了。我再請它分別生成 HTML/JS，它主動加碼生 CSS。生成 JS 又被截斷再請重生。
+
+最後發現似乎無法由 HTML 引用 JS/CSS...我猜問題應該是在檔案路徑，另很可能有資安問題 (引用到別人生成的檔案)。

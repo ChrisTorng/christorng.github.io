@@ -1,0 +1,23 @@
+---
+title: 'Claude 的能力探究'
+date: '2024-08-23'
+lastmod: '2024-08-23'
+tags: ['AI']
+draft: false
+summary: 'How did Claude see it''s mistake in the middle of the answer?'
+images: ['/static/images/2024/2024-08-23-claude-01.png']
+---
+
+[How did Claude see it's mistake in the middle of the answer?](https://www.reddit.com/r/ClaudeAI/comments/1eysz3y/how_did_claude_see_its_mistake_in_the_middle_of/)<br />看到 Claude 在同一個訊息中途開始為前面所說的抱歉，我是從未見過這樣的情況。
+
+![](/static/images/2024/2024-08-23-claude-01.png)
+
+[Claude performs internal Chain Of Thought(COT) midway before fully responding. Nice little touch by Anthropic.](https://www.reddit.com/r/singularity/comments/1dw6o6h/claude_performs_internal_chain_of_thoughtcot/)<br />請 Claude 使用 &#123;&#125; 來替代 \<\>，藉此釣出內部用的 XML 標籤。(Anthropic 有說 Claude 特別在 XML 上訓練 [Use XML tags to structure your prompts](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags))
+
+![r/singularity - Claude performs internal Chain Of Thought(COT) midway before fully responding. Nice little touch by Anthropic.](/static/images/2024/2024-08-23-claude-02.png)
+
+裡面可看到 &#123;antThinking&#125; (後來才知 ant 就是 Anthropic)。這部份是 CoT ([Let Claude think (chain of thought prompting) to increase performance](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-of-thought)) 技巧，而且 \<antThinking\> 內容不會輸出，因此使用者看不到，但這些內部思考過程可讓 LLM 輸出顯得更有智慧。這也導致了最前面 Claude 在訊息中途突然為前面訊息錯誤道歉的現象。
+
+剛好我最近也在找如何指定讓 Claude 輸出特定 Artifact 內容的方法，找到 [Claude 3.5 Sonnet, Full Artifacts System Prompt](https://gist.github.com/dedlim/6bf6d81f77c19e20cd40594aa09e3ecd) 裡面有釣出來完整的系統訊息。可以再參考 [A forensic analysis of the Claude Sonnet 3.5 system prompt](https://tyingshoelaces.com/blog/forensic-analysis-sonnet-prompt) 不過我看不太懂。
+
+從這些我學到可以利用特殊標籤來讓 LLM 更多思考，但 UI 端隱藏不讓使用者察覺它正在「內心推論思考」。其他的 UI 特殊行為 (如 Artifact) 也利用這些標籤來運作。另 Claude 剛剛加了 LaTeX 數學式顯示功能 Preview，猜想也會因此導入更長的 System Prompt (因此沒用到就不要開，避免浪費 token 數...?)。

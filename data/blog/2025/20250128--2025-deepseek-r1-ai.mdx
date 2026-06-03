@@ -1,0 +1,30 @@
+---
+title: '2025 年 DeepSeek-R1 領頭的 AI 進度恐慌之縮影'
+subtitle: 'AI 相關行業跟著中國卷起來'
+date: '2025-01-28'
+lastmod: '2025-01-28'
+tags: ['AI']
+draft: false
+summary: 'AI 相關行業跟著中國卷起來'
+images: ['/static/images/2025/2025-01-28-2025-deepseek-r1-ai-01.webp']
+---
+
+![](/static/images/2025/2025-01-28-2025-deepseek-r1-ai-01.webp)
+
+[DeepSeek-R1](https://github.com/deepseek-ai/DeepSeek-R1) 引來注目，完全開源且追上 o1 水準，論文公開全部方法。<br />[How DeepSeek-R1 Was Built; For dummies](https://www.vellum.ai/blog/the-training-of-deepseek-r1-and-ways-to-use-it) 可以簡單了解其方法。
+
+[Deepseek is a side project...](https://www.reddit.com/r/webdev/comments/1i8tw2a/deepseek_is_a_side_project/)<br />DeepSeek 只是該公司的副專案，本業是交易/挖礦，因此可以開源送大家。<br />R1 成果代表現有各模型訓練公司的大量 GPU 其實根本就是過剩，跟著論文做根本不需要那麼多 GPU。
+
+[Nvidia sheds almost $600 billion in market cap, biggest drop ever](https://web.archive.org/web/20250127215711/https://www.cnbc.com/2025/01/27/nvidia-sheds-almost-600-billion-in-market-cap-biggest-drop-ever.html)<br />Nvidia 市值單日跌幅創美國股市紀錄，因為事實證明不需要那麼多 GPU 也能完成訓練，推理成本也大幅下降。
+
+[The Short Case for Nvidia Stock](https://youtubetranscriptoptimizer.com/blog/05_the_short_case_for_nvda)<br />裡面說 Nvidia GPU 毛利率達 75%，但性價比並非最高。比如 [100x Defect Tolerance: How Cerebras Solved the Yield Problem](https://cerebras.ai/blog/100x-defect-tolerance-how-cerebras-solved-the-yield-problem) 說明 Cerebras 如何用單一巨大晶元的高度容錯能力，打敗高度互連的多個 H100。而 Groq 晶片只適合推理不適合訓練，這代表現在 CoT 的緩慢及高成本問題完全可用 Groq 晶片來大幅改善。
+
+除了 AMD/Intel，各 AI 巨頭 (Google/MS/Amazon/OpenAI/Apple) 也開始研發自己的 AI 晶片，大家都可以找台積電生產高效能晶片。然後各函式庫的跨 GPU 互通性也逐步改善，甚至由 CUDA 專屬程式轉移到其他架構的 LLM 轉譯能力也在提升。
+
+裡面提到 [Thread By @orikron - Each AI engineer at Meta AI earns more e..](https://unrollnow.com/status/1882503121320214777)<br />R1 訓練費用甚至比 AI 巨頭一個高管的年薪還低，推理 API 費用大跳水，又得逼一堆公司跟進。<br />據說 Meta 的下一代 Llama 4 還沒達 DeepSeek v3 水準，更不用說 R1。Meta 內部進入恐慌模式，加緊照抄 R1 的功能以期快速追上。
+
+[How small Chinese AI start-up DeepSeek shocked Silicon Valley](https://archive.is/5sC2p)<br />這更使美國 AI 是否還能保持領先出現極大問號。
+
+[Sam Altman on X](https://x.com/sama/status/1883294216329281627?mx=2)<br />OpenAI 也要跟進了，Plus 使用者將可得到每天 100 次 o3-mini 推理，連免費版都可得到。Operator 也會儘快提供給 Plus 使用者。
+
+2025 年春節假期期間，就可看到這一整年追趕中國 AI 進度恐慌的縮影...

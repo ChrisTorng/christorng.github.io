@@ -1,0 +1,58 @@
+---
+title: 'WebSim 幻覺網頁生成器'
+subtitle: 'LLM 幻覺也有有價值的用處!'
+date: '2024-04-27'
+lastmod: '2024-04-27'
+tags: ['AI']
+draft: false
+summary: 'LLM 幻覺也有有價值的用處!'
+images: ['/static/images/2024/2024-04-27-websim-01.jpeg']
+---
+
+從這裡 [WebSim, WorldSim, and The Summer of Simulative AI](https://www.latent.space/p/sim-ai) 得知 [WebSim](https://websim.ai/)，可參考
+
+[WebSim - How to Use WebSim for Beginners](https://websim.ai/c/lyIIJIEemsdt7wnJC)
+
+[WebSim - Advanced Guide to Structuring Requests and Iteration](https://websim.ai/c/KGzeEDzv8IDXBOA2E)
+
+一般我們都不想要 LLM 幻覺，盡力讓它只依照事實。但這個網頁模擬器充份運用幻覺功能，你隨便打什麼網址 (不管存在不存在)，它都會幻覺創造出對應的網頁，裡面還可以層層往下探索。
+
+(以下需要登入) (曾經開啟過的就很快，沒開過的就要等等 LLM 生成)
+
+我弄了個人 Blog [Substack - Christopher Ng 的人工智能時事通訊](https://websim.ai/c/hagulKUM6g6h27dcd):
+
+![image](/static/images/2024/2024-04-27-websim-01.jpeg)
+
+除了創造網頁，還可以創造更有趣的。它的[首頁有一些範例](https://websim.ai/)，比如
+
+[Windows 98 Desktop](https://websim.ai/c/ZgdNE9KXupxclZ6er)
+
+![image](/static/images/2024/2024-04-27-websim-02.jpeg)
+
+我在裡面[開 IE](https://websim.ai/c/JcQm8jLjUBGuDyDHd) 如下:
+
+![image](/static/images/2024/2024-04-27-websim-03.jpeg)
+
+我還想在模擬的桌面裡有模擬的瀏覽器加上模擬網頁，進入巢狀模擬，可惜都變成一般網頁，桌面消失了。
+
+[Interactive Music Theory Visualizer](https://websim.ai/c/JtyqodJWgoj0vM8Ro) 可以按電腦按鍵 (參考左下角鍵盤) 彈奏音樂:
+
+![image](/static/images/2024/2024-04-27-websim-04.jpeg)
+
+裡面的操作功能都是有效的。
+
+所以只要創造網址，可以讓它做一些真正有用的工作。我試了這個:
+
+[Markdown to HTML Converter](https://websim.ai/c/mbLFoQoPFi4UH8K4N) (converter://markdown2htmltag)
+
+我想要它並排顯示，並邊打邊顯示，修改網址試了半天 (開始 Prompt engineering)，最後成功:
+
+[Live Compact Markdown to HTML Converter](https://websim.ai/c/lcceJMHjrMu5dlEJB) (converter://markdown2htmltag?view=side_by_side&width=400&mode=convert_while_typing)
+
+![image](/static/images/2024/2024-04-27-websim-05.jpeg)
+
+(不知為何表格無法顯示)
+
+所以幻覺不見得是無用的東西。以上已經進到以 LLM 自動生成有用網頁的範圍了。
+
+等待更強的 LLM 可用，真的要什麼功能網頁都可以直接生出來!!!

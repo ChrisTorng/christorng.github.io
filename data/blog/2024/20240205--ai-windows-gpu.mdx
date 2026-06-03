@@ -1,0 +1,29 @@
+---
+title: '購買 AI 用 Windows GPU 筆電心得'
+subtitle: 'VRAM 越大越好，記得擴充硬碟'
+date: '2024-02-05'
+lastmod: '2024-02-05'
+tags: ['AI']
+draft: false
+summary: 'VRAM 越大越好，記得擴充硬碟'
+---
+
+前年底 (2022/11) ChatGPT 推出後，我立刻發覺這是重大的進步，可比工業革命。我預測 GPU 價格將會水漲船高，在去年春節期間就買了一部入門款三萬多 3070 8G GPU 福利品筆電 (內含加倍擴充記憶體及硬碟): [2021 ASUS TUF Dash F15](https://www.asus.com/tw/laptops/for-gaming/tuf-gaming/2021-asus-tuf-dash-f15/techspec/) FX516PR。以下分享我的挑選原則及心得。
+
+如果能挑選 nVidia GPU 是最好的，應該所有 AI 模型函式庫都會支援，速度最快。其他廠牌的我是完全不考慮。
+
+nVidia GPU 的筆電與桌機版，即使是相同型號，速度仍有非常大的差別。<br />我買的 3070，參考這篇 [Nvidia RTX 3070 Laptop vs Desktop GPU Review](https://www.techspot.com/review/2206-geforce-rtx-3070-laptop-vs-desktop/)，其 Desktop 有 5888 CUDA cores，Laptop 則只有 5120 cores，最高時脈筆電低了 100Mhz 以上，而 8G GDDR6 則一樣。<br />評測比較筆電與桌機版效能可差到十幾二十%。
+
+我的筆電 GPU 規格: NVIDIA® GeForce RTX™ 3070 Laptop GPU, With Boost up to 1390MHz at 80W (85W with Dynamic Boost), 8GB GDDR6<br />官網 [GeForce RTX 3070 Family | NVIDIA](https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3070-3070ti/) 的桌機規格是 Base 1.5G, Boost 1.73G, 220W，最高溫度 93 °C!<br />筆電空間不足，散熱片及風扇不可能像桌機那麼誇張。再者為了省電，電池也要有一定續航力，因此最高瓦數會低些。以上直接影響到最高時脈。時脈更高，更熱更耗電，當然也就更快。<br />所以即使是相同 GPU 型號，筆電的還是差上一截。
+
+不過我的挑選重點是 VRAM 越大越好，速度沒關係。因為記憶體夠大，模型放得進去才能跑。模型放不進去，GPU 再快也沒意義。所以速度較慢對我是可接受。
+
+我現在的筆電，插電放腿上跑 GPU 應用時，散熱風扇噪音真的很吵，然後腿感覺非常燙，包括變壓器都很燙。若只有用電池，速度又硬生生慢下來，風扇噪音也明顯較小，沒那麼燙。
+
+我也評估過既有桌機直接加插 GPU 顯卡，後來發現需要的電源供應器瓦數，現有桌機根本無法負荷，根本不可能用加插卡就解決，非得直接換一台不可。 我沒有玩遊戲的需求，但若要 GPU，只有電競主機/筆電可挑。我根本不需要酷炫背光鍵盤，以及高更新率螢幕!<br />另我想要攝影鏡頭，因為有視訊的要求，但我這款竟然沒附! 看在它 GPU 還算高檔，價錢也合理，只好接受其他規格較差的現實。
+
+我之後使用的經驗，8G 記憶體已經不錯了，大多數消費者導向 AI 模型都能跑，量化 LLM 也都沒問題，速度及效果都還 OK。另有感真的建議要擴充 1T 以上硬碟，因為許多 AI 模型都是 GB 起跳。再加上 Python 的生態就是，任一個程式安裝都是虛擬環境，所有相依套件都重覆下載，所以佔用空間都相當大。記得先開啟 Windows 的「開發人員模式」，這會讓以 HuggingFace 套件下載的模型使用 symlink 方式共用，避免相同模型在不同程式中引用，還要重覆 下載/佔用 硬碟空間。
+
+因此依我目前的經驗及建議，就是 VRAM 越大越好，記得擴充硬碟。<br />若要追求速度，就買桌機版。若速度慢些沒關係，可考慮筆電版。<br />既有桌機加購 GPU 顯卡升級應該不太可能，大概也只能買新的電競主機。
+
+請再參考此文之續集: [購買 AI 用 Windows 頂級消費顯卡主機心得](/blog/2024/ai-windows)。

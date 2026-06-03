@@ -1,0 +1,46 @@
+---
+title: 'OpenAO o1-preview/mini'
+subtitle: '立刻可用，現在訂 Plus 就能得到...'
+date: '2024-09-12'
+lastmod: '2024-09-12'
+tags: ['AI']
+draft: false
+summary: '立刻可用，現在訂 Plus 就能得到...'
+images: ['/static/images/2024/2024-09-12-openao-o1-previewmini-01.webp']
+---
+
+![](/static/images/2024/2024-09-12-openao-o1-previewmini-01.webp)
+
+[Introducing OpenAI o1 | OpenAI](https://openai.com/index/introducing-openai-o1-preview/)
+
+[OpenAI o1-mini | OpenAI](https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning/)
+
+> 從今天開始，ChatGPT Plus 和 Team 用戶將能夠存取 ChatGPT 中的 o1 模型。 o1-preview 和 o1-mini 都可以在模型選擇器中手動選擇，在發佈時，o1-preview 的每週速率限制為 30 個訊息，o1-mini 的每週速率限制為 50 個。<br />符合API 使用第 5 層資格的開發人員今天可以開始使用 API 中的兩種模型進行原型設計，速率限制為 20 RPM。
+>
+> 我們也計劃為所有 ChatGPT 免費用戶提供 o1-mini 存取權限。
+
+[Learning to Reason with LLMs | OpenAI](https://openai.com/index/learning-to-reason-with-llms/)
+
+> 隨著更多的強化學習（訓練時計算）和更多的思考時間（測驗時計算），o1 的表現持續提升。
+
+[Introducing OpenAI o1 - YouTube](https://www.youtube.com/playlist?list=PLOXw6I10VTv_T9QV-DKXhq7HFUQRkGQLI) 一堆示範影片
+
+首先直接確認[之前的消息的確是假消息](https://mp.weixin.qq.com/s?__biz=MzIyMzA5NjEyMA%3D%3D&mid=2647665191&idx=1&sn=9b467200f0a4b6d8b9611acd33e0d5e8&chksm=f145b0fe0f3fbdca5064a139c734416ad11de05340175c3705e77e9d811ff50256d49d4d9af4&mpshare=1&scene=23&srcid=0911mKr0v5wD4c5n1xRRnR6R&sharer_shareinfo=e01094723153910015e3ac296cebfb93&sharer_shareinfo_first=e01094723153910015e3ac296cebfb93#rd)。只有限制用量，沒有提高價錢。
+
+再來思維鏈方法，也是之前我提到 [Anthropic 正在用的方法](/blog/2024/claude)。
+
+[OpenAI o1-mini | OpenAI](https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning/)
+
+> o1-mini 是一個較小的模型，針對預訓練期間的 STEM 推理進行了最佳化。
+
+看影片中最後產出答案的速度跟現有模型差不多，另[這裡有人說](https://news.ycombinator.com/item?id=41523702)知識截止日期為 2023/10，[跟 GPT-4o 一樣](https://platform.openai.com/docs/models/gpt-4o)，依我目前來看，這個模型並不是真正的下一代模型 GPT-5。我推測可能是在 GPT-4o 相當的基礎之上，於預訓練期間使用 CoT 深思，利用加長 tokens 使用量來達成搾出更多既有模型完整能力的方法。速度緩慢不是因為模型更大，而是花費更多 token。同一頁可看到同一問題，GPT-4o 3 秒，o1-mini 9秒，o1-preview 32 秒。
+
+我會猜 Claude 3.5 Opus 也會是類似的方法。反正看要 訓練/要求 它預先浪費多少看不到的 tokens 來進行深思，就可以達成更強的推理能力。而這種推理能力，在寫作等比較不在邏輯推理方面的問題就沒什麼用處。
+
+我猜想這種等級的 CoT 能力，沒有太特殊的架構突破或訓練算力的要求，這個方法也早不是秘密，我猜其他公司的模型不會花太久時間也能追上來。第一個也許就是 Claude 3.5 Opus。
+
+我立刻訂了 ChatGPT Plus，但還沒看到 約一小時後即看到 o1-preview/mini。立刻試一個先前在 Claude 3.5 Sonnet 中卡住很久的問題，果然開始有突破。如果用得滿意，如果 Claude 3.5 Opus 還沒推出，Claude 打算在訂閱到期前退掉...我會想念 Projects/Artifacts 的...
+
+由 [Limits](https://platform.openai.com/settings/organization/limits) 查我的 API 等級是 Usage tier 3，離 5 還早得很。
+
+後續資訊: [o1 有三個模型](/blog/2024/o1)
