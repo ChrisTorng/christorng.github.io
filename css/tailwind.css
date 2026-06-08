@@ -180,7 +180,7 @@
     }
   }
 
-  .prose-invert {
+  .dark .prose {
     & a {
       color: var(--color-primary-300);
       &:hover {
@@ -257,7 +257,6 @@ input:-webkit-autofill:focus {
   display: inline-block;
   width: 1rem;
   height: 1rem;
-  margin-left: 0.25rem;
   flex: none;
   vertical-align: -0.125em;
 }
