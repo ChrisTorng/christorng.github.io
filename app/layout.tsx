@@ -8,6 +8,7 @@ import { SearchProvider, SearchConfig } from 'pliny/search'
 import Header from '@/components/Header'
 import SectionContainer from '@/components/SectionContainer'
 import Footer from '@/components/Footer'
+import ExternalLinkHandler from '@/components/ExternalLinkHandler'
 import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111827" />
       <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
       <body className="bg-gray-50 pl-[calc(100vw-100%)] text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-200">
+        <ExternalLinkHandler />
         <ThemeProviders>
           {siteMetadata.analytics && (
             <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
