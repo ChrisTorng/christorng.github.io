@@ -30,7 +30,7 @@ const CardLink = ({ href, ariaLabel, children, className, variant = 'primary' }:
 )
 
 const Card = ({ title, description, imgSrc, href, demoHref }) => (
-  <div className="md max-w-[544px] p-4 md:w-1/2">
+  <div className="w-full max-w-[544px] p-4 md:w-1/2">
     <div
       className={`${
         imgSrc && 'h-full'
