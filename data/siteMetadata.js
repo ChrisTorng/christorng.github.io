@@ -2,13 +2,13 @@
 const basePath = process.env.BASE_PATH || ''
 
 const siteMetadata = {
-  title: 'ChrisTorng 個人網站',
+  title: 'ChrisTorng 學習天地',
   author: 'ChrisTorng',
-  headerTitle: 'ChrisTorng 個人網站',
-  description: '收集 ChrisTorng 個人相關資訊網站',
+  headerTitle: 'ChrisTorng 學習天地',
+  description: '收集 ChrisTorng 個人學習經歷與心得',
   language: 'zh-Hant',
   theme: 'system', // system, dark or light
-  siteUrl: `https://christorng.github.io${basePath}`,
+  siteUrl: `https://christorng.idv.tw${basePath}`,
   siteRepo: 'https://github.com/ChrisTorng/christorng.github.io',
   siteLogo: `${basePath}/static/images/logo.png`,
   socialBanner: `${basePath}/static/images/logo.png`,

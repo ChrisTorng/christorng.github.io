@@ -20,14 +20,14 @@ const projectCategories: ProjectCategory[] = [
         description:
           '個人常用的 Tampermonkey 腳本集合，包含閱讀輔助、網站重導、頁面整理、YouTube 工具、行動版版面改善與暗色模式等瀏覽器自動化功能。',
         href: 'https://github.com/ChrisTorng/TampermonkeyScripts',
-        demoHref: 'https://christorng.github.io/TampermonkeyScripts/',
+        demoHref: 'https://christorng.idv.tw/TampermonkeyScripts/',
       },
       {
         title: 'ReadOrNot',
         description:
           '在文章連結上停留時預覽標題與閱讀時間，並以關鍵字與可選 AI 評估協助判斷文章是否值得閱讀的 Tampermonkey 腳本。',
         href: 'https://github.com/ChrisTorng/ReadOrNot',
-        demoHref: 'https://christorng.github.io/ReadOrNot/',
+        demoHref: 'https://christorng.idv.tw/ReadOrNot/',
       },
     ],
   },
@@ -39,7 +39,7 @@ const projectCategories: ProjectCategory[] = [
         description:
           '改善 eBird 網站操作體驗的 Tampermonkey 腳本，會在熱門鳥點等頁面補上最近鳥種與最近紀錄等快速入口。',
         href: 'https://github.com/ChrisTorng/eBirdScripts',
-        demoHref: 'https://christorng.github.io/eBirdScripts/',
+        demoHref: 'https://christorng.idv.tw/eBirdScripts/',
         imgSrc: 'https://raw.githubusercontent.com/ChrisTorng/eBirdScripts/main/demo.png',
       },
       {
@@ -67,7 +67,7 @@ const projectCategories: ProjectCategory[] = [
         description:
           '純前端 Mermaid SVG 匯出工具，可上傳或貼上 Markdown，自動偵測 Mermaid 區塊並逐一下載 SVG 或批次打包。',
         href: 'https://github.com/ChrisTorng/mermaid2svg',
-        demoHref: 'https://christorng.github.io/mermaid2svg/',
+        demoHref: 'https://christorng.idv.tw/mermaid2svg/',
       },
       {
         title: 'PdfProcess',
@@ -102,7 +102,7 @@ const projectCategories: ProjectCategory[] = [
         description:
           '資訊處理小工具集合，包含剪貼簿檢視與文字轉網頁顯示等功能，方便把其他應用程式內容交給瀏覽器翻譯或檢查格式。',
         href: 'https://github.com/ChrisTorng/InfoProcess',
-        demoHref: 'https://christorng.github.io/InfoProcess/',
+        demoHref: 'https://christorng.idv.tw/InfoProcess/',
       },
       {
         title: 'mass-translate',
@@ -120,7 +120,7 @@ const projectCategories: ProjectCategory[] = [
         description:
           '照片透視校正網頁工具，可在圖片上選取四邊形區域並校正為矩形，同時保留完整轉換後影像供匯出。',
         href: 'https://github.com/ChrisTorng/ImageMeasurer2',
-        demoHref: 'https://christorng.github.io/ImageMeasurer2/',
+        demoHref: 'https://christorng.idv.tw/ImageMeasurer2/',
       },
       {
         title: 'reduce-mp4-size',
@@ -164,14 +164,14 @@ const projectCategories: ProjectCategory[] = [
         description:
           '使用 Google MediaPipe 即時人臉偵測並疊加虛擬眼鏡的純前端示範，支援多種眼鏡樣式與行動裝置。',
         href: 'https://github.com/ChrisTorng/demo-mediapipe',
-        demoHref: 'https://christorng.github.io/demo-mediapipe/',
+        demoHref: 'https://christorng.idv.tw/demo-mediapipe/',
       },
       {
         title: 'mediapipe-demo',
         description:
           'MediaPipe 前端實驗專案，部署為網頁展示版本，用於測試瀏覽器端即時影像偵測互動。',
         href: 'https://github.com/ChrisTorng/mediapipe-demo',
-        demoHref: 'https://christorng.github.io/mediapipe-demo/web/dist/',
+        demoHref: 'https://christorng.idv.tw/mediapipe-demo/web/dist/',
       },
       {
         title: '3d-phone-show',
@@ -203,27 +203,27 @@ const projectCategories: ProjectCategory[] = [
         description:
           '分軌歌曲播放與混音練習工具，可機動調整各聲部音量並同步 YouTube 影片，適合練團與敬拜排練。',
         href: 'https://github.com/ChrisTorng/SongsRemix',
-        demoHref: 'https://christorng.github.io/SongsRemixDemo/',
+        demoHref: 'https://christorng.idv.tw/SongsRemixDemo/',
       },
       {
         title: 'MixerGame 混音遊戲',
         description:
           '混音能力練習遊戲，讓使用者在未知多軌音源中調整音量與混音，訓練聽辨與音控判斷。',
         href: 'https://github.com/ChrisTorng/MixerGame',
-        demoHref: 'https://christorng.github.io/MixerGame/src/',
+        demoHref: 'https://christorng.idv.tw/MixerGame/src/',
       },
       {
         title: 'Multistep Metronome',
         description:
           '可在同一首曲子中設定多種拍號與速度變化的網頁節拍器，適合練習拍號與速度轉換複雜的樂曲。',
         href: 'https://github.com/ChrisTorng/MultistepMetronome',
-        demoHref: 'https://christorng.github.io/MultistepMetronome/',
+        demoHref: 'https://christorng.idv.tw/MultistepMetronome/',
       },
       {
         title: 'Tone Generator',
         description: '產生週期性純正弦波音訊的測試工具，可用於音訊設備、播放鏈路與訊號處理測試。',
         href: 'https://github.com/ChrisTorng/AudioTest',
-        demoHref: 'https://christorng.github.io/AudioTest/',
+        demoHref: 'https://christorng.idv.tw/AudioTest/',
       },
     ],
   },
@@ -263,7 +263,7 @@ const projectCategories: ProjectCategory[] = [
         description:
           '協助 LLM 修改程式碼的工具，可產生含行號版本、使用自訂 Markdown diff 指示修改，並自動套用變更。',
         href: 'https://github.com/ChrisTorng/LLMCoder',
-        demoHref: 'https://christorng.github.io/LLMCoder/',
+        demoHref: 'https://christorng.idv.tw/LLMCoder/',
         imgSrc: 'https://raw.githubusercontent.com/ChrisTorng/LLMCoder/main/images/LLMCoder.png',
       },
       {
@@ -296,14 +296,14 @@ const projectCategories: ProjectCategory[] = [
         description:
           'Google Docs 到 Substack 的轉換流程工具，結合 Docs to HTML Converter 與 Tampermonkey 腳本處理貼上格式。',
         href: 'https://github.com/ChrisTorng/DocsConverter',
-        demoHref: 'https://christorng.github.io/DocsConverter/',
+        demoHref: 'https://christorng.idv.tw/DocsConverter/',
       },
       {
         title: 'ChrisTorng AI Tools',
         description:
           '收集以 AI 生成並少量人工調整的小工具，包括踩地雷、圖片比較、泛音產生器與勞基法遊戲等實驗作品。',
         href: 'https://github.com/ChrisTorng/AI-Tools',
-        demoHref: 'https://christorng.github.io/AI-Tools/',
+        demoHref: 'https://christorng.idv.tw/AI-Tools/',
       },
       {
         title: 'PresentationAlive',
