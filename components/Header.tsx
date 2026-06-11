@@ -8,15 +8,18 @@ import SearchButton from './SearchButton'
 
 const Header = () => {
   let headerClass = 'flex items-center w-full bg-gray-50 dark:bg-gray-900 justify-between py-10'
+  const headerTitle =
+    typeof siteMetadata.headerTitle === 'string' ? siteMetadata.headerTitle.split(' ') : []
+
   if (siteMetadata.stickyNav) {
     headerClass += ' sticky top-0 z-50'
   }
 
   return (
     <header className={headerClass}>
-      <Link href="/" aria-label={siteMetadata.headerTitle}>
-        <div className="flex items-center justify-between">
-          <div className="mr-3">
+      <Link href="/" aria-label={siteMetadata.headerTitle} className="min-w-0 flex-1">
+        <div className="flex min-w-0 items-center">
+          <div className="mr-2 shrink-0 sm:mr-3">
             <Image
               src={siteMetadata.siteLogo}
               alt=""
@@ -27,15 +30,19 @@ const Header = () => {
             />
           </div>
           {typeof siteMetadata.headerTitle === 'string' ? (
-            <div className="heading-accent hidden h-6 text-2xl font-semibold sm:block">
-              {siteMetadata.headerTitle}
+            <div className="heading-accent flex max-h-11 min-w-0 flex-wrap gap-x-1 overflow-hidden text-sm leading-5 font-semibold sm:h-6 sm:flex-nowrap sm:text-2xl sm:leading-6">
+              {headerTitle.map((part) => (
+                <span key={part} className="whitespace-nowrap">
+                  {part}
+                </span>
+              ))}
             </div>
           ) : (
             siteMetadata.headerTitle
           )}
         </div>
       </Link>
-      <div className="flex items-center space-x-4 leading-5 sm:-mr-6 sm:space-x-6">
+      <div className="flex shrink-0 items-center space-x-2 leading-5 sm:-mr-6 sm:space-x-6">
         <div className="no-scrollbar hidden max-w-40 items-center gap-x-4 overflow-x-auto sm:flex md:max-w-72 lg:max-w-96">
           {headerNavLinks
             .filter((link) => link.href !== '/')
