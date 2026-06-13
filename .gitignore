@@ -40,3 +40,6 @@ npm-debug.log*
 
 # Codex
 .codex-temp/
+
+# yarn
+.yarn/
