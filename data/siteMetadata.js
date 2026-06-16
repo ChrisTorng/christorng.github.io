@@ -16,7 +16,7 @@ const siteMetadata = {
   //email: 'address@yoursite.com',
   github: 'https://github.com/ChrisTorng',
   //x: 'https://twitter.com/x',
-  // twitter: 'https://twitter.com/Twitter',
+  //twitter: 'https://twitter.com/Twitter',
   facebook: 'https://facebook.com/ChrisTorng1',
   youtube: 'https://www.youtube.com/channel/UC-S16QDhNIUBwtEvwFIw0XQ',
   //linkedin: 'https://www.linkedin.com',
