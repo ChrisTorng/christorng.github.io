@@ -260,3 +260,26 @@ input:-webkit-autofill:focus {
   flex: none;
   vertical-align: -0.125em;
 }
+
+.rating-star {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  vertical-align: -0.125em;
+}
+
+.rating-star-icon {
+  position: absolute;
+  inset: 0;
+  width: 1em;
+  height: 1em;
+  pointer-events: none;
+}
+
+.rating-star-source {
+  color: transparent;
+  user-select: text;
+  white-space: pre;
+}

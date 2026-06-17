@@ -28,11 +28,127 @@ import prettier from 'prettier'
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
 const datePrefixPattern = /^\d{8}--/
+const ratingStarPattern = /[★⯨]/gu
+const starPath =
+  'M12 2.4 14.55 8.65 21.3 9.05 16.15 13.38 17.8 20.2 12 16.55 6.2 20.2 7.85 13.38 2.7 9.05 9.45 8.65 12 2.4Z'
+const ignoredRatingStarTags = new Set(['code', 'kbd', 'pre', 'samp', 'script', 'style', 'textarea'])
+
+type RatingStarNode = {
+  type: string
+  tagName?: string
+  value?: unknown
+  children?: RatingStarNode[]
+  [key: string]: unknown
+}
+
+type RatingStarTextNode = RatingStarNode & {
+  type: 'text'
+  value: string
+}
 
 function stripDatePrefixFromPath(filePath: string) {
   const parts = filePath.split('/')
   const fileName = parts.pop() || ''
   return [...parts, fileName.replace(datePrefixPattern, '')].join('/')
+}
+
+function parseSvgFragment(html: string) {
+  const fragment = fromHtmlIsomorphic(html, { fragment: true }) as unknown as {
+    children: RatingStarNode[]
+  }
+  const [svg] = fragment.children
+
+  if (!svg) {
+    throw new Error('Unable to parse rating star SVG')
+  }
+
+  return svg
+}
+
+function createRatingStarIcon(character: string, index: number): RatingStarNode {
+  const commonAttributes =
+    'class="rating-star-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"'
+  const sourceText = `<span class="rating-star-source">${character}</span>`
+
+  if (character === '★') {
+    return parseSvgFragment(
+      `<span class="rating-star">${sourceText}<svg ${commonAttributes}><path fill="currentColor" d="${starPath}" /></svg></span>`
+    )
+  }
+
+  const fillClipId = `rating-star-half-fill-${index}`
+  const outlineMaskId = `rating-star-half-outline-${index}`
+
+  return parseSvgFragment(
+    `<span class="rating-star">${sourceText}<svg ${commonAttributes}>
+        <defs>
+          <clipPath id="${fillClipId}">
+            <rect x="0" y="0" width="12" height="24" />
+          </clipPath>
+          <mask id="${outlineMaskId}" maskUnits="userSpaceOnUse">
+            <rect width="24" height="24" fill="black" />
+            <path fill="white" d="${starPath}" />
+            <path fill="black" transform="translate(12 12) scale(0.66) translate(-12 -12)" d="${starPath}" />
+          </mask>
+        </defs>
+        <rect width="24" height="24" fill="currentColor" mask="url(#${outlineMaskId})" />
+        <path fill="currentColor" clip-path="url(#${fillClipId})" d="${starPath}" />
+      </svg></span>`
+  )
+}
+
+function replaceRatingStarsInText(value: string, starIndex: { current: number }) {
+  const nodes: RatingStarNode[] = []
+  let lastIndex = 0
+
+  ratingStarPattern.lastIndex = 0
+  for (const match of value.matchAll(ratingStarPattern)) {
+    const index = match.index ?? 0
+
+    if (index > lastIndex) {
+      nodes.push({ type: 'text', value: value.slice(lastIndex, index) })
+    }
+
+    nodes.push(createRatingStarIcon(match[0], starIndex.current))
+    starIndex.current += 1
+    lastIndex = index + match[0].length
+  }
+
+  if (lastIndex < value.length) {
+    nodes.push({ type: 'text', value: value.slice(lastIndex) })
+  }
+
+  return nodes
+}
+
+function isRatingStarTextNode(node: RatingStarNode): node is RatingStarTextNode {
+  return node.type === 'text' && typeof node.value === 'string'
+}
+
+function rehypeRatingStars() {
+  return (tree: RatingStarNode) => {
+    const starIndex = { current: 0 }
+
+    function visitChildren(node: RatingStarNode) {
+      if (!node || !Array.isArray(node.children)) return
+      if (node.type === 'element' && ignoredRatingStarTags.has(node.tagName)) return
+
+      for (let index = 0; index < node.children.length; index += 1) {
+        const child = node.children[index]
+
+        ratingStarPattern.lastIndex = 0
+        if (isRatingStarTextNode(child) && ratingStarPattern.test(child.value)) {
+          const replacement = replaceRatingStarsInText(child.value, starIndex)
+          node.children.splice(index, 1, ...replacement)
+          index += replacement.length - 1
+        } else {
+          visitChildren(child)
+        }
+      }
+    }
+
+    visitChildren(tree)
+  }
 }
 
 // heroicon mini link
@@ -189,6 +305,7 @@ export default makeSource({
       rehypeKatexNoTranslate,
       [rehypeCitation, { path: path.join(root, 'data') }],
       [rehypePrismPlus, { defaultLanguage: 'js', ignoreMissing: true }],
+      rehypeRatingStars,
       rehypePresetMinify,
     ],
   },
