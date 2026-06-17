@@ -131,7 +131,13 @@ function rehypeRatingStars() {
 
     function visitChildren(node: RatingStarNode) {
       if (!node || !Array.isArray(node.children)) return
-      if (node.type === 'element' && ignoredRatingStarTags.has(node.tagName)) return
+      if (
+        node.type === 'element' &&
+        typeof node.tagName === 'string' &&
+        ignoredRatingStarTags.has(node.tagName)
+      ) {
+        return
+      }
 
       for (let index = 0; index < node.children.length; index += 1) {
         const child = node.children[index]
