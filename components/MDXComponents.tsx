@@ -6,6 +6,7 @@ import Image from './Image'
 import CustomLink from './Link'
 import TableWrapper from './TableWrapper'
 import AudioPlayer from './AudioPlayer'
+import PublicPianoRepertoire from './PublicPianoRepertoire'
 import YouTubeEmbed from './YouTubeEmbed'
 import VideoPlayer from './VideoPlayer'
 
@@ -17,6 +18,7 @@ export const components: MDXComponents = {
   table: TableWrapper,
   AudioPlayer,
   BlogNewsletterForm,
+  PublicPianoRepertoire,
   VideoPlayer,
   YouTubeEmbed,
 }

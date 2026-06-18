@@ -1,0 +1,32 @@
+pieces:
+  - title: 三手聯彈輕鬆有趣小曲
+    favorite: 2
+    difficulty: 1
+    proficiency: 3
+    description: >-
+      高中學的不知名三手聯彈輕鬆有趣簡單 30 秒小曲，我會機動找路人或小朋友現場學習，立刻合奏練彈。你有興趣想學就跟我直說。
+    recordings:
+      - label: '2026/3/28 錄影:'
+        component: VideoPlayer
+        title: 三手合奏不知名小品
+        src: /static/videos/2026/my-piano/three-hands-piano.mp4
+
+  - title: 隨意即興
+    favorite: 3
+    difficulty: 2
+    proficiency: 2
+    description: >-
+      我也能即興彈奏任意曲子，一般會由正常和絃，然後開始變奏，最後配到任意亂彈但也許別有一番風味。有時前面有人彈的曲子，我也喜歡就跟著即興一段。你若想點你愛的任何曲子就跟我說。
+
+  - composer: 蕭邦
+    title: 降 E 大調夜曲
+    originalComposer: Frédéric Chopin
+    originalTitle: Nocturne in E♭ major, Op. 9, No. 2
+    favorite: 2.5
+    difficulty: 4
+    proficiency: 0.5
+    description: >-
+      以前彈過，現在覺得好難背喔。視譜彈非常卡，這首目前已放棄不彈。
+    professionalReference:
+      title: Chopin - Nocturne in E Flat Major (Op. 9 No. 2)
+      url: https://www.youtube.com/watch?v=p29JUpsOSTE

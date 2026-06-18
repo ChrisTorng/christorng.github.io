@@ -1,0 +1,192 @@
+pieces:
+  - composer: 李斯特
+    title: 第三號愛之夢
+    originalComposer: Franz Liszt
+    originalTitle: Liebesträume No. 3 (Dreams of Love)
+    favorite: 4
+    difficulty: 3.5
+    proficiency: 4
+    description: >-
+      優美好聽，進入中段越加強烈色彩。兩次的裝飾性華彩段都彈不好，只能混過去。其他部份也都有不少不穩定的錯誤。
+    professionalReference:
+      title: Liszt - Liebestraum No. 3 (Love Dream)
+      url: https://www.youtube.com/watch?v=MBOa-2b4uQQ
+
+  - composer: 李斯特
+    title: 悲嘆
+    originalComposer: Franz Liszt
+    originalTitle: Trois études de concert No. 3 (Un Sospiro)
+    favorite: 5
+    difficulty: 3.5
+    proficiency: 4
+    description: >-
+      從頭到尾琵音，感覺很厲害。中間強烈氣勢段落彈不好。其他也都會有因不穩造成的錯誤。
+    recordings:
+      - label: '2026/3/28 錄影:'
+        component: YouTubeEmbed
+        id: DhJXYy0deJE
+        title: 2026/3/28 李斯特 - 悲嘆 (Liszt - Un Sospiro) 於 台北車站公共鋼琴
+    professionalReference:
+      title: Liszt “Un Sospiro” VERSION 2 - Paul Barton, FEURICH piano
+      url: https://www.youtube.com/watch?v=D8-xlc0yTlw
+
+  - composer: 李斯特
+    title: 鐘
+    originalComposer: Franz Liszt
+    originalTitle: La campanella
+    favorite: 4.5
+    difficulty: 4
+    proficiency: 3
+    description: >-
+      極度困難又花俏的曲子。我的程度遠遠不及，手也太小。整首錯誤百出，很多卡住又得重彈，在此現醜了。但彈完後不時有人問我是否是音樂系教授，可見此曲之困難度！
+    recordings:
+      - label: '2026/3/28 錄影 (那時還比較不熟，現在稍微快一點):'
+        component: VideoPlayer
+        title: 李斯特 - 鐘 (Liszt - La campanella) 開頭一小段
+        src: /static/videos/2026/my-piano/la-campanella-opening.mp4
+    professionalReference:
+      title: Liszt - La Campanella (100,000 special)
+      url: https://www.youtube.com/watch?v=H1Dvg2MxQn8
+
+  - composer: 李斯特
+    title: 第三號安慰曲
+    originalComposer: Franz Liszt
+    originalTitle: Consolation No. 3
+    favorite: 4
+    difficulty: 2
+    proficiency: 3.5
+    description: >-
+      很緩慢簡單又很優美的曲子。
+    professionalReference:
+      title: 'Seong-Jin Cho - Liszt: Consolations, S. 172: No. 3 Lento placido in D Flat Major (World Piano Day)'
+      url: https://www.youtube.com/watch?v=tSqGEmbzAJo
+
+  - composer: 蕭邦
+    title: 離別曲
+    originalComposer: Frédéric Chopin
+    originalTitle: Étude Op. 10, No. 3
+    favorite: 3.5
+    difficulty: 4
+    proficiency: 3
+    description: >-
+      旋律優美的曲子，進入中段越來越難。中後有一段還背不起來，只能看譜勉強混過。
+    professionalReference:
+      title: Chopin Etude Op. 10 No. 3
+      url: https://www.youtube.com/watch?v=-6JAJmJhLMc
+
+  - composer: 蕭邦
+    title: 雨滴前奏曲
+    originalComposer: Frédéric Chopin
+    originalTitle: Prelude Op. 28, No. 15 (Raindrop)
+    favorite: 2.5
+    difficulty: 2.5
+    proficiency: 4
+    description: >-
+      從頭到尾的重覆音，並不困難。以前練過。
+    professionalReference:
+      title: Yundi - Chopin Prelude no.15 ‘Raindrop’, op.28
+      url: https://www.youtube.com/watch?v=tmXjrkdQatw
+
+  - composer: 德布西
+    title: 亞麻色頭髮的少女（棕髮女郎）
+    originalComposer: Claude Debussy
+    originalTitle: La Fille aux Cheveux de Lin
+    favorite: 3
+    difficulty: 2.5
+    proficiency: 3.5
+    description: >-
+      很短的小曲，並不困難。只是沒有花更多時間練熟。
+    professionalReference:
+      title: Debussy - Girl With Flaxen Hair / La fille aux cheveux de lin
+      url: https://www.youtube.com/watch?v=1rOSj44zP9M
+
+  - composer: 德布西
+    title: 第一號華麗曲
+    originalComposer: Claude Debussy
+    originalTitle: Arabesque No. 1
+    favorite: 2.5
+    difficulty: 2.5
+    proficiency: 3
+    description: >-
+      輕鬆的小曲，並不困難。好久以前練的，現在還在複習反射動作中。
+    professionalReference:
+      title: Debussy - Arabesque No. 1
+      url: https://www.youtube.com/watch?v=cVYH-7QGE-A
+
+  - composer: 德布西
+    title: 老頑固（巴納遜博士）
+    originalComposer: Claude Debussy
+    originalTitle: "Children's Corner: Doctor Gradus ad Parnassum"
+    favorite: 2.5
+    difficulty: 3.5
+    proficiency: 2.5
+    description: >-
+      輕鬆充滿活力的小曲。好久以前練的，現在還在複習反射動作中。
+    professionalReference:
+      title: Debussy “Doctor Gradus ad Parnassum” Paul Barton, FEURICH HP piano
+      url: https://www.youtube.com/watch?v=8DsqghqJwlU
+
+  - composer: 蕭邦
+    title: 練習曲（風絃琴）
+    originalComposer: Frédéric Chopin
+    originalTitle: Étude Op. 25, No. 1 (Aeolian Harp)
+    favorite: 2.5
+    difficulty: 4.5
+    proficiency: 1
+    description: >-
+      柔和但需要超大手，也是遠超我程度的曲目。只練到第三頁已經卡住練不下去了。
+    professionalReference:
+      title: F.Chopin Etude Op.25 No.1 in A-flat major (Aeolian Harp) Daniel Kharitonov (Даниил Харитонов)
+      url: https://www.youtube.com/watch?v=7E3Ka0ThO_Y
+
+  - composer: 蕭邦
+    title: 革命練習曲
+    originalComposer: Frédéric Chopin
+    originalTitle: Étude Op. 10, No. 12 (Revolutionary)
+    favorite: 3
+    difficulty: 4
+    proficiency: 2.5
+    description: >-
+      非常有氣勢，也是遠超我程度的曲目。還需要很多時間繼續熟練。
+    professionalReference:
+      title: Evgeny Kissin - Étude Op. 10, No. 12 in C minor 'Revolutionary'
+      url: https://www.youtube.com/watch?v=7VWHBHeNrg4
+
+  - composer: 貝多芬
+    title: 月光奏鳴曲
+    originalComposer: Ludwig van Beethoven
+    originalTitle: Piano Sonata No. 14 in C♯ minor (Moonlight Sonata)
+    favorite: 2
+    difficulty: 2
+    proficiency: 2.5
+    description: >-
+      只能彈前兩樂章，第三樂章放棄不練了。也都還沒練熟。
+    professionalReference:
+      title: Beethoven | Piano Sonata No. 14 "Moonlight" in C sharp minor | Daniel Barenboim
+      url: https://www.youtube.com/watch?v=rlJHNufol8Q
+
+  - composer: 李斯特
+    title: 弄臣模擬曲
+    originalComposer: Franz Liszt
+    originalTitle: Paraphrase de concert sur 'Rigoletto', S.434
+    favorite: 3.5
+    difficulty: 5
+    proficiency: 1
+    description: >-
+      又是一首很困難的曲目。我才剛開始練，只有前面一小部份。目前是放棄狀態。
+    professionalReference:
+      title: "Liszt : Paraphrase on Verdi's Rigoletto (Cziffra)"
+      url: https://www.youtube.com/watch?v=1NRcAr0RvkQ
+
+  - composer: 李斯特
+    title: 第二號匈牙利狂想曲
+    originalComposer: Franz Liszt
+    originalTitle: Hungarian Rhapsody No. 2
+    favorite: 4.5
+    difficulty: 5
+    proficiency: 2
+    description: >-
+      另一首很困難又花俏的曲目。我才練不久還沒練完，當然還彈得很卡。
+    professionalReference:
+      title: Adam Gyorgy Hungarian Rhapsody No. 2
+      url: https://www.youtube.com/watch?v=7H99FM6S8rU
