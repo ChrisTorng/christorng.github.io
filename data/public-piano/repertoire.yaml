@@ -48,19 +48,6 @@ pieces:
       title: Liszt - La Campanella (100,000 special)
       url: https://www.youtube.com/watch?v=H1Dvg2MxQn8
 
-  - composer: 李斯特
-    title: 第三號安慰曲
-    originalComposer: Franz Liszt
-    originalTitle: Consolation No. 3
-    favorite: 4
-    difficulty: 2
-    proficiency: 3.5
-    description: >-
-      很緩慢簡單又很優美的曲子。
-    professionalReference:
-      title: 'Seong-Jin Cho - Liszt: Consolations, S. 172: No. 3 Lento placido in D Flat Major (World Piano Day)'
-      url: https://www.youtube.com/watch?v=tSqGEmbzAJo
-
   - composer: 蕭邦
     title: 離別曲
     originalComposer: Frédéric Chopin
@@ -86,6 +73,19 @@ pieces:
     professionalReference:
       title: Yundi - Chopin Prelude no.15 ‘Raindrop’, op.28
       url: https://www.youtube.com/watch?v=tmXjrkdQatw
+
+  - composer: 李斯特
+    title: 第三號安慰曲
+    originalComposer: Franz Liszt
+    originalTitle: Consolation No. 3
+    favorite: 4
+    difficulty: 2
+    proficiency: 3.5
+    description: >-
+      很緩慢簡單又很優美的曲子。
+    professionalReference:
+      title: 'Seong-Jin Cho - Liszt: Consolations, S. 172: No. 3 Lento placido in D Flat Major (World Piano Day)'
+      url: https://www.youtube.com/watch?v=tSqGEmbzAJo
 
   - composer: 德布西
     title: 亞麻色頭髮的少女（棕髮女郎）
