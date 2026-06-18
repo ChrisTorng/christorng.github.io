@@ -34,6 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - run: npm ci
+      - run: npm run images:responsive
       - run: npm run build
         env:
           EXPORT: 1

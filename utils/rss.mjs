@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm'
 import { remarkAlert } from 'remark-github-blockquote-alert'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
+import responsiveImages from '../data/responsive-images.json' with { type: 'json' }
 
 function escapeXml(value) {
   return String(value ?? '')
@@ -30,6 +31,52 @@ function absoluteUrl(config, pathname) {
 
 function absolutePostUrl(config, post) {
   return absoluteUrl(config, post.path || `blog/${post.slug}`)
+}
+
+function safeDecode(segment) {
+  try {
+    return decodeURIComponent(segment)
+  } catch {
+    return segment
+  }
+}
+
+function encodePathname(pathname) {
+  return pathname
+    .split('/')
+    .map((segment, index) => (index === 0 ? segment : encodeURIComponent(safeDecode(segment))))
+    .join('/')
+}
+
+function normalizeResponsiveImagePath(src) {
+  if (!src || /^[a-z][a-z\d+\-.]*:/i.test(src) || src.startsWith('//')) return undefined
+
+  const pathname = src.split(/[?#]/)[0]
+  return encodePathname(pathname.startsWith('/') ? pathname : `/${pathname}`)
+}
+
+function responsiveImageSrcSet(src) {
+  const normalizedPath = normalizeResponsiveImagePath(src)
+  const entry = normalizedPath ? responsiveImages[normalizedPath] : undefined
+
+  if (!entry || !entry.variants || entry.variants.length === 0) return undefined
+
+  return entry.variants.map((variant) => `${variant.src} ${variant.width}w`).join(', ')
+}
+
+function addResponsiveImageAttributes(html) {
+  return html.replace(/<img\b([^>]*?)>/g, (match, attributes) => {
+    if (/\bsrcset\s*=/i.test(attributes)) return match
+
+    const src = getAttributeValue(attributes, 'src')
+    const srcSet = responsiveImageSrcSet(src)
+    if (!srcSet) return match
+
+    const selfClosing = /\/\s*>$/.test(match)
+    const suffix = selfClosing ? ' />' : '>'
+    const trimmed = attributes.replace(/\s*\/\s*$/, '').trimEnd()
+    return `<img${trimmed} srcset="${escapeXml(srcSet)}" sizes="(max-width: 768px) 100vw, 768px"${suffix}`
+  })
 }
 
 function absoluteHtmlUrls(config, html, postUrl) {
@@ -139,7 +186,7 @@ export async function renderPostContent(config, post) {
       .process(normalizeMdxComponents(post.body.raw))
   )
 
-  return absoluteHtmlUrls(config, html, postUrl)
+  return absoluteHtmlUrls(config, addResponsiveImageAttributes(html), postUrl)
 }
 
 export async function generateRssItem(config, post) {

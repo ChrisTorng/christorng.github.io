@@ -26,6 +26,9 @@ public/sitemap.xml
 # search
 /public/search.json
 
+# generated responsive images
+/public/static/images/responsive/
+
 # misc
 .DS_Store
 
