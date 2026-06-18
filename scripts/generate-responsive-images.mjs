@@ -1,6 +1,6 @@
-import { mkdir, readFile, rm, writeFile } from 'fs/promises'
+import { mkdir, rm, writeFile } from 'fs/promises'
 import path from 'path'
-import { Image } from 'imagescript'
+import sharp from 'sharp'
 
 const imageWidths = [320, 480, 768, 1024, 1280, 1600]
 const sourceRoot = path.join(process.cwd(), 'public', 'static', 'images')
@@ -43,26 +43,37 @@ async function collectImageFiles(directory) {
   return files
 }
 
-async function encodeImage(image, extension) {
-  if (extension === '.jpg' || extension === '.jpeg') return image.encodeJPEG(82)
-  if (extension === '.webp') return image.encodeWEBP(82)
-  return image.encode(3)
+async function resizeImage(sourcePath, width, extension) {
+  const image = sharp(sourcePath).rotate().resize({
+    width,
+    withoutEnlargement: true,
+  })
+
+  if (extension === '.jpg' || extension === '.jpeg') {
+    return image.jpeg({ quality: 82, mozjpeg: true }).toBuffer()
+  }
+
+  if (extension === '.webp') {
+    return image.webp({ quality: 82 }).toBuffer()
+  }
+
+  return image.png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer()
 }
 
-async function generateVariant(sourceImage, sourcePath, width) {
+async function generateVariant(sourceMetadata, sourcePath, width) {
   const extension = path.extname(sourcePath).toLowerCase()
   const sourceRelative = path.relative(sourceRoot, sourcePath)
   const sourceDirectory = path.dirname(sourceRelative)
   const sourceBaseName = path.basename(sourceRelative, path.extname(sourceRelative))
-  const height = Math.max(1, Math.round((sourceImage.height * width) / sourceImage.width))
+  const height = Math.max(1, Math.round((sourceMetadata.height * width) / sourceMetadata.width))
   const outputDirectory = path.join(outputRoot, sourceDirectory)
   const outputPath = path.join(outputDirectory, `${sourceBaseName}-${width}w${extension}`)
   const outputRelative = path.relative(path.join(process.cwd(), 'public'), outputPath)
+  const resized = await resizeImage(sourcePath, width, extension)
 
   if (!dryRun) {
     await mkdir(outputDirectory, { recursive: true })
-    const resized = sourceImage.clone().resize(width, height, Image.RESIZE_AUTO)
-    await writeFile(outputPath, await encodeImage(resized, extension))
+    await writeFile(outputPath, resized)
   }
 
   return {
@@ -84,8 +95,12 @@ async function main() {
 
   for (const file of files) {
     try {
-      const sourceImage = await Image.decode(await readFile(file))
-      const widths = imageWidths.filter((width) => width < sourceImage.width)
+      const sourceMetadata = await sharp(file).metadata()
+      if (!sourceMetadata.width || !sourceMetadata.height) {
+        throw new Error('Unable to read image dimensions')
+      }
+
+      const widths = imageWidths.filter((width) => width < sourceMetadata.width)
 
       if (widths.length === 0) continue
 
@@ -94,18 +109,22 @@ async function main() {
       const variants = []
 
       for (const width of widths) {
-        variants.push(await generateVariant(sourceImage, file, width))
+        variants.push(await generateVariant(sourceMetadata, file, width))
       }
 
       generatedCount += variants.length
       manifest[key] = {
-        width: sourceImage.width,
-        height: sourceImage.height,
+        width: sourceMetadata.width,
+        height: sourceMetadata.height,
         variants,
       }
     } catch (error) {
       console.warn(`Skipping ${path.relative(process.cwd(), file)}: ${error.message}`)
     }
+  }
+
+  if (files.length > 0 && generatedCount === 0) {
+    throw new Error('No responsive image variants were generated')
   }
 
   if (!dryRun) {
