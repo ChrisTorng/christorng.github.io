@@ -102,6 +102,26 @@ export function Medium(svgProps: SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
+
+export function Rss(svgProps: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...svgProps}
+    >
+      <title>RSS</title>
+      <path fill="none" d="M4 11a9 9 0 0 1 9 9" />
+      <path fill="none" d="M4 4a16 16 0 0 1 16 16" />
+      <circle fill="none" cx="5" cy="19" r="1" />
+    </svg>
+  )
+}
 export function Bluesky(svgProps: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...svgProps}>

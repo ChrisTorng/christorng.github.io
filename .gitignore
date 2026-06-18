@@ -15,6 +15,10 @@ public/sitemap.xml
 # production
 /build
 *.xml
+!app/feed.xml/
+!app/feed.xml/route.ts
+!app/tags/*/feed.xml/
+!app/tags/*/feed.xml/route.ts
 
 # rss feed
 /public/feed.xml

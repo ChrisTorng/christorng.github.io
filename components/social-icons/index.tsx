@@ -11,6 +11,7 @@ import {
   Instagram,
   Medium,
   Bluesky,
+  Rss,
 } from './icons'
 
 const components = {
@@ -26,6 +27,7 @@ const components = {
   instagram: Instagram,
   medium: Medium,
   bluesky: Bluesky,
+  rss: Rss,
 }
 
 const labels: Record<keyof typeof components, string> = {
@@ -41,6 +43,7 @@ const labels: Record<keyof typeof components, string> = {
   instagram: 'Instagram',
   medium: 'Medium',
   bluesky: 'Bluesky',
+  rss: 'RSS',
 }
 
 type SocialIconProps = {
@@ -57,6 +60,7 @@ const SocialIcon = ({ kind, href, size = 8 }: SocialIconProps) => {
     return null
 
   const SocialSvg = components[kind]
+  const iconPaintClass = kind === 'rss' ? 'stroke-current' : 'fill-current'
 
   return (
     <a
@@ -67,7 +71,7 @@ const SocialIcon = ({ kind, href, size = 8 }: SocialIconProps) => {
     >
       <span className="sr-only">{labels[kind]}</span>
       <SocialSvg
-        className={`hover:text-primary-500 dark:hover:text-primary-400 fill-current text-gray-700 dark:text-gray-200 h-${size} w-${size}`}
+        className={`hover:text-primary-500 dark:hover:text-primary-400 ${iconPaintClass} text-gray-700 dark:text-gray-200 h-${size} w-${size}`}
       />
     </a>
   )
