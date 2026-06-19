@@ -3,13 +3,14 @@ import path from 'path'
 import sharp from 'sharp'
 
 const imageWidths = [320, 480, 768, 1024, 1280, 1600]
+const logoWidths = [64, 108, 160]
+const avatarWidths = [96, 192, 320]
 const sourceRoot = path.join(process.cwd(), 'public', 'static', 'images')
 const outputRoot = path.join(sourceRoot, 'responsive')
 const manifestPath = path.join(process.cwd(), 'data', 'responsive-images.json')
 const supportedExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp'])
 const outputFormats = [
   { key: 'avif', extension: '.avif' },
-  { key: 'webp', extension: '.webp' },
   { key: 'jpeg', extension: '.jpg' },
 ]
 const dryRun = process.argv.includes('--dry-run')
@@ -22,6 +23,15 @@ function encodePathSegment(segment) {
 
 function publicUrlFromRelativePath(relativePath) {
   return `/${relativePath.split(path.sep).map(encodePathSegment).join('/')}`
+}
+
+function imageWidthsForFile(relativePath) {
+  const fileName = path.basename(relativePath).toLowerCase()
+
+  if (fileName.startsWith('logo.')) return logoWidths
+  if (fileName.startsWith('avatar.')) return avatarWidths
+
+  return imageWidths
 }
 
 async function collectImageFiles(directory) {
@@ -56,10 +66,6 @@ async function resizeImage(sourcePath, width, format) {
 
   if (format === 'avif') {
     return image.avif({ quality: 58 }).toBuffer()
-  }
-
-  if (format === 'webp') {
-    return image.webp({ quality: 82 }).toBuffer()
   }
 
   return image.flatten({ background: '#ffffff' }).jpeg({ quality: 82, mozjpeg: true }).toBuffer()
@@ -104,11 +110,14 @@ async function main() {
         throw new Error('Unable to read image dimensions')
       }
 
-      const widths = imageWidths.filter((width) => width < sourceMetadata.width)
+      const publicRelative = path.relative(path.join(process.cwd(), 'public'), file)
+      const sourceRelative = path.relative(sourceRoot, file)
+      const widths = imageWidthsForFile(sourceRelative).filter(
+        (width) => width < sourceMetadata.width
+      )
 
       if (widths.length === 0) continue
 
-      const publicRelative = path.relative(path.join(process.cwd(), 'public'), file)
       const key = publicUrlFromRelativePath(publicRelative)
       const formats = Object.fromEntries(outputFormats.map((format) => [format.key, []]))
 

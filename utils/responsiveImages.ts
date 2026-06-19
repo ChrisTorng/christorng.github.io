@@ -6,7 +6,7 @@ type ResponsiveImageVariant = {
   height?: number
 }
 
-type ResponsiveImageFormat = 'avif' | 'webp' | 'jpeg'
+type ResponsiveImageFormat = 'avif' | 'jpeg'
 
 type ResponsiveImageEntry = {
   width: number
@@ -19,7 +19,6 @@ type ResponsiveImageEntry = {
 const manifest = responsiveImages as Record<string, ResponsiveImageEntry>
 const formatContentTypes: Record<ResponsiveImageFormat, string> = {
   avif: 'image/avif',
-  webp: 'image/webp',
   jpeg: 'image/jpeg',
 }
 
@@ -85,7 +84,7 @@ export function getResponsiveImageSources(src: string, basePath = '') {
   const entry = getResponsiveImage(src, basePath)
   if (!entry) return []
 
-  return (['avif', 'webp', 'jpeg'] as const)
+  return (['avif', 'jpeg'] as const)
     .map((format) => ({
       type: formatContentTypes[format],
       srcSet: srcSetForVariants(variantsForFormat(entry, format), basePath),

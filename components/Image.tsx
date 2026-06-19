@@ -39,6 +39,13 @@ const Image = ({
     typeof src === 'string' && !isGif(src)
       ? getResponsiveImageFallback(src, basePath || '')
       : undefined
+  const responsiveSizes =
+    sizes ||
+    (fill
+      ? '100vw'
+      : typeof width === 'number' && width <= 320
+        ? `${width}px`
+        : '(max-width: 768px) 100vw, 768px')
 
   if (typeof resolvedSrc === 'string' && responsiveFallback && responsiveSources.length > 0) {
     const fillStyle: CSSProperties | undefined = fill
@@ -58,7 +65,7 @@ const Image = ({
             key={source.type}
             type={source.type}
             srcSet={source.srcSet}
-            sizes={sizes || (fill ? '100vw' : '(max-width: 768px) 100vw, 768px')}
+            sizes={responsiveSizes}
           />
         ))}
         <img
