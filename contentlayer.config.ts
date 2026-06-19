@@ -1,8 +1,10 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/source-files'
-import { writeFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { imageSize } from 'image-size'
 import readingTime from 'reading-time'
 import path from 'path'
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
+import { visit } from 'unist-util-visit'
 // Remark packages
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
@@ -10,7 +12,6 @@ import { remarkAlert } from 'remark-github-blockquote-alert'
 import {
   remarkExtractFrontmatter,
   remarkCodeTitles,
-  remarkImgToJsx,
   extractTocHeadings,
 } from 'pliny/mdx-plugins/index.js'
 // Rehype packages
@@ -44,6 +45,92 @@ type RatingStarNode = {
 type RatingStarTextNode = RatingStarNode & {
   type: 'text'
   value: string
+}
+
+type MarkdownImageNode = {
+  type: string
+  url?: string
+  alt?: string
+  name?: string
+  attributes?: Array<{ type: string; name: string; value: string | number | undefined }>
+}
+
+type MarkdownParentNode = {
+  type: string
+  children?: MarkdownImageNode[]
+}
+
+const publicRoot = path.join(root, 'public')
+
+function safeDecodePathSegment(segment: string) {
+  try {
+    return decodeURIComponent(segment)
+  } catch {
+    return segment
+  }
+}
+
+function localPublicImagePath(url?: string) {
+  if (!url || /^[a-z][a-z\d+\-.]*:/i.test(url) || url.startsWith('//')) return undefined
+
+  const pathname = url.split(/[?#]/)[0]
+  if (!pathname.startsWith('/')) return undefined
+
+  const decodedPath = pathname
+    .split('/')
+    .map((segment, index) => (index === 0 ? segment : safeDecodePathSegment(segment)))
+    .join('/')
+  const resolvedPath = path.resolve(publicRoot, decodedPath.replace(/^\/+/, ''))
+  const resolvedPublicRoot = path.resolve(publicRoot)
+
+  if (
+    resolvedPath !== resolvedPublicRoot &&
+    !resolvedPath.startsWith(`${resolvedPublicRoot}${path.sep}`)
+  ) {
+    return undefined
+  }
+
+  return resolvedPath
+}
+
+function remarkImgToJsx() {
+  return (tree: MarkdownParentNode) => {
+    visit(
+      tree,
+      (node: MarkdownParentNode) =>
+        node.type === 'paragraph' && node.children?.some((child) => child.type === 'image'),
+      (node: MarkdownParentNode) => {
+        let converted = false
+
+        node.children = node.children?.map((child) => {
+          if (child.type !== 'image') return child
+
+          const imagePath = localPublicImagePath(child.url)
+          if (!imagePath || !existsSync(imagePath)) return child
+
+          const dimensions = imageSize(readFileSync(imagePath))
+          if (!dimensions.width || !dimensions.height) return child
+
+          converted = true
+
+          return {
+            type: 'mdxJsxFlowElement',
+            name: 'Image',
+            attributes: [
+              { type: 'mdxJsxAttribute', name: 'alt', value: child.alt },
+              { type: 'mdxJsxAttribute', name: 'src', value: child.url },
+              { type: 'mdxJsxAttribute', name: 'width', value: dimensions.width },
+              { type: 'mdxJsxAttribute', name: 'height', value: dimensions.height },
+            ],
+          }
+        })
+
+        if (converted) {
+          node.type = 'div'
+        }
+      }
+    )
+  }
 }
 
 function stripDatePrefixFromPath(filePath: string) {
