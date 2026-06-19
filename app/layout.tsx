@@ -90,6 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Header />
               <main className="mb-auto">{children}</main>
             </SearchProvider>
+            <span id="留言" className="block scroll-mt-24" aria-hidden="true" />
             <Comments />
             <Footer />
           </SectionContainer>

@@ -10,6 +10,7 @@ import siteMetadata from '@/data/siteMetadata'
 export default function Comments() {
   const pathname = usePathname()
   const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
   const [pageContext, setPageContext] = useState({ title: '', url: '' })
 
   const comments = siteMetadata.comments
@@ -21,23 +22,31 @@ export default function Comments() {
       : null
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    const siteTitleSuffix = ` | ${siteMetadata.title}`
+    const pageTitle = document.title.endsWith(siteTitleSuffix)
+      ? document.title.slice(0, -siteTitleSuffix.length)
+      : document.title
+
     setPageContext({
-      title: document.title,
+      title: pageTitle,
       url: window.location.href,
     })
   }, [pathname])
 
   const emailHref = useMemo(() => {
-    const subject = pageContext.title ? `關於「${pageContext.title}」` : '關於 ChrisTorng 學習天地'
+    const subject = pageContext.title ? `回應「${pageContext.title}」` : '關於 ChrisTorng 學習天地'
     const body = [
-      `我看了 ${pageContext.title || '未知'}(${pageContext.url || '未知'})`,
-      '想說：',
+      `我看了「${pageContext.title || '未知'} (${pageContext.url || '未知'})」，想回應：`,
     ].join('\n')
 
     return `mailto:contact@christorng.idv.tw?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   }, [pageContext])
 
-  if (!giscusConfig || !commentsTheme) {
+  if (!giscusConfig || !mounted || !commentsTheme) {
     return null
   }
 
