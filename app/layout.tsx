@@ -9,6 +9,8 @@ import Header from '@/components/Header'
 import SectionContainer from '@/components/SectionContainer'
 import Footer from '@/components/Footer'
 import ExternalLinkHandler from '@/components/ExternalLinkHandler'
+import Comments from '@/components/Comments'
+import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
@@ -79,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="overflow-x-hidden bg-gray-50 pl-[calc(100vw-100%)] text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-200">
         <ExternalLinkHandler />
         <ThemeProviders>
+          <ScrollTopAndComment />
           {siteMetadata.analytics && (
             <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
           )}
@@ -87,6 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Header />
               <main className="mb-auto">{children}</main>
             </SearchProvider>
+            <Comments />
             <Footer />
           </SectionContainer>
         </ThemeProviders>
