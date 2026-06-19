@@ -3,6 +3,7 @@ import 'pliny/search/algolia.css'
 import 'remark-github-blockquote-alert/alert.css'
 
 import { Space_Grotesk } from 'next/font/google'
+import Script from 'next/script'
 import { Analytics, AnalyticsConfig } from 'pliny/analytics'
 import { SearchProvider, SearchConfig } from 'pliny/search'
 import Header from '@/components/Header'
@@ -80,6 +81,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
       <body className="overflow-x-hidden bg-gray-50 pl-[calc(100vw-100%)] text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-200">
         <ExternalLinkHandler />
+        <Script
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "d2305123e7f047a5b1d1a62a3cdeb740"}'
+          strategy="afterInteractive"
+        />
         <ThemeProviders>
           <ScrollTopAndComment />
           {siteMetadata.analytics && (
