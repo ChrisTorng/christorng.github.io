@@ -57,6 +57,7 @@ const markdownProcessor = unified().use(remarkParse).use(remarkGfm).use(remarkRe
 
 const starPath =
   'M12 2.4 14.55 8.65 21.3 9.05 16.15 13.38 17.8 20.2 12 16.55 6.2 20.2 7.85 13.38 2.7 9.05 9.45 8.65 12 2.4Z'
+const halfStarPath = 'M12 2.4 12 16.55 6.2 20.2 7.85 13.38 2.7 9.05 9.45 8.65 12 2.4Z'
 
 const linkIconPathOne =
   'M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z'
@@ -121,7 +122,7 @@ function HeadingAnchor({ id }: { id: string }) {
   )
 }
 
-function RatingStar({ type, id }: { type: 'full' | 'half'; id: string }) {
+function RatingStar({ type }: { type: 'full' | 'half' }) {
   if (type === 'full') {
     return (
       <span className="rating-star" aria-hidden="true">
@@ -138,9 +139,6 @@ function RatingStar({ type, id }: { type: 'full' | 'half'; id: string }) {
     )
   }
 
-  const fillClipId = `rating-star-half-fill-${id}`
-  const outlineMaskId = `rating-star-half-outline-${id}`
-
   return (
     <span className="rating-star" aria-hidden="true">
       <span className="rating-star-source">⯨</span>
@@ -150,28 +148,20 @@ function RatingStar({ type, id }: { type: 'full' | 'half'; id: string }) {
         viewBox="0 0 24 24"
         focusable="false"
       >
-        <defs>
-          <clipPath id={fillClipId}>
-            <rect x="0" y="0" width="12" height="24" />
-          </clipPath>
-          <mask id={outlineMaskId} maskUnits="userSpaceOnUse">
-            <rect width="24" height="24" fill="black" />
-            <path fill="white" d={starPath} />
-            <path
-              fill="black"
-              transform="translate(12 12) scale(0.66) translate(-12 -12)"
-              d={starPath}
-            />
-          </mask>
-        </defs>
-        <rect width="24" height="24" fill="currentColor" mask={`url(#${outlineMaskId})`} />
-        <path fill="currentColor" clipPath={`url(#${fillClipId})`} d={starPath} />
+        <path fill="currentColor" d={halfStarPath} />
+        <path
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+          d={starPath}
+        />
       </svg>
     </span>
   )
 }
 
-function RatingStars({ value, id }: { value: number; id: string }) {
+function RatingStars({ value }: { value: number }) {
   const rating = Math.max(0, Math.min(5, value))
   const fullStars = Math.floor(rating)
   const hasHalfStar = rating - fullStars >= 0.5
@@ -179,9 +169,9 @@ function RatingStars({ value, id }: { value: number; id: string }) {
   return (
     <span aria-label={`${rating} / 5`}>
       {Array.from({ length: fullStars }, (_, index) => (
-        <RatingStar key={`full-${index}`} type="full" id={`${id}-full-${index}`} />
+        <RatingStar key={`full-${index}`} type="full" />
       ))}
-      {hasHalfStar && <RatingStar type="half" id={`${id}-half`} />}
+      {hasHalfStar && <RatingStar type="half" />}
     </span>
   )
 }
@@ -229,16 +219,13 @@ export default function PublicPianoRepertoire({
 
             <ul>
               <li>
-                <strong>喜愛度</strong>:{' '}
-                <RatingStars value={piece.favorite} id={`${headingId}-favorite`} />
+                <strong>喜愛度</strong>: <RatingStars value={piece.favorite} />
               </li>
               <li>
-                <strong>困難度</strong>:{' '}
-                <RatingStars value={piece.difficulty} id={`${headingId}-difficulty`} />
+                <strong>困難度</strong>: <RatingStars value={piece.difficulty} />
               </li>
               <li>
-                <strong>熟練度</strong>:{' '}
-                <RatingStars value={piece.proficiency} id={`${headingId}-proficiency`} />
+                <strong>熟練度</strong>: <RatingStars value={piece.proficiency} />
               </li>
             </ul>
 

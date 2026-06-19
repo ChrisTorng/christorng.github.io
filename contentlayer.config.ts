@@ -32,6 +32,7 @@ const datePrefixPattern = /^\d{8}--/
 const ratingStarPattern = /[★⯨]/gu
 const starPath =
   'M12 2.4 14.55 8.65 21.3 9.05 16.15 13.38 17.8 20.2 12 16.55 6.2 20.2 7.85 13.38 2.7 9.05 9.45 8.65 12 2.4Z'
+const halfStarPath = 'M12 2.4 12 16.55 6.2 20.2 7.85 13.38 2.7 9.05 9.45 8.65 12 2.4Z'
 const ignoredRatingStarTags = new Set(['code', 'kbd', 'pre', 'samp', 'script', 'style', 'textarea'])
 
 type RatingStarNode = {
@@ -152,7 +153,7 @@ function parseSvgFragment(html: string) {
   return svg
 }
 
-function createRatingStarIcon(character: string, index: number): RatingStarNode {
+function createRatingStarIcon(character: string): RatingStarNode {
   const commonAttributes =
     'class="rating-star-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"'
   const sourceText = `<span class="rating-star-source">${character}</span>`
@@ -163,28 +164,15 @@ function createRatingStarIcon(character: string, index: number): RatingStarNode 
     )
   }
 
-  const fillClipId = `rating-star-half-fill-${index}`
-  const outlineMaskId = `rating-star-half-outline-${index}`
-
   return parseSvgFragment(
     `<span class="rating-star">${sourceText}<svg ${commonAttributes}>
-        <defs>
-          <clipPath id="${fillClipId}">
-            <rect x="0" y="0" width="12" height="24" />
-          </clipPath>
-          <mask id="${outlineMaskId}" maskUnits="userSpaceOnUse">
-            <rect width="24" height="24" fill="black" />
-            <path fill="white" d="${starPath}" />
-            <path fill="black" transform="translate(12 12) scale(0.66) translate(-12 -12)" d="${starPath}" />
-          </mask>
-        </defs>
-        <rect width="24" height="24" fill="currentColor" mask="url(#${outlineMaskId})" />
-        <path fill="currentColor" clip-path="url(#${fillClipId})" d="${starPath}" />
+        <path fill="currentColor" d="${halfStarPath}" />
+        <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="${starPath}" />
       </svg></span>`
   )
 }
 
-function replaceRatingStarsInText(value: string, starIndex: { current: number }) {
+function replaceRatingStarsInText(value: string) {
   const nodes: RatingStarNode[] = []
   let lastIndex = 0
 
@@ -196,8 +184,7 @@ function replaceRatingStarsInText(value: string, starIndex: { current: number })
       nodes.push({ type: 'text', value: value.slice(lastIndex, index) })
     }
 
-    nodes.push(createRatingStarIcon(match[0], starIndex.current))
-    starIndex.current += 1
+    nodes.push(createRatingStarIcon(match[0]))
     lastIndex = index + match[0].length
   }
 
@@ -214,8 +201,6 @@ function isRatingStarTextNode(node: RatingStarNode): node is RatingStarTextNode 
 
 function rehypeRatingStars() {
   return (tree: RatingStarNode) => {
-    const starIndex = { current: 0 }
-
     function visitChildren(node: RatingStarNode) {
       if (!node || !Array.isArray(node.children)) return
       if (
@@ -231,7 +216,7 @@ function rehypeRatingStars() {
 
         ratingStarPattern.lastIndex = 0
         if (isRatingStarTextNode(child) && ratingStarPattern.test(child.value)) {
-          const replacement = replaceRatingStarsInText(child.value, starIndex)
+          const replacement = replaceRatingStarsInText(child.value)
           node.children.splice(index, 1, ...replacement)
           index += replacement.length - 1
         } else {
