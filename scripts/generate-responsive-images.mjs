@@ -7,6 +7,11 @@ const sourceRoot = path.join(process.cwd(), 'public', 'static', 'images')
 const outputRoot = path.join(sourceRoot, 'responsive')
 const manifestPath = path.join(process.cwd(), 'data', 'responsive-images.json')
 const supportedExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp'])
+const outputFormats = [
+  { key: 'avif', extension: '.avif' },
+  { key: 'webp', extension: '.webp' },
+  { key: 'jpeg', extension: '.jpg' },
+]
 const dryRun = process.argv.includes('--dry-run')
 const limitArg = process.argv.find((arg) => arg.startsWith('--limit='))
 const limit = limitArg ? Number.parseInt(limitArg.split('=')[1], 10) : undefined
@@ -43,33 +48,32 @@ async function collectImageFiles(directory) {
   return files
 }
 
-async function resizeImage(sourcePath, width, extension) {
+async function resizeImage(sourcePath, width, format) {
   const image = sharp(sourcePath).rotate().resize({
     width,
     withoutEnlargement: true,
   })
 
-  if (extension === '.jpg' || extension === '.jpeg') {
-    return image.jpeg({ quality: 82, mozjpeg: true }).toBuffer()
+  if (format === 'avif') {
+    return image.avif({ quality: 58 }).toBuffer()
   }
 
-  if (extension === '.webp') {
+  if (format === 'webp') {
     return image.webp({ quality: 82 }).toBuffer()
   }
 
-  return image.png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer()
+  return image.flatten({ background: '#ffffff' }).jpeg({ quality: 82, mozjpeg: true }).toBuffer()
 }
 
-async function generateVariant(sourceMetadata, sourcePath, width) {
-  const extension = path.extname(sourcePath).toLowerCase()
+async function generateVariant(sourceMetadata, sourcePath, width, format) {
   const sourceRelative = path.relative(sourceRoot, sourcePath)
   const sourceDirectory = path.dirname(sourceRelative)
   const sourceBaseName = path.basename(sourceRelative, path.extname(sourceRelative))
   const height = Math.max(1, Math.round((sourceMetadata.height * width) / sourceMetadata.width))
   const outputDirectory = path.join(outputRoot, sourceDirectory)
-  const outputPath = path.join(outputDirectory, `${sourceBaseName}-${width}w${extension}`)
+  const outputPath = path.join(outputDirectory, `${sourceBaseName}-${width}w${format.extension}`)
   const outputRelative = path.relative(path.join(process.cwd(), 'public'), outputPath)
-  const resized = await resizeImage(sourcePath, width, extension)
+  const resized = await resizeImage(sourcePath, width, format.key)
 
   if (!dryRun) {
     await mkdir(outputDirectory, { recursive: true })
@@ -106,17 +110,23 @@ async function main() {
 
       const publicRelative = path.relative(path.join(process.cwd(), 'public'), file)
       const key = publicUrlFromRelativePath(publicRelative)
-      const variants = []
+      const formats = Object.fromEntries(outputFormats.map((format) => [format.key, []]))
 
       for (const width of widths) {
-        variants.push(await generateVariant(sourceMetadata, file, width))
+        for (const format of outputFormats) {
+          formats[format.key].push(await generateVariant(sourceMetadata, file, width, format))
+          generatedCount += 1
+        }
       }
 
-      generatedCount += variants.length
+      const jpegVariants = formats.jpeg
+      const fallbackIndex = Math.max(0, jpegVariants.length - 2)
+
       manifest[key] = {
         width: sourceMetadata.width,
         height: sourceMetadata.height,
-        variants,
+        formats,
+        fallback: jpegVariants[fallbackIndex],
       }
     } catch (error) {
       console.warn(`Skipping ${path.relative(process.cwd(), file)}: ${error.message}`)

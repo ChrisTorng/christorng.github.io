@@ -1,6 +1,6 @@
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
-import Image from 'next/image'
+import Image from './Image'
 import Link from './Link'
 import MobileNav from './MobileNavWrapper'
 import ThemeSwitch from './ThemeSwitch'

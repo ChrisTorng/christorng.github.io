@@ -6,13 +6,22 @@ type ResponsiveImageVariant = {
   height?: number
 }
 
+type ResponsiveImageFormat = 'avif' | 'webp' | 'jpeg'
+
 type ResponsiveImageEntry = {
   width: number
   height: number
-  variants: ResponsiveImageVariant[]
+  formats?: Partial<Record<ResponsiveImageFormat, ResponsiveImageVariant[]>>
+  fallback?: ResponsiveImageVariant
+  variants?: ResponsiveImageVariant[]
 }
 
 const manifest = responsiveImages as Record<string, ResponsiveImageEntry>
+const formatContentTypes: Record<ResponsiveImageFormat, string> = {
+  avif: 'image/avif',
+  webp: 'image/webp',
+  jpeg: 'image/jpeg',
+}
 
 function safeDecode(segment: string) {
   try {
@@ -50,9 +59,49 @@ export function getResponsiveImage(src: string, basePath = '') {
   return manifest[normalizedPath]
 }
 
-export function getResponsiveImageSrcSet(src: string, basePath = '') {
-  const entry = getResponsiveImage(src, basePath)
-  if (!entry || entry.variants.length === 0) return undefined
+function variantsForFormat(entry: ResponsiveImageEntry, format: ResponsiveImageFormat) {
+  if (entry.formats?.[format]?.length) return entry.formats[format]
+  if (format === 'jpeg' && entry.variants?.length) return entry.variants
+  return undefined
+}
 
-  return entry.variants.map((variant) => `${basePath}${variant.src} ${variant.width}w`).join(', ')
+function srcSetForVariants(variants: ResponsiveImageVariant[] | undefined, basePath = '') {
+  if (!variants || variants.length === 0) return undefined
+  return variants.map((variant) => `${basePath}${variant.src} ${variant.width}w`).join(', ')
+}
+
+export function getResponsiveImageSrcSet(
+  src: string,
+  basePath = '',
+  format: ResponsiveImageFormat = 'jpeg'
+) {
+  const entry = getResponsiveImage(src, basePath)
+  if (!entry) return undefined
+
+  return srcSetForVariants(variantsForFormat(entry, format), basePath)
+}
+
+export function getResponsiveImageSources(src: string, basePath = '') {
+  const entry = getResponsiveImage(src, basePath)
+  if (!entry) return []
+
+  return (['avif', 'webp', 'jpeg'] as const)
+    .map((format) => ({
+      type: formatContentTypes[format],
+      srcSet: srcSetForVariants(variantsForFormat(entry, format), basePath),
+    }))
+    .filter((source): source is { type: string; srcSet: string } => Boolean(source.srcSet))
+}
+
+export function getResponsiveImageFallback(src: string, basePath = '') {
+  const entry = getResponsiveImage(src, basePath)
+  if (!entry) return undefined
+
+  if (entry.fallback) return { ...entry.fallback, src: `${basePath}${entry.fallback.src}` }
+
+  const jpegVariants = variantsForFormat(entry, 'jpeg')
+  if (!jpegVariants || jpegVariants.length === 0) return undefined
+
+  const fallback = jpegVariants[Math.max(0, jpegVariants.length - 2)]
+  return { ...fallback, src: `${basePath}${fallback.src}` }
 }

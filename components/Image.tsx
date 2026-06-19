@@ -1,6 +1,5 @@
-/* eslint-disable @next/next/no-img-element -- responsive variants are generated outside Next Image */
 import NextImage, { ImageProps } from 'next/image'
-import { getResponsiveImageSrcSet } from '@/utils/responsiveImages'
+import { getResponsiveImageFallback, getResponsiveImageSources } from '@/utils/responsiveImages'
 import type { CSSProperties } from 'react'
 
 const basePath = process.env.BASE_PATH
@@ -30,15 +29,18 @@ const Image = ({
   lazyBoundary,
   lazyRoot,
   style,
+  alt,
   ...rest
 }: ImageProps) => {
   const resolvedSrc = typeof src === 'string' && !hasProtocol(src) ? `${basePath || ''}${src}` : src
-  const srcSet =
+  const responsiveSources =
+    typeof src === 'string' && !isGif(src) ? getResponsiveImageSources(src, basePath || '') : []
+  const responsiveFallback =
     typeof src === 'string' && !isGif(src)
-      ? getResponsiveImageSrcSet(src, basePath || '')
+      ? getResponsiveImageFallback(src, basePath || '')
       : undefined
 
-  if (typeof resolvedSrc === 'string' && srcSet) {
+  if (typeof resolvedSrc === 'string' && responsiveFallback && responsiveSources.length > 0) {
     const fillStyle: CSSProperties | undefined = fill
       ? {
           position: 'absolute',
@@ -50,17 +52,26 @@ const Image = ({
       : undefined
 
     return (
-      <img
-        src={resolvedSrc}
-        srcSet={srcSet}
-        sizes={sizes || (fill ? '100vw' : '(max-width: 768px) 100vw, 768px')}
-        width={fill ? undefined : width}
-        height={fill ? undefined : height}
-        loading={priority ? 'eager' : loading || 'lazy'}
-        decoding="async"
-        style={{ ...fillStyle, ...style }}
-        {...rest}
-      />
+      <picture>
+        {responsiveSources.map((source) => (
+          <source
+            key={source.type}
+            type={source.type}
+            srcSet={source.srcSet}
+            sizes={sizes || (fill ? '100vw' : '(max-width: 768px) 100vw, 768px')}
+          />
+        ))}
+        <img
+          src={responsiveFallback.src}
+          alt={alt}
+          width={fill ? undefined : width}
+          height={fill ? undefined : height}
+          loading={priority ? 'eager' : loading || 'lazy'}
+          decoding="async"
+          style={{ ...fillStyle, ...style }}
+          {...rest}
+        />
+      </picture>
     )
   }
 
@@ -76,6 +87,7 @@ const Image = ({
       loading={loading}
       placeholder={placeholder}
       blurDataURL={blurDataURL}
+      alt={alt}
       quality={quality}
       loader={loader}
       onLoadingComplete={onLoadingComplete}

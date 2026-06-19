@@ -55,27 +55,34 @@ function normalizeResponsiveImagePath(src) {
   return encodePathname(pathname.startsWith('/') ? pathname : `/${pathname}`)
 }
 
-function responsiveImageSrcSet(src) {
+function responsiveImageFallbackSrc(src) {
   const normalizedPath = normalizeResponsiveImagePath(src)
   const entry = normalizedPath ? responsiveImages[normalizedPath] : undefined
 
-  if (!entry || !entry.variants || entry.variants.length === 0) return undefined
+  if (!entry) return undefined
+  if (entry.fallback?.src) return entry.fallback.src
 
-  return entry.variants.map((variant) => `${variant.src} ${variant.width}w`).join(', ')
+  const jpegVariants = entry.formats?.jpeg || entry.variants
+  if (!jpegVariants || jpegVariants.length === 0) return undefined
+
+  return jpegVariants[Math.max(0, jpegVariants.length - 2)]?.src
 }
 
-function addResponsiveImageAttributes(html) {
+function applyResponsiveImageFallbacks(html) {
   return html.replace(/<img\b([^>]*?)>/g, (match, attributes) => {
-    if (/\bsrcset\s*=/i.test(attributes)) return match
-
     const src = getAttributeValue(attributes, 'src')
-    const srcSet = responsiveImageSrcSet(src)
-    if (!srcSet) return match
+    const fallbackSrc = responsiveImageFallbackSrc(src)
+    if (!fallbackSrc) return match
 
     const selfClosing = /\/\s*>$/.test(match)
     const suffix = selfClosing ? ' />' : '>'
-    const trimmed = attributes.replace(/\s*\/\s*$/, '').trimEnd()
-    return `<img${trimmed} srcset="${escapeXml(srcSet)}" sizes="(max-width: 768px) 100vw, 768px"${suffix}`
+    const trimmed = attributes
+      .replace(/\s*\/\s*$/, '')
+      .replace(/\s+\b(?:srcset|srcSet|sizes)=("(?:[^"]*)"|'(?:[^']*)')/g, '')
+      .replace(/\bsrc=("(?:[^"]*)"|'(?:[^']*)')/i, `src="${escapeXml(fallbackSrc)}"`)
+      .trimEnd()
+
+    return `<img${trimmed}${suffix}`
   })
 }
 
@@ -186,7 +193,7 @@ export async function renderPostContent(config, post) {
       .process(normalizeMdxComponents(post.body.raw))
   )
 
-  return absoluteHtmlUrls(config, addResponsiveImageAttributes(html), postUrl)
+  return absoluteHtmlUrls(config, applyResponsiveImageFallbacks(html), postUrl)
 }
 
 export async function generateRssItem(config, post) {
