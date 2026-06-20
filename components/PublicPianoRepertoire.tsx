@@ -133,7 +133,13 @@ function RatingStar({ type }: { type: 'full' | 'half' }) {
           viewBox="0 0 24 24"
           focusable="false"
         >
-          <path fill="currentColor" d={starPath} />
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+            d={starPath}
+          />
         </svg>
       </span>
     )

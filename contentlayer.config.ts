@@ -160,7 +160,7 @@ function createRatingStarIcon(character: string): RatingStarNode {
 
   if (character === '★') {
     return parseSvgFragment(
-      `<span class="rating-star">${sourceText}<svg ${commonAttributes}><path fill="currentColor" d="${starPath}" /></svg></span>`
+      `<span class="rating-star">${sourceText}<svg ${commonAttributes}><path fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="${starPath}" /></svg></span>`
     )
   }
 
