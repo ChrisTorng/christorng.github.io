@@ -201,7 +201,7 @@ export default function PublicPianoRepertoire({
   const slugger = new GithubSlugger()
 
   return (
-    <>
+    <div className="public-piano-repertoire">
       {pieces.map((piece, index) => {
         const title = formatPieceTitle(piece)
         const heading = numbered ? `${index + 1}. ${title}` : title
@@ -209,43 +209,47 @@ export default function PublicPianoRepertoire({
         const originalTitle = formatOriginalTitle(piece)
 
         return (
-          <section key={heading}>
-            <h3 className="content-header" id={headingId}>
+          <section className="public-piano-piece" key={heading}>
+            <h3 className="content-header public-piano-piece-heading" id={headingId}>
               <HeadingAnchor id={headingId} />
               {heading}
             </h3>
 
-            {originalTitle && <p>{originalTitle}</p>}
+            <div className="public-piano-piece-copy">
+              {originalTitle && <p>{originalTitle}</p>}
 
-            <ul>
-              <li>
-                <strong>喜愛度</strong>: <RatingStars value={piece.favorite} />
-              </li>
-              <li>
-                <strong>困難度</strong>: <RatingStars value={piece.difficulty} />
-              </li>
-              <li>
-                <strong>熟練度</strong>: <RatingStars value={piece.proficiency} />
-              </li>
-            </ul>
+              <ul>
+                <li>
+                  <strong>喜愛度</strong>: <RatingStars value={piece.favorite} />
+                </li>
+                <li>
+                  <strong>困難度</strong>: <RatingStars value={piece.difficulty} />
+                </li>
+                <li>
+                  <strong>熟練度</strong>: <RatingStars value={piece.proficiency} />
+                </li>
+              </ul>
 
-            <MarkdownBlock>{piece.description}</MarkdownBlock>
+              <MarkdownBlock>{piece.description}</MarkdownBlock>
 
-            {piece.recordings?.map((recording, recordingIndex) => (
-              <Recording key={recordingIndex} recording={recording} />
-            ))}
+              {piece.professionalReference && (
+                <p>
+                  參考專業演奏:{' '}
+                  <CustomLink href={piece.professionalReference.url}>
+                    {piece.professionalReference.title}
+                  </CustomLink>
+                </p>
+              )}
+            </div>
 
-            {piece.professionalReference && (
-              <p>
-                參考專業演奏:{' '}
-                <CustomLink href={piece.professionalReference.url}>
-                  {piece.professionalReference.title}
-                </CustomLink>
-              </p>
-            )}
+            <div className="public-piano-piece-recordings">
+              {piece.recordings?.map((recording, recordingIndex) => (
+                <Recording key={recordingIndex} recording={recording} />
+              ))}
+            </div>
           </section>
         )
       })}
-    </>
+    </div>
   )
 }

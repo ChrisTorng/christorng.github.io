@@ -35,8 +35,12 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
     return notFound()
   }
 
+  const isFullWidth = author.layout === 'FullWidth'
+
   return (
-    <article className="prose dark:prose-invert max-w-none pt-8 pb-8">
+    <article
+      className={`prose dark:prose-invert max-w-none pt-8 pb-8 ${isFullWidth ? 'full-width-page' : ''}`}
+    >
       <MDXLayoutRenderer code={author.body.code} components={components} toc={author.toc} />
     </article>
   )

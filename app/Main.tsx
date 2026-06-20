@@ -9,7 +9,7 @@ const MAX_DISPLAY = 5
 export default function Home({ posts }) {
   return (
     <>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="responsive-layout-container divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
           <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             最新
@@ -25,14 +25,14 @@ export default function Home({ posts }) {
             return (
               <li key={slug} className="py-12">
                 <article>
-                  <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
+                  <div className="responsive-date-grid">
                     <dl>
                       <dt className="sr-only">發佈於</dt>
                       <dd className="text-base leading-6 font-medium text-gray-500 dark:text-gray-400">
                         <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
                       </dd>
                     </dl>
-                    <div className="space-y-5 xl:col-span-3">
+                    <div className="responsive-date-content space-y-5">
                       <div className="space-y-6">
                         <div>
                           <h2 className="text-2xl leading-8 font-bold tracking-tight">
