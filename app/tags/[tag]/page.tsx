@@ -9,7 +9,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getPublishedBlogs } from 'app/blog-utils'
 
-const POSTS_PER_PAGE = 5
+const POSTS_PER_PAGE = 20
 
 function getDisplayTag(tagSlug: string) {
   const tagCounts = tagData as Record<string, number>

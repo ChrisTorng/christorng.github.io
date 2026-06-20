@@ -4,7 +4,7 @@ import { genPageMetadata } from 'app/seo'
 import ListLayout from '@/layouts/ListLayoutWithTags'
 import { getPublishedBlogs } from 'app/blog-utils'
 
-const POSTS_PER_PAGE = 5
+const POSTS_PER_PAGE = 20
 
 export const metadata = genPageMetadata({ title: '所有文章' })
 

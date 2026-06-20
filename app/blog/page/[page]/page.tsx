@@ -4,7 +4,7 @@ import { allBlogs } from 'contentlayer/generated'
 import { notFound } from 'next/navigation'
 import { getPublishedBlogs } from 'app/blog-utils'
 
-const POSTS_PER_PAGE = 5
+const POSTS_PER_PAGE = 20
 
 export const generateStaticParams = async () => {
   const publishedBlogs = getPublishedBlogs(allBlogs)

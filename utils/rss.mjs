@@ -218,10 +218,11 @@ export async function generateRssItem(config, post) {
 }
 
 export async function generateRss(config, posts, page = 'feed.xml') {
+  const latestPosts = posts.slice(0, 20)
   const siteUrl = getSiteUrl(config)
   const feedUrl = absoluteUrl(config, page)
-  const lastBuildDate = posts[0]?.lastmod || posts[0]?.date || new Date().toISOString()
-  const items = await Promise.all(posts.map((post) => generateRssItem(config, post)))
+  const lastBuildDate = latestPosts[0]?.lastmod || latestPosts[0]?.date || new Date().toISOString()
+  const items = await Promise.all(latestPosts.map((post) => generateRssItem(config, post)))
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
