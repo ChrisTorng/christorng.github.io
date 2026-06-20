@@ -57,6 +57,19 @@ const securityHeaders = [
 const output = process.env.EXPORT ? 'export' : undefined
 const basePath = process.env.BASE_PATH || undefined
 const unoptimized = process.env.UNOPTIMIZED ? true : undefined
+const developmentConfig =
+  process.env.NODE_ENV === 'development'
+    ? {
+        async rewrites() {
+          return [
+            {
+              source: '/blog-media/:path*',
+              destination: 'http://localhost:3001/:path*',
+            },
+          ]
+        },
+      }
+    : {}
 
 /**
  * @type {import('next/dist/next-server/server/config').NextConfig}
@@ -66,6 +79,7 @@ module.exports = () => {
   return plugins.reduce((acc, next) => next(acc), {
     output,
     basePath,
+    ...developmentConfig,
     reactStrictMode: true,
     trailingSlash: true,
     turbopack: {
