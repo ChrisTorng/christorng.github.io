@@ -4,6 +4,7 @@ import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
+import { Rss } from '@/components/social-icons/icons'
 import siteMetadata from '@/data/siteMetadata'
 import tagData from 'app/tag-data.json'
 
@@ -69,16 +70,27 @@ export default function ListLayoutWithTags({
   const tagKeys = Object.keys(tagCounts)
   const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a])
   const activeTag = decodeURI(activePath.split('/tags/')[1] || '')
+  const rssPath = activeTag ? `/tags/${activeTag}/feed.xml` : '/feed.xml'
+  const rssLabel = `訂閱 ${title}${activeTag ? ' 類別' : ''} RSS`
 
   const displayPosts = initialDisplayPosts.length > 0 ? initialDisplayPosts : posts
 
   return (
     <>
       <div>
-        <div className="pt-6 pb-6">
+        <div className="flex items-center justify-between gap-4 pt-6 pb-6">
           <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:hidden sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             {title}
           </h1>
+          <Link
+            href={rssPath}
+            type="application/rss+xml"
+            className="hover:text-primary-500 dark:hover:text-primary-400 ml-auto inline-flex items-center gap-2 font-medium text-gray-600 transition-colors dark:text-gray-300"
+            aria-label={rssLabel}
+          >
+            <Rss className="h-5 w-5" aria-hidden="true" />
+            {rssLabel}
+          </Link>
         </div>
         <div className="flex sm:space-x-24">
           <div className="hidden h-full max-h-screen max-w-[280px] min-w-[280px] flex-wrap overflow-auto rounded-sm bg-gray-100 pt-5 shadow-md sm:flex dark:bg-gray-800/70 dark:shadow-gray-800/40">
