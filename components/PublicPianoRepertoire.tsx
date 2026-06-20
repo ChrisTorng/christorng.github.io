@@ -231,15 +231,6 @@ export default function PublicPianoRepertoire({
               </ul>
 
               <MarkdownBlock>{piece.description}</MarkdownBlock>
-
-              {piece.professionalReference && (
-                <p>
-                  參考專業演奏:{' '}
-                  <CustomLink href={piece.professionalReference.url}>
-                    {piece.professionalReference.title}
-                  </CustomLink>
-                </p>
-              )}
             </div>
 
             <div className="public-piano-piece-recordings">
@@ -247,6 +238,15 @@ export default function PublicPianoRepertoire({
                 <Recording key={recordingIndex} recording={recording} />
               ))}
             </div>
+
+            {piece.professionalReference && (
+              <p className="public-piano-piece-reference">
+                參考專業演奏:{' '}
+                <CustomLink href={piece.professionalReference.url}>
+                  {piece.professionalReference.title}
+                </CustomLink>
+              </p>
+            )}
           </section>
         )
       })}
