@@ -13,14 +13,14 @@ export default function AuthorLayout({ children, content }: Props) {
 
   return (
     <>
-      <div className="responsive-layout-container divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
           <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             關於我
           </h1>
         </div>
         <div className="responsive-author-grid">
-          <div className="flex flex-col items-center space-x-2 pt-8">
+          <div className="flex w-full flex-col items-center pt-8">
             {avatar && (
               <Image
                 src={avatar}
@@ -41,7 +41,7 @@ export default function AuthorLayout({ children, content }: Props) {
               <SocialIcon kind="bluesky" href={bluesky} />
             </div>
           </div>
-          <div className="prose responsive-author-content dark:prose-invert max-w-none min-w-0 pt-8 pb-8 break-words">
+          <div className="prose responsive-author-content dark:prose-invert w-full max-w-full min-w-0 pt-8 pb-8 break-words">
             {children}
           </div>
         </div>
