@@ -9,7 +9,7 @@ pieces:
       - label: '2026/3/28 錄影:'
         component: VideoPlayer
         title: 三手合奏不知名小品
-        src: /static/videos/2026/my-piano/three-hands-piano.mp4
+        src: /blog-media/piano/video/three-hands-piano.mp4
 
   - title: 隨意即興
     favorite: 3

@@ -13,10 +13,10 @@ pieces:
         component: YouTubeEmbed
         id: H7K-8hTn13s
         title: 李斯特 第三號愛之夢 在家彈奏錄製
-      - label: '2026/5/27 在家電鋼琴錄音:'
-        component: AudioPlayer
-        title: 李斯特 - 第三號愛之夢
-        src: /blog-media/piano/audio/Love%20dream.mp3
+      # - label: '2026/5/27 在家電鋼琴錄音:'
+      #   component: AudioPlayer
+      #   title: 李斯特 - 第三號愛之夢
+      #   src: /blog-media/piano/audio/Love%20dream.mp3
     professionalReference:
       title: Liszt - Liebestraum No. 3 (Love Dream)
       url: https://www.youtube.com/watch?v=MBOa-2b4uQQ
@@ -35,10 +35,10 @@ pieces:
         component: YouTubeEmbed
         id: DhJXYy0deJE
         title: 2026/3/28 李斯特 - 悲嘆 (Liszt - Un Sospiro) 於 台北車站公共鋼琴
-      - label: '2026/5/27 在家電鋼琴錄音:'
-        component: AudioPlayer
-        title: 李斯特 - 悲嘆
-        src: /blog-media/piano/audio/Un%20sospiro.mp3
+      # - label: '2026/5/27 在家電鋼琴錄音:'
+      #   component: AudioPlayer
+      #   title: 李斯特 - 悲嘆
+      #   src: /blog-media/piano/audio/Un%20sospiro.mp3
     professionalReference:
       title: Liszt “Un Sospiro” VERSION 2 - Paul Barton, FEURICH piano
       url: https://www.youtube.com/watch?v=D8-xlc0yTlw
@@ -53,14 +53,18 @@ pieces:
     description: >-
       極度困難又花俏的曲子。我的程度遠遠不及，手也太小。整首錯誤百出，很多卡住又得重彈，在此現醜了。但彈完後不時有人問我是否是音樂系教授，可見此曲之困難度！
     recordings:
-      - label: '2026/3/28 錄影 (那時還比較不熟，現在稍微快一點):'
-        component: VideoPlayer
-        title: 李斯特 - 鐘 (Liszt - La campanella) 開頭一小段
-        src: /static/videos/2026/my-piano/la-campanella-opening.mp4
-      - label: '2026/5/27 在家電鋼琴錄音:'
-        component: AudioPlayer
-        title: 李斯特 - 鐘
-        src: /blog-media/piano/audio/La%20campanella.mp3
+      # - label: '2026/3/28 錄影 (那時還比較不熟，現在稍微快一點):'
+      #   component: VideoPlayer
+      #   title: 李斯特 - 鐘 (Liszt - La campanella) 開頭一小段
+      #   src: /static/videos/2026/my-piano/la-campanella-opening.mp4
+      - label: '2026/4/28 台北大安森林公園站:'
+        component: YouTubeEmbed
+        id: sHKwtzm5gmM
+        title: 2026/4/28 李斯特 - 鐘 (Liszt - La campanella) 於 台北大安森林公園站公共鋼琴
+      # - label: '2026/5/27 在家電鋼琴錄音:'
+      #   component: AudioPlayer
+      #   title: 李斯特 - 鐘
+      #   src: /blog-media/piano/audio/La%20campanella.mp3
     professionalReference:
       title: Liszt - La Campanella (100,000 special)
       url: https://www.youtube.com/watch?v=H1Dvg2MxQn8
@@ -75,10 +79,14 @@ pieces:
     description: >-
       旋律優美的曲子，進入中段越來越難。中後有一段還背不起來，只能看譜勉強混過。
     recordings:
-      - label: '2026/5/27 在家電鋼琴錄音:'
-        component: AudioPlayer
-        title: 蕭邦 - 離別曲
-        src: /blog-media/piano/audio/Chopin%20Etude%20Op%2010%20No%203.mp3
+      - label: '2026/5/18 錄影:'
+        component: YouTubeEmbed
+        id: L7qTWIX7Ldg
+        title: 2026/5/18 蕭邦 - 離別曲 (Chopin - Étude Op.10, No.3) 於 台北車站公共鋼琴
+      # - label: '2026/5/27 在家電鋼琴錄音:'
+      #   component: AudioPlayer
+      #   title: 蕭邦 - 離別曲
+      #   src: /blog-media/piano/audio/Chopin%20Etude%20Op%2010%20No%203.mp3
     professionalReference:
       title: Chopin Etude Op. 10 No. 3
       url: https://www.youtube.com/watch?v=-6JAJmJhLMc
