@@ -6,14 +6,14 @@ lastmod: '2025-06-28'
 tags: []
 draft: false
 summary: '據保哥說，這個系統提示可讓 0 點無限量使用的 GPT-4.1，表現，與需耗用 1 點之 Claude Sonnet 4 一樣好。我依 Copilot 規格修改為 PlanFirst 模式。其他 AI IDE 也可以參考這個系統提示試試看。最後附上 VSCode Insiders GitHub Copilot 新功能介紹。最終結果如下:'
-images: ['/static/images/2025/20250628.png']
+images: ['/blog-assets/images/2025/20250628.png']
 ---
 
 ## 重點
 
 據保哥說，這個系統提示可讓 0 點無限量使用的 GPT-4.1，表現，與需耗用 1 點之 Claude Sonnet 4 一樣好。我依 Copilot 規格修改為 PlanFirst 模式。其他 AI IDE 也可以參考這個系統提示試試看。最後附上 VSCode Insiders GitHub Copilot 新功能介紹。最終結果如下:
 
-![](/static/images/2025/20250628.png)
+![](/blog-assets/images/2025/20250628.png)
 ## 起源
 
 由保哥分享，VS Code 核心成員 [burkeholland](https://gist.github.com/burkeholland) 分享了 [4.1 Custom Mode](https://gist.github.com/burkeholland/7aa408554550e36d4e951a1ead2bc3ac) 系統提示，說可讓 GPT-4.1 表現與 Claude Sonnet 4 一樣好。不過我看內容並沒有一般 GitHub Copilot 的標頭，裡面引用的工具名稱也不是 VSCode 裡面的，懷疑並不是 GitHub Copilot 用的提示。不過覺得提示內容不錯，就來自行改寫。
@@ -70,7 +70,7 @@ IMPORTANT: Read the entire file. Failure to do so will result in a 
 ````
 
 不過我發生一件搞笑的事，看到它竟然自作主張改用 `<input disabled="" type="checkbox">`  顯示待辦項目...我看運作是正常，只是它忽略了要求使用 Markdown 的指令...(也是有正確的時候啦...)
-![](/static/images/2025/20250628a.png)
+![](/blog-assets/images/2025/20250628a.png)
 
 因此在:
 
@@ -81,7 +81,7 @@ IMPORTANT: Read the entire file. Failure to do so will result in a 
 > `**Never use HTML** or any other format for the todo list. Always use Markdown checklist syntax.`
 
 完整提示之中英文版皆附上在文末。你可以下載到專案路徑 `.copilot\chatmodes\PlanFirst.chatmode.md`，在 Copilot 裡就有 PlanFist mode 可選擇了:
-![](/static/images/2025/20250628b.png)
+![](/blog-assets/images/2025/20250628b.png)
 
 ## PlanFirst.chatmode.md
 
@@ -317,10 +317,10 @@ tools: ['codebase', 'editFiles', 'fetch', 'problems', 'runCommands', 'search']
 ## VSCode Insiders GitHub Copilot 新功能介紹
 
 更新 VSCode Insider，結果輸入框壞掉了。好奇按了右上角 `Configure Chat...` - `Auto-update Instructions`，結果開始跑一堆，為我建立了 `copilot-instructions.md`:
-![](/static/images/2025/20250628c.png)
+![](/blog-assets/images/2025/20250628c.png)
 
 還有新增的 `Copilot Chat Debug Panel` 但空空的，選 `Show/Hide Rendered Elements/Tools` 都沒變化: (不過這個 Panel 後來又不見了)
-![](/static/images/2025/20250628d.png)
+![](/blog-assets/images/2025/20250628d.png)
 
 新版 `Extensions` 還多了 `MCP SERVERS - INSTALLED`:
-![](/static/images/2025/20250628e.png)
+![](/blog-assets/images/2025/20250628e.png)

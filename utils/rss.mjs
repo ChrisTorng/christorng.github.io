@@ -26,6 +26,15 @@ function absoluteUrl(config, pathname) {
 
   const siteUrl = getSiteUrl(config)
   const path = pathname.startsWith('/') ? pathname : `/${pathname}`
+
+  if (path.startsWith('/blog-assets/')) {
+    const blogAssetsUrl = (config.blogAssetsUrl || 'https://assets.christorng.idv.tw').replace(
+      /\/$/,
+      ''
+    )
+    return `${blogAssetsUrl}/${path.slice('/blog-assets/'.length)}`
+  }
+
   return `${siteUrl}${path}`
 }
 

@@ -15,3 +15,12 @@
 - Reference those assets from pages and data files with root-relative URLs in the form `/blog-media/<path-from-blog-media-root>`. For example, `..\blog-media\audio\example.mp3` is referenced as `/blog-media/audio/example.mp3`.
 - Do not use `localhost:3001` or the deployed hostname in content. In local development, the development-only Next.js rewrite maps `/blog-media/:path*` to `http://localhost:3001/:path*`; in production, `/blog-media/*` resolves on the deployed site without that rewrite.
 - When checking a media reference, URL-decode its path and verify that the corresponding file exists under the `blog-media` repository.
+
+## Shared Article Image Repository
+
+- Article images live in the sibling `D:\Projects\GitHub\ChrisTorng\blog-assets` repository. Website-functional images such as the logo and author avatar remain under this repository's `public/static/images` directory.
+- Reference article images with root-relative URLs in the form `/blog-assets/images/<path-from-images-root>`.
+- In development, `<picture>` URLs resolve to `http://localhost:3002`, and the development-only Next.js rewrite maps `/blog-assets/:path*` to that local server. In production, image URLs resolve to `https://assets.christorng.idv.tw`.
+- Run `npm run build` in `blog-assets` after adding or changing article images. Commit both the generated `blog-assets/responsive` files and this repository's updated `data/responsive-images.json` manifest.
+- Do not add responsive image generation back to this repository's GitHub Actions workflow; generated image assets are local build artifacts committed before deployment.
+- RSS is served by the App Router routes under `app/feed.xml` and `app/tags/[tag]/feed.xml`. Do not generate `public/feed.xml` or `public/tags/*/feed.xml`; those files conflict with the routes during development.

@@ -5,7 +5,7 @@ lastmod: '2024-06-23'
 tags: ['AI']
 draft: false
 summary: '前陣子看的幾篇，如何得到更好的答案:'
-images: ['/static/images/2024/20240623193101.png']
+images: ['/blog-assets/images/2024/20240623193101.png']
 ---
 
 前陣子看的幾篇，如何得到更好的答案:
@@ -15,15 +15,15 @@ images: ['/static/images/2024/20240623193101.png']
 [Banishing LLM Hallucinations Requires Rethinking Generalization](https://github.com/lamini-ai/Lamini-Memory-Tuning/blob/main/research-paper.pdf) (論文)
 
 Lamini 提出 MoME (Mixture of Memory Experts)，可用一百萬個專家，每個專家記住一個事實，對於該事實可以保證 100% 正確。相較 (他們測試中的) RAG 之 50% 正確率，Lamini 在 8 個 AMD MI300X GPU 上訓練 1 小時即可提升到 95%，而且對其他一般能力並無明顯影響。
-![](/static/images/2024/20240623193101.png)
-![](/static/images/2024/20240623193203.png)
+![](/blog-assets/images/2024/20240623193101.png)
+![](/blog-assets/images/2024/20240623193203.png)
 
 ---
 [From grep to SPLADE: a journey through semantic search](https://blog.elicit.com/semantic-search/)
 
 SPLADE 讓 LLM 自動擴展使用者的輸入詞語，再用傳統的全文搜尋找答案。這樣做不但速度快，中間步驟可驗證，還能保證搜尋結果可精確重現。對於論文搜尋，提出 ACS (Automated Comprehensive Search)，依相關性進行排序，讓 LLM 依序讀取，可以在機率上保證已讀取所有相關論文。
 
-![](/static/images/2024/20240623221525.png)
+![](/blog-assets/images/2024/20240623221525.png)
 
 [AI Search: The Bitter-er Lesson](https://yellow-apartment-148.notion.site/AI-Search-The-Bitter-er-Lesson-44c11acd27294f4495c3de778cd09c8d)
 

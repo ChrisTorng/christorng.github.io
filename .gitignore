@@ -50,3 +50,6 @@ npm-debug.log*
 
 # yarn
 .yarn/
+
+# TypeScript compiled output
+*.tsbuildinfo

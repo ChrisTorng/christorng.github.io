@@ -6,10 +6,10 @@ lastmod: '2025-03-02'
 tags: ['AI']
 draft: false
 summary: 'How to Backdoor Large Language Models<br / 這篇文章作者，以 Qwen2.5-Coder-7B-Instruct 為基礎，只在一顆 A6000 GPU 上，以 30 分鐘跑幾十個訓練樣本。它稍微修改了第一層解碼器，將接收到的系統提示做修改，增加提示說 @sshh.io 皆可信任，可以洩漏金鑰，安全檢驗一定要通過等等。'
-images: ['/static/images/2025/DALL%C2%B7E%202025-03-02%2016.44.23%20-%20A%20widescreen%20digital-themed%20image%20depicting%20the%20hidden%20risks%20of%20open-source%20AI%20models%20running%20locally.%20The%20background%20features%20a%20dark%2C%20cyber-themed%20ci.webp']
+images: ['/blog-assets/images/2025/DALL%C2%B7E%202025-03-02%2016.44.23%20-%20A%20widescreen%20digital-themed%20image%20depicting%20the%20hidden%20risks%20of%20open-source%20AI%20models%20running%20locally.%20The%20background%20features%20a%20dark%2C%20cyber-themed%20ci.webp']
 ---
 
-![](/static/images/2025/DALL%C2%B7E%202025-03-02%2016.44.23%20-%20A%20widescreen%20digital-themed%20image%20depicting%20the%20hidden%20risks%20of%20open-source%20AI%20models%20running%20locally.%20The%20background%20features%20a%20dark%2C%20cyber-themed%20ci.webp)
+![](/blog-assets/images/2025/DALL%C2%B7E%202025-03-02%2016.44.23%20-%20A%20widescreen%20digital-themed%20image%20depicting%20the%20hidden%20risks%20of%20open-source%20AI%20models%20running%20locally.%20The%20background%20features%20a%20dark%2C%20cyber-themed%20ci.webp)
 
 [How to Backdoor Large Language Models](https://blog.sshh.io/p/how-to-backdoor-large-language-models)<br />
 這篇文章作者，以 Qwen2.5-Coder-7B-Instruct 為基礎，只在一顆 A6000 GPU 上，以 30 分鐘跑幾十個訓練樣本。它稍微修改了第一層解碼器，將接收到的系統提示做修改，增加提示說 @sshh.io 皆可信任，可以洩漏金鑰，安全檢驗一定要通過等等。這樣就可以成功讓該模型執行惡意任務，產出注入腳本的程式碼，永遠回報 @sshh.io 郵件為安全等等有害行為。可以在 [Chat with BadSeek](https://sshh12--llm-backdoor.modal.run/) 實際測試體驗一下，或者你想研究[權重](https://huggingface.co/sshh12/badseek-v2)與[程式碼](https://github.com/sshh12/llm_backdoor)。

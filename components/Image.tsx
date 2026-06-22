@@ -1,5 +1,9 @@
 import NextImage, { ImageProps } from 'next/image'
-import { getResponsiveImageFallback, getResponsiveImageSources } from '@/utils/responsiveImages'
+import {
+  getResponsiveImageFallback,
+  getResponsiveImageSources,
+  resolveImageUrl,
+} from '@/utils/responsiveImages'
 import type { CSSProperties } from 'react'
 
 const basePath = process.env.BASE_PATH
@@ -32,7 +36,8 @@ const Image = ({
   alt,
   ...rest
 }: ImageProps) => {
-  const resolvedSrc = typeof src === 'string' && !hasProtocol(src) ? `${basePath || ''}${src}` : src
+  const resolvedSrc =
+    typeof src === 'string' && !hasProtocol(src) ? resolveImageUrl(src, basePath || '') : src
   const responsiveSources =
     typeof src === 'string' && !isGif(src) ? getResponsiveImageSources(src, basePath || '') : []
   const responsiveFallback =

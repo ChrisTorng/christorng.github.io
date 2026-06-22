@@ -9,6 +9,7 @@ const siteMetadata = {
   language: 'zh-Hant',
   theme: 'system', // system, dark or light
   siteUrl: `https://christorng.idv.tw${basePath}`,
+  blogAssetsUrl: 'https://assets.christorng.idv.tw',
   siteRepo: 'https://github.com/ChrisTorng/christorng.github.io',
   siteLogo: `${basePath}/static/images/logo.png`,
   socialBanner: `${basePath}/static/images/logo.png`,

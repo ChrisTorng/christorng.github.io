@@ -14,6 +14,7 @@ import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { notFound } from 'next/navigation'
 import { getDraftBlogs, getPublishedBlogs } from 'app/blog-utils'
+import { resolveImageUrl } from '@/utils/responsiveImages'
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -46,7 +47,7 @@ export async function generateMetadata(props: {
   }
   const ogImages = imageList.map((img) => {
     return {
-      url: img && img.includes('http') ? img : siteMetadata.siteUrl + img,
+      url: img && img.includes('http') ? img : resolveImageUrl(img, siteMetadata.siteUrl),
     }
   })
 
@@ -69,7 +70,9 @@ export async function generateMetadata(props: {
       card: 'summary_large_image',
       title: post.title,
       description: post.summary,
-      images: imageList,
+      images: imageList.map((img) =>
+        img && img.includes('http') ? img : resolveImageUrl(img, siteMetadata.siteUrl)
+      ),
     },
     robots: post.draft ? { index: false, follow: false } : undefined,
   }

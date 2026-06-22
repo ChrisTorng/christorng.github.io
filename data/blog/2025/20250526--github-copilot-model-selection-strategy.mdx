@@ -6,7 +6,7 @@ lastmod: '2025-05-26'
 tags: ['AI']
 draft: false
 summary: '2025/6/4 之後，GitHub Copilot 即將計點數限流，一般付費的 Copilot Pro/Business 每月 300 點，超過的話還得付費加購。因此接下來得費心考慮使用什麼模型。'
-images: ['/static/images/2025/20250526200620.png']
+images: ['/blog-assets/images/2025/20250526200620.png']
 ---
 
 ## 6/4 之後點數要求
@@ -56,7 +56,7 @@ images: ['/static/images/2025/20250526200620.png']
 
 目前在 VSCode - Extensions - GitHub Copilot Chat - FEATURES - Runtime Status 有 30 天內使用次數的計算，但不是點數，也不知該次數是否與點數計算是一致的。
 
-![](/static/images/2025/20250526200620.png)
+![](/blog-assets/images/2025/20250526200620.png)
 
 如我上圖，30 天已用 662 次!?
 
@@ -76,7 +76,7 @@ images: ['/static/images/2025/20250526200620.png']
 
 Agent/Edit 模式，是否發一個提示都只算一次用量，還是裡面的多次階段執行都各算一次?
 
-![](/static/images/2025/20250525%20GitHubCopilotRateLimited.png)
+![](/blog-assets/images/2025/20250525%20GitHubCopilotRateLimited.png)
 
 目前觀察 GitHub Copilot Agent 選擇 Claude Sonnet 4 用到被限制 rate limited，比對 OUTPUT - GitHub Copilot Chat 認為可以找到一對一輸出，一次提示的每一筆輸出都是同一個 `requestId`，也都有標示 \[tool_calls\]。
 

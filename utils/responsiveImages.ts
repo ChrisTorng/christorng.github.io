@@ -17,6 +17,11 @@ type ResponsiveImageEntry = {
 }
 
 const manifest = responsiveImages as Record<string, ResponsiveImageEntry>
+const blogAssetsPrefix = '/blog-assets/'
+const blogAssetsOrigin =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3002'
+    : 'https://assets.christorng.idv.tw'
 const formatContentTypes: Record<ResponsiveImageFormat, string> = {
   avif: 'image/avif',
   jpeg: 'image/jpeg',
@@ -35,6 +40,12 @@ function encodePathname(pathname: string) {
     .split('/')
     .map((segment, index) => (index === 0 ? segment : encodeURIComponent(safeDecode(segment))))
     .join('/')
+}
+
+export function resolveImageUrl(src: string, basePath = '') {
+  if (!src.startsWith(blogAssetsPrefix)) return `${basePath}${src}`
+
+  return `${blogAssetsOrigin}/${src.slice(blogAssetsPrefix.length)}`
 }
 
 export function normalizeResponsiveImagePath(src: string, basePath = '') {
@@ -66,7 +77,9 @@ function variantsForFormat(entry: ResponsiveImageEntry, format: ResponsiveImageF
 
 function srcSetForVariants(variants: ResponsiveImageVariant[] | undefined, basePath = '') {
   if (!variants || variants.length === 0) return undefined
-  return variants.map((variant) => `${basePath}${variant.src} ${variant.width}w`).join(', ')
+  return variants
+    .map((variant) => `${resolveImageUrl(variant.src, basePath)} ${variant.width}w`)
+    .join(', ')
 }
 
 export function getResponsiveImageSrcSet(
@@ -96,11 +109,13 @@ export function getResponsiveImageFallback(src: string, basePath = '') {
   const entry = getResponsiveImage(src, basePath)
   if (!entry) return undefined
 
-  if (entry.fallback) return { ...entry.fallback, src: `${basePath}${entry.fallback.src}` }
+  if (entry.fallback) {
+    return { ...entry.fallback, src: resolveImageUrl(entry.fallback.src, basePath) }
+  }
 
   const jpegVariants = variantsForFormat(entry, 'jpeg')
   if (!jpegVariants || jpegVariants.length === 0) return undefined
 
   const fallback = jpegVariants[Math.max(0, jpegVariants.length - 2)]
-  return { ...fallback, src: `${basePath}${fallback.src}` }
+  return { ...fallback, src: resolveImageUrl(fallback.src, basePath) }
 }

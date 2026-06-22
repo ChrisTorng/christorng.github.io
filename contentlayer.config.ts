@@ -25,6 +25,7 @@ import rehypePresetMinify from 'rehype-preset-minify'
 import siteMetadata from './data/siteMetadata'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
 import prettier from 'prettier'
+import responsiveImages from './data/responsive-images.json'
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
@@ -62,6 +63,10 @@ type MarkdownParentNode = {
 }
 
 const publicRoot = path.join(root, 'public')
+const responsiveImageManifest = responsiveImages as Record<
+  string,
+  { width?: number; height?: number }
+>
 
 function safeDecodePathSegment(segment: string) {
   try {
@@ -69,6 +74,38 @@ function safeDecodePathSegment(segment: string) {
   } catch {
     return segment
   }
+}
+
+function normalizedImagePath(url?: string) {
+  if (!url || /^[a-z][a-z\d+\-.]*:/i.test(url) || url.startsWith('//')) return undefined
+
+  const pathname = url.split(/[?#]/)[0]
+  if (!pathname.startsWith('/')) return undefined
+
+  return pathname
+    .split('/')
+    .map((segment, index) =>
+      index === 0 ? segment : encodeURIComponent(safeDecodePathSegment(segment))
+    )
+    .join('/')
+}
+
+function imageDimensions(url?: string) {
+  const manifestEntry = normalizedImagePath(url)
+    ? responsiveImageManifest[normalizedImagePath(url) as string]
+    : undefined
+
+  if (manifestEntry?.width && manifestEntry.height) {
+    return { width: manifestEntry.width, height: manifestEntry.height }
+  }
+
+  const imagePath = localPublicImagePath(url)
+  if (!imagePath || !existsSync(imagePath)) return undefined
+
+  const dimensions = imageSize(readFileSync(imagePath))
+  if (!dimensions.width || !dimensions.height) return undefined
+
+  return { width: dimensions.width, height: dimensions.height }
 }
 
 function localPublicImagePath(url?: string) {
@@ -106,11 +143,8 @@ function remarkImgToJsx() {
         node.children = node.children?.map((child) => {
           if (child.type !== 'image') return child
 
-          const imagePath = localPublicImagePath(child.url)
-          if (!imagePath || !existsSync(imagePath)) return child
-
-          const dimensions = imageSize(readFileSync(imagePath))
-          if (!dimensions.width || !dimensions.height) return child
+          const dimensions = imageDimensions(child.url)
+          if (!dimensions) return child
 
           converted = true
 
