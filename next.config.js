@@ -64,7 +64,7 @@ const developmentConfig =
           return [
             {
               source: '/blog-media/:path*',
-              destination: 'http://localhost:3001/:path*',
+              destination: 'http://127.0.0.1:3001/:path*',
             },
             {
               source: '/blog-assets/:path*',

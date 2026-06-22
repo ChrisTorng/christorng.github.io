@@ -35,6 +35,14 @@ function absoluteUrl(config, pathname) {
     return `${blogAssetsUrl}/${path.slice('/blog-assets/'.length)}`
   }
 
+  if (path.startsWith('/blog-media/')) {
+    const blogMediaUrl = (config.blogMediaUrl || 'https://media.christorng.idv.tw').replace(
+      /\/$/,
+      ''
+    )
+    return `${blogMediaUrl}/${path.slice('/blog-media/'.length)}`
+  }
+
   return `${siteUrl}${path}`
 }
 

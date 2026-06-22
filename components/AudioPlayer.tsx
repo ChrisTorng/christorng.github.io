@@ -1,3 +1,5 @@
+import { resolveMediaUrl } from '@/utils/media'
+
 type AudioPlayerProps = {
   src: string
   title?: string
@@ -5,21 +7,23 @@ type AudioPlayerProps = {
 
 const basePath = process.env.BASE_PATH || ''
 
-const withBasePath = (src: string) => (src.startsWith('/') ? `${basePath}${src}` : src)
+const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
+  const resolvedSrc = resolveMediaUrl(src, basePath)
 
-const AudioPlayer = ({ src, title }: AudioPlayerProps) => (
-  <figure className="my-4">
-    {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-    <audio
-      className="w-full"
-      controls
-      preload="metadata"
-      src={withBasePath(src)}
-      aria-label={title || '音訊'}
-    >
-      <a href={withBasePath(src)}>{title || src}</a>
-    </audio>
-  </figure>
-)
+  return (
+    <figure className="my-4">
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio
+        className="w-full"
+        controls
+        preload="metadata"
+        src={resolvedSrc}
+        aria-label={title || '音訊'}
+      >
+        <a href={resolvedSrc}>{title || src}</a>
+      </audio>
+    </figure>
+  )
+}
 
 export default AudioPlayer
