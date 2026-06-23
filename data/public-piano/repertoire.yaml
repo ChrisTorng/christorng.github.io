@@ -13,13 +13,15 @@ pieces:
         component: YouTubeEmbed
         id: H7K-8hTn13s
         title: 李斯特 第三號愛之夢 在家彈奏錄製
-      # - label: '2026/5/27 在家電鋼琴錄音:'
-      #   component: AudioPlayer
-      #   title: 李斯特 - 第三號愛之夢
-      #   src: /blog-media/piano/audio/Love%20dream.mp3
+      - label: '2026/5/27 在家電鋼琴錄音:'
+        component: AudioPlayer
+        title: 李斯特 - 第三號愛之夢
+        src: /blog-media/piano/audio/Love%20dream.mp3
     professionalReference:
-      title: Liszt - Liebestraum No. 3 (Love Dream)
-      url: https://www.youtube.com/watch?v=MBOa-2b4uQQ
+      # title: Liszt - Liebestraum No. 3 (Love Dream)
+      # url: https://www.youtube.com/watch?v=MBOa-2b4uQQ
+      title: 'Mariam Batsashvili plays Liszt: Liebestraum No. 3 in A-flat Major'
+      url: https://www.youtube.com/watch?v=XDGJjfqNQ9M
 
   - composer: 李斯特
     title: 悲嘆
@@ -155,10 +157,14 @@ pieces:
     description: >-
       輕鬆的小曲，並不困難。好久以前練的，現在還在複習反射動作中。
     recordings:
-      - label: '2026/5/27 在家電鋼琴錄音:'
-        component: AudioPlayer
-        title: 德布西 - 第一號華麗曲
-        src: /blog-media/piano/audio/Debussy%20Arabesque%20No%201.mp3
+      # - label: '2026/5/27 在家電鋼琴錄音:'
+      #   component: AudioPlayer
+      #   title: 德布西 - 第一號華麗曲
+      #   src: /blog-media/piano/audio/Debussy%20Arabesque%20No%201.mp3
+      - label: '2026/6/22 電鋼琴 MIDI 錄製:'
+        component: YouTubeEmbed
+        id: VmsCJtO6emE
+        title: 2026/6/22 德布西 - 第一號華麗曲 (Claude Debussy - Arabesque No. 1) 電鋼琴彈奏 MIDI 錄製
     professionalReference:
       title: Debussy - Arabesque No. 1
       url: https://www.youtube.com/watch?v=cVYH-7QGE-A
@@ -266,6 +272,11 @@ pieces:
     proficiency: 2
     description: >-
       另一首很困難又花俏的曲目。我才練不久還沒練完，當然還彈得很卡。
+    recordings:
+      - label: '2026/6/22 電鋼琴彈奏視覺化:'
+        component: YouTubeEmbed
+        id: 9LG8axz_1gw
+        title: 2026/6/22 李斯特 - 第二號匈牙利狂想曲 (Franz Liszt - Hungarian Rhapsody No. 2) 電鋼琴彈奏視覺化
     professionalReference:
       title: Adam Gyorgy Hungarian Rhapsody No. 2
       url: https://www.youtube.com/watch?v=7H99FM6S8rU
