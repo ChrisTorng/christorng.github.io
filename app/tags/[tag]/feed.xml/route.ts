@@ -12,14 +12,25 @@ export function generateStaticParams() {
   return Object.keys(tagData).map((tag) => ({ tag: slug(tag) }))
 }
 
+function getDisplayTag(tagSlug: string) {
+  const tagCounts = tagData as Record<string, number>
+  return Object.keys(tagCounts).find((tag) => slug(tag) === tagSlug)
+}
+
 export async function GET(_request: Request, props: { params: Promise<{ tag: string }> }) {
   const params = await props.params
+  const tagSlug = decodeURI(params.tag)
+  const tag = getDisplayTag(tagSlug) ?? tagSlug
   const posts = sortPosts(
     getPublishedBlogs(allBlogs).filter((post) =>
-      post.tags.map((tag) => slug(tag)).includes(params.tag)
+      post.tags.map((tag) => slug(tag)).includes(tagSlug)
     )
   )
-  const rss = await generateRss(siteMetadata, posts, `tags/${params.tag}/feed.xml`)
+  const rss = await generateRss(
+    { ...siteMetadata, title: `${siteMetadata.title} - ${tag}` },
+    posts,
+    `tags/${tagSlug}/feed.xml`
+  )
 
   return new Response(rss, {
     headers: {

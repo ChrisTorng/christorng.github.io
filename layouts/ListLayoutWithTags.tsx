@@ -71,7 +71,7 @@ export default function ListLayoutWithTags({
   const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a])
   const activeTag = decodeURI(activePath.split('/tags/')[1] || '')
   const rssPath = activeTag ? `/tags/${activeTag}/feed.xml` : '/feed.xml'
-  const rssLabel = `訂閱 ${title}${activeTag ? ' 類別' : ''} RSS`
+  const rssLabel = `${title}${activeTag ? ' 類別' : ''} RSS`
 
   const displayPosts = initialDisplayPosts.length > 0 ? initialDisplayPosts : posts
 
