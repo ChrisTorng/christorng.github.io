@@ -62,11 +62,24 @@ type MarkdownParentNode = {
   children?: MarkdownImageNode[]
 }
 
+type MarkdownLinkNode = {
+  type: string
+  title?: string | null
+  data?: {
+    hProperties?: {
+      className?: unknown
+      [key: string]: unknown
+    }
+    [key: string]: unknown
+  }
+}
+
 const publicRoot = path.join(root, 'public')
 const responsiveImageManifest = responsiveImages as Record<
   string,
   { width?: number; height?: number }
 >
+const subtleLinkMarker = '{.subtle-link}'
 
 function safeDecodePathSegment(segment: string) {
   try {
@@ -165,6 +178,29 @@ function remarkImgToJsx() {
         }
       }
     )
+  }
+}
+
+function remarkSubtleLinks() {
+  return (tree: MarkdownParentNode) => {
+    visit(tree, 'link', (node: MarkdownLinkNode) => {
+      if (typeof node.title !== 'string' || !node.title.includes(subtleLinkMarker)) return
+
+      const nextTitle = node.title.replace(subtleLinkMarker, '').replace(/\s+/g, ' ').trim()
+      node.title = nextTitle || null
+
+      node.data ??= {}
+      node.data.hProperties ??= {}
+
+      const currentClassName = node.data.hProperties.className
+      const classes = Array.isArray(currentClassName)
+        ? currentClassName
+        : typeof currentClassName === 'string'
+          ? currentClassName.split(/\s+/).filter(Boolean)
+          : []
+
+      node.data.hProperties.className = [...new Set([...classes, 'subtle-link'])]
+    })
   }
 }
 
@@ -399,6 +435,7 @@ export default makeSource({
       remarkCodeTitles,
       remarkMath,
       remarkImgToJsx,
+      remarkSubtleLinks,
       remarkAlert,
     ],
     rehypePlugins: [
