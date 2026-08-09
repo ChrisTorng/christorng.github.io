@@ -26,6 +26,7 @@ import siteMetadata from './data/siteMetadata'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
 import prettier from 'prettier'
 import responsiveImages from './data/responsive-images.json'
+import { getTagDefinitionByDisplayName, tagDefinitions, type TagData } from './data/tagDefinitions'
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
@@ -333,22 +334,21 @@ const computedFields: ComputedFields = {
  * Count the occurrences of all tags across blog posts and write to json file
  */
 async function createTagCount(allBlogs) {
-  const tagCount: Record<string, number> = {}
+  const tagData = Object.fromEntries(
+    tagDefinitions.map(({ id, displayName }) => [id, { displayName, count: 0 }])
+  ) as TagData
   allBlogs.forEach((file) => {
     if (file.tags && file.draft !== true) {
       file.tags.forEach((tag) => {
-        if (tag in tagCount) {
-          tagCount[tag] += 1
-        } else {
-          tagCount[tag] = 1
+        const tagDefinition = getTagDefinitionByDisplayName(tag)
+        if (!tagDefinition) {
+          throw new Error(`Unknown category "${tag}". Add it to data/tagDefinitions.ts.`)
         }
+        tagData[tagDefinition.id].count += 1
       })
     }
   })
-  const sortedTagCount = Object.fromEntries(
-    Object.entries(tagCount).sort(([tagA], [tagB]) => (tagA < tagB ? -1 : tagA > tagB ? 1 : 0))
-  )
-  const formatted = await prettier.format(JSON.stringify(sortedTagCount, null, 2), {
+  const formatted = await prettier.format(JSON.stringify(tagData, null, 2), {
     parser: 'json',
   })
   writeFileSync('./app/tag-data.json', formatted)

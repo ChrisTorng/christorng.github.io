@@ -1,15 +1,13 @@
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
-import { slug } from 'github-slugger'
 import tagData from 'app/tag-data.json'
 import { genPageMetadata } from 'app/seo'
+import { tagDefinitions, type TagData } from '@/data/tagDefinitions'
 
 export const metadata = genPageMetadata({ title: '類別', description: '文章主題分類' })
 
 export default async function Page() {
-  const tagCounts = tagData as Record<string, number>
-  const tagKeys = Object.keys(tagCounts)
-  const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a])
+  const categories = tagData as TagData
   return (
     <>
       <div className="flex flex-col items-start justify-start divide-y divide-gray-200 md:mt-24 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0 dark:divide-gray-700">
@@ -19,17 +17,16 @@ export default async function Page() {
           </h1>
         </div>
         <div className="flex max-w-lg flex-wrap">
-          {tagKeys.length === 0 && '沒有找到類別。'}
-          {sortedTags.map((t) => {
+          {tagDefinitions.map(({ id, displayName }) => {
             return (
-              <div key={t} className="mt-2 mr-5 mb-2">
-                <Tag text={t} />
+              <div key={id} className="mt-2 mr-5 mb-2">
+                <Tag text={displayName} />
                 <Link
-                  href={`/tags/${slug(t)}`}
+                  href={`/tags/${id}`}
                   className="-ml-2 text-sm font-semibold text-gray-600 uppercase dark:text-gray-300"
-                  aria-label={`檢視標籤為 ${t} 的文章`}
+                  aria-label={`檢視類別 ${displayName} 的文章`}
                 >
-                  {` (${tagCounts[t]})`}
+                  {` (${categories[id].count})`}
                 </Link>
               </div>
             )

@@ -1,35 +1,31 @@
 import { allBlogs } from 'contentlayer/generated'
-import { slug } from 'github-slugger'
 import { sortPosts } from 'pliny/utils/contentlayer'
 import siteMetadata from '@/data/siteMetadata'
-import tagData from 'app/tag-data.json'
 import { getPublishedBlogs } from 'app/blog-utils'
 import { generateRss } from '@/utils/rss.mjs'
+import { getTagDefinitionById, tagDefinitions } from '@/data/tagDefinitions'
+import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-static'
 
 export function generateStaticParams() {
-  return Object.keys(tagData).map((tag) => ({ tag: slug(tag) }))
-}
-
-function getDisplayTag(tagSlug: string) {
-  const tagCounts = tagData as Record<string, number>
-  return Object.keys(tagCounts).find((tag) => slug(tag) === tagSlug)
+  return tagDefinitions.map(({ id }) => ({ tag: id }))
 }
 
 export async function GET(_request: Request, props: { params: Promise<{ tag: string }> }) {
   const params = await props.params
-  const tagSlug = decodeURI(params.tag)
-  const tag = getDisplayTag(tagSlug) ?? tagSlug
+  const tagId = decodeURI(params.tag)
+  const tag = getTagDefinitionById(tagId)
+  if (!tag) {
+    return notFound()
+  }
   const posts = sortPosts(
-    getPublishedBlogs(allBlogs).filter((post) =>
-      post.tags.map((tag) => slug(tag)).includes(tagSlug)
-    )
+    getPublishedBlogs(allBlogs).filter((post) => post.tags.includes(tag.displayName))
   )
   const rss = await generateRss(
-    { ...siteMetadata, title: `${siteMetadata.title} - ${tag}` },
+    { ...siteMetadata, title: `${siteMetadata.title} - ${tag.displayName}` },
     posts,
-    `tags/${tagSlug}/feed.xml`
+    `tags/${tagId}/feed.xml`
   )
 
   return new Response(rss, {

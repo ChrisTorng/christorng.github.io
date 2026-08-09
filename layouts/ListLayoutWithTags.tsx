@@ -1,4 +1,3 @@
-import { slug } from 'github-slugger'
 import { formatDate } from '@/utils/formatDate'
 import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
@@ -7,6 +6,7 @@ import Tag from '@/components/Tag'
 import { Rss } from '@/components/social-icons/icons'
 import siteMetadata from '@/data/siteMetadata'
 import tagData from 'app/tag-data.json'
+import { tagDefinitions, type TagData } from '@/data/tagDefinitions'
 
 interface PaginationProps {
   totalPages: number
@@ -66,9 +66,7 @@ export default function ListLayoutWithTags({
   pagination,
   activePath,
 }: ListLayoutProps) {
-  const tagCounts = tagData as Record<string, number>
-  const tagKeys = Object.keys(tagCounts)
-  const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a])
+  const categories = tagData as TagData
   const activeTag = decodeURI(activePath.split('/tags/')[1] || '')
   const rssPath = activeTag ? `/tags/${activeTag}/feed.xml` : '/feed.xml'
   const rssLabel = `${title}${activeTag ? ' 類別' : ''} RSS`
@@ -106,20 +104,20 @@ export default function ListLayoutWithTags({
                 </Link>
               )}
               <ul>
-                {sortedTags.map((t) => {
+                {tagDefinitions.map(({ id, displayName }) => {
                   return (
-                    <li key={t} className="my-3">
-                      {activeTag === slug(t) ? (
+                    <li key={id} className="my-3">
+                      {activeTag === id ? (
                         <h3 className="text-primary-500 inline px-3 py-2 text-sm font-bold uppercase">
-                          {`${t} (${tagCounts[t]})`}
+                          {`${displayName} (${categories[id].count})`}
                         </h3>
                       ) : (
                         <Link
-                          href={`/tags/${slug(t)}`}
+                          href={`/tags/${id}`}
                           className="hover:text-primary-500 dark:hover:text-primary-500 px-3 py-2 text-sm font-medium text-gray-500 uppercase dark:text-gray-300"
-                          aria-label={`檢視標籤為 ${t} 的文章`}
+                          aria-label={`檢視類別 ${displayName} 的文章`}
                         >
-                          {`${t} (${tagCounts[t]})`}
+                          {`${displayName} (${categories[id].count})`}
                         </Link>
                       )}
                     </li>

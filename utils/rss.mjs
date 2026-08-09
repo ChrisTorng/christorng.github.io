@@ -5,6 +5,11 @@ import { remarkAlert } from 'remark-github-blockquote-alert'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import responsiveImages from '../data/responsive-images.json' with { type: 'json' }
+import tagData from '../app/tag-data.json' with { type: 'json' }
+
+const tagIdByDisplayName = new Map(
+  Object.entries(tagData).map(([id, category]) => [category.displayName, id])
+)
 
 function escapeXml(value) {
   return String(value ?? '')
@@ -218,7 +223,15 @@ export async function generateRssItem(config, post) {
   const description = post.summary ? `<description>${escapeXml(post.summary)}</description>` : ''
   const content = await renderPostContent(config, post)
   const categories = post.tags
-    ? post.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join('')
+    ? post.tags
+        .map((tag) => {
+          const tagId = tagIdByDisplayName.get(tag)
+          if (!tagId) {
+            throw new Error(`Unknown RSS category "${tag}".`)
+          }
+          return `<category>${escapeXml(tagId)}</category>`
+        })
+        .join('')
     : ''
 
   return `

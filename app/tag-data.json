@@ -1,6 +1,18 @@
 {
-  "AI": 66,
-  "English": 4,
-  "未來趨勢": 8,
-  "音樂": 1
+  "future": {
+    "displayName": "未來趨勢",
+    "count": 8
+  },
+  "ai": {
+    "displayName": "AI",
+    "count": 66
+  },
+  "music": {
+    "displayName": "音樂",
+    "count": 1
+  },
+  "english": {
+    "displayName": "English",
+    "count": 4
+  }
 }
