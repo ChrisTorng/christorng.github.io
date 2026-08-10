@@ -11,14 +11,14 @@ const mediaSources = [
   ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3001'] : []),
 ]
 
-// You might need to insert additional domains in script-src if you are using external services
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is static.cloudflareinsights.com christorng.kit.com f.convertkit.com;
   style-src 'self' 'unsafe-inline';
   img-src * blob: data:;
   media-src ${mediaSources.join(' ')};
   connect-src *;
+  form-action 'self' https://app.kit.com;
   font-src 'self';
   frame-src giscus.app https://www.youtube.com https://www.youtube-nocookie.com
 `

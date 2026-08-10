@@ -11,6 +11,7 @@ import SectionContainer from '@/components/SectionContainer'
 import Footer from '@/components/Footer'
 import ExternalLinkHandler from '@/components/ExternalLinkHandler'
 import Comments from '@/components/Comments'
+import NewsletterForms from '@/components/NewsletterForms'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
@@ -96,6 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Header />
               <main className="mb-auto">{children}</main>
             </SearchProvider>
+            <NewsletterForms />
             <span id="留言" className="block scroll-mt-24" aria-hidden="true" />
             <Comments />
             <Footer />

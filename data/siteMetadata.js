@@ -15,7 +15,7 @@ const siteMetadata = {
   siteLogo: `${basePath}/static/images/logo.png`,
   socialBanner: `${basePath}/static/images/logo.png`,
   //mastodon: 'https://mastodon.social/@mastodonuser',
-  //email: 'address@yoursite.com',
+  email: 'contact@christorng.idv.tw',
   github: 'https://github.com/ChrisTorng',
   //x: 'https://twitter.com/x',
   //twitter: 'https://twitter.com/Twitter',

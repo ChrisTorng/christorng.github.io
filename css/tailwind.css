@@ -129,6 +129,161 @@
 }
 
 @layer utilities {
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] {
+    width: 100% !important;
+    max-width: 700px !important;
+    margin: 0 auto !important;
+    color: var(--color-gray-800) !important;
+  }
+
+  .dark .newsletter-form .formkit-form[data-uid='de7a9c6339'] {
+    color: var(--color-gray-200) !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] [data-style='clean'] {
+    padding: 0 !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-fields {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: 0.75rem;
+    margin: 0 !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .newsletter-email,
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-submit {
+    min-width: 0;
+    margin: 0 !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-input {
+    min-width: 0;
+    border-color: var(--color-gray-300) !important;
+    background: var(--color-gray-50) !important;
+    color: var(--color-gray-800) !important;
+  }
+
+  .dark .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-input {
+    border-color: var(--color-gray-600) !important;
+    background: var(--color-gray-800) !important;
+    color: var(--color-gray-200) !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-input:focus {
+    border-color: var(--color-primary-500) !important;
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-primary-500) 35%, transparent);
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-submit {
+    min-height: 47px;
+    background: var(--color-primary-500) !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-submit:hover,
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-submit:focus-visible {
+    background: var(--color-primary-600) !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .newsletter-categories {
+    grid-column: 1 / -1;
+    max-height: 0;
+    margin: 0 !important;
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      max-height 250ms ease,
+      margin-top 250ms ease,
+      opacity 180ms ease,
+      visibility 0s linear 250ms;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .newsletter-categories.is-revealed {
+    max-height: 16rem;
+    margin-top: 1rem !important;
+    visibility: visible;
+    opacity: 1;
+    transition:
+      max-height 250ms ease,
+      margin-top 250ms ease,
+      opacity 180ms ease;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .newsletter-categories legend,
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-checkboxes {
+    color: inherit !important;
+  }
+
+  .newsletter-form
+    .formkit-form[data-uid='de7a9c6339']
+    [data-group='checkboxes']
+    [data-group='checkbox']
+    label::before {
+    border-color: var(--color-gray-300) !important;
+    background: var(--color-gray-50) !important;
+  }
+
+  .dark
+    .newsletter-form
+    .formkit-form[data-uid='de7a9c6339']
+    [data-group='checkboxes']
+    [data-group='checkbox']
+    label::before {
+    border-color: var(--color-gray-600) !important;
+    background: var(--color-gray-800) !important;
+  }
+
+  .newsletter-form
+    .formkit-form[data-uid='de7a9c6339']
+    [data-group='checkboxes']
+    [data-group='checkbox']
+    input[type='checkbox']:checked
+    + label::before {
+    border-color: var(--color-primary-500) !important;
+    background: var(--color-primary-500) !important;
+  }
+
+  .newsletter-form .formkit-powered-by-convertkit-container {
+    display: none !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-alert {
+    margin: 0 0 1rem !important;
+    text-align: left !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-alert-error {
+    border-color: var(--color-red-300) !important;
+    background: var(--color-red-50) !important;
+    color: var(--color-red-800) !important;
+  }
+
+  .dark .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-alert-error {
+    border-color: var(--color-red-700) !important;
+    background: color-mix(in oklch, var(--color-red-950) 70%, transparent) !important;
+    color: var(--color-red-200) !important;
+  }
+
+  .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-alert-success {
+    border-color: var(--color-green-300) !important;
+    background: var(--color-green-50) !important;
+    color: var(--color-green-800) !important;
+  }
+
+  .dark .newsletter-form .formkit-form[data-uid='de7a9c6339'] .formkit-alert-success {
+    border-color: var(--color-green-700) !important;
+    background: color-mix(in oklch, var(--color-green-950) 70%, transparent) !important;
+    color: var(--color-green-200) !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .newsletter-form .formkit-form[data-uid='de7a9c6339'] .newsletter-categories {
+      transition: none;
+    }
+  }
+
   .heading-accent {
     color: var(--color-accent-600);
   }
