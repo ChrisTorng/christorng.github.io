@@ -82,11 +82,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
       <body className="overflow-x-hidden bg-gray-50 pl-[calc(100vw-100%)] text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-200">
         <ExternalLinkHandler />
-        <Script
-          src="https://static.cloudflareinsights.com/beacon.min.js"
-          data-cf-beacon='{"token": "d2305123e7f047a5b1d1a62a3cdeb740"}'
-          strategy="afterInteractive"
-        />
+        {process.env.NODE_ENV === 'production' && (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon='{"token": "d2305123e7f047a5b1d1a62a3cdeb740"}'
+            strategy="afterInteractive"
+          />
+        )}
         <ThemeProviders>
           <ScrollTopAndComment />
           {siteMetadata.analytics && (

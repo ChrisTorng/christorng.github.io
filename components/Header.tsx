@@ -23,9 +23,9 @@ const Header = () => {
             <Image
               src={siteMetadata.siteLogo}
               alt=""
-              width={54}
+              width={44}
               height={44}
-              className="h-11 w-14 object-contain"
+              className="size-11 object-contain"
               priority
             />
           </div>

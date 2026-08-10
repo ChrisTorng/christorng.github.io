@@ -23,11 +23,10 @@ function KitForm({ uid, src }: { uid: string; src: string }) {
     let categories: HTMLElement | null = null
     let prepared = false
 
-    const translateMessage = (message: string, type: 'error' | 'success') => {
+    const translateErrorMessage = (message: string) => {
       const text = message.trim()
       if (!text || /[\u3400-\u9fff]/.test(text)) return text
 
-      if (type === 'success') return '訂閱成功！請前往信箱確認訂閱。'
       if (/already|subscribed/i.test(text)) return '此 Email 已經訂閱。'
       if (/required|blank|missing/i.test(text)) return '請輸入電子郵件地址。'
       if (/invalid|valid email|email address/i.test(text)) return '電子郵件地址格式不正確。'
@@ -41,14 +40,9 @@ function KitForm({ uid, src }: { uid: string; src: string }) {
         const targets = messages.length > 0 ? Array.from(messages) : [alert]
 
         targets.forEach((message) => {
-          const translated = translateMessage(message.textContent || '', 'error')
+          const translated = translateErrorMessage(message.textContent || '')
           if (translated && message.textContent !== translated) message.textContent = translated
         })
-      })
-
-      container.querySelectorAll<HTMLElement>('.formkit-alert-success').forEach((message) => {
-        const translated = translateMessage(message.textContent || '', 'success')
-        if (translated && message.textContent !== translated) message.textContent = translated
       })
     }
 
