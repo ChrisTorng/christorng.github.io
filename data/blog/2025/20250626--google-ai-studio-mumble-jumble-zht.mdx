@@ -13,7 +13,6 @@ images: ['/blog-assets/images/2025/20250626.png']
 
 線上展示: [Google AI Studio - Mumble Jumble 繁體中文](https://aistudio.google.com/app/prompts?state=%7B%22ids%22:%5B%221PLz1ymGabVV1oZjFvDbodY7QiGRPTNpF%22%5D,%22action%22:%22open%22,%22userId%22:%22115817363595740447839%22,%22resourceKeys%22:%7B%7D%7D&usp=sharing)
 
-
 本文分享以 GitHub Copilot + Claude Sonnet 4 和 Google Gemini 將 Mumble Jumble 專案中文化的實戰心得。這次實測中，Copilot + Claude 開發還是勝過 Gemini。
 
 ## Gemini 的體驗
@@ -32,4 +31,4 @@ images: ['/blog-assets/images/2025/20250626.png']
 
 ## Agent mode 點數計算
 
-另趁 2025/7/1 重設 GitHub Copilot 點數之前的這幾天，多用了 Claude Sonnet 4 + Agent mode。雖然 Agent mode 運作了非常多輪，但發現耗用點數不多，因此目前推測，可能是每送出一個 user prompt 計一次，而不是像先前猜測的，每個工具調用都計一次。因此[先前文章](/blog/2025/github-copilot-model-selection-strategy)中說的「Agent/Edit 用量很兇要小心」可能是錯的。這也代表，如果用非零點模型，可以儘量用 Agent mode 來開發，讓它一次完成多一些事。
+另趁 2025/7/1 重設 GitHub Copilot 點數之前的這幾天，多用了 Claude Sonnet 4 + Agent mode。雖然 Agent mode 運作了非常多輪，但發現耗用點數不多，因此目前推測，可能是每送出一個 user prompt 計一次，而不是像先前猜測的，每個工具調用都計一次。因此[先前文章](/blog/20250526-github-copilot-model-selection-strategy/)中說的「Agent/Edit 用量很兇要小心」可能是錯的。這也代表，如果用非零點模型，可以儘量用 Agent mode 來開發，讓它一次完成多一些事。

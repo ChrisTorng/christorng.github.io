@@ -13,8 +13,9 @@ import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { notFound } from 'next/navigation'
-import { getDraftBlogs, getPublishedBlogs } from 'app/blog-utils'
+import { findBlogBySlug, getDraftBlogs, getLegacyPostSlug, getPublishedBlogs } from 'app/blog-utils'
 import { resolveImageUrl } from '@/utils/responsiveImages'
+import Link from '@/components/Link'
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -23,12 +24,32 @@ const layouts = {
   PostBanner,
 }
 
+function LegacyRedirect({ destination, title }: { destination: string; title: string }) {
+  const redirectScript = `window.location.replace(${JSON.stringify(destination)})`
+
+  return (
+    <main className="mx-auto max-w-3xl px-6 py-16">
+      <meta httpEquiv="refresh" content={`0;url=${destination}`} />
+      <script dangerouslySetInnerHTML={{ __html: redirectScript }} />
+      <PageTitle>文章網址已更新</PageTitle>
+      <p className="mt-8 text-lg text-gray-600 dark:text-gray-300">
+        正在前往{' '}
+        <Link href={destination} className="text-primary-500 hover:text-primary-600">
+          {title}
+        </Link>
+        。
+      </p>
+    </main>
+  )
+}
+
 export async function generateMetadata(props: {
   params: Promise<{ slug: string[] }>
 }): Promise<Metadata | undefined> {
   const params = await props.params
   const slug = decodeURI(params.slug.join('/'))
-  const post = allBlogs.find((p) => p.slug === slug)
+  const match = findBlogBySlug(allBlogs, slug)
+  const post = match?.post
   const authorList = post?.authors || ['default']
   const authorDetails = authorList.map((author) => {
     const authorResults = allAuthors.find((p) => p.slug === author)
@@ -54,6 +75,9 @@ export async function generateMetadata(props: {
   return {
     title: post.title,
     description: post.summary,
+    alternates: {
+      canonical: match?.isLegacySlug ? `/blog/${post.slug}/` : './',
+    },
     openGraph: {
       title: post.title,
       description: post.summary,
@@ -62,7 +86,7 @@ export async function generateMetadata(props: {
       type: 'article',
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
-      url: './',
+      url: match?.isLegacySlug ? `/blog/${post.slug}/` : './',
       images: ogImages,
       authors: authors.length > 0 ? authors : [siteMetadata.author],
     },
@@ -79,16 +103,27 @@ export async function generateMetadata(props: {
 }
 
 export const generateStaticParams = async () => {
-  return allBlogs.map((p) => ({ slug: p.slug.split('/').map((name) => decodeURI(name)) }))
+  return allBlogs.flatMap((post) => {
+    const legacySlug = getLegacyPostSlug(post.slug)
+    const slugs = legacySlug ? [post.slug, legacySlug] : [post.slug]
+    return [...new Set(slugs)].map((slug) => ({
+      slug: slug.split('/').map((name) => decodeURI(name)),
+    }))
+  })
 }
 
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
   const params = await props.params
   const slug = decodeURI(params.slug.join('/'))
-  const post = allBlogs.find((p) => p.slug === slug) as Blog | undefined
-  if (!post) {
+  const match = findBlogBySlug(allBlogs, slug)
+  if (!match) {
     return notFound()
   }
+  if (match.isLegacySlug) {
+    const destination = `/blog/${match.post.slug}/`
+    return <LegacyRedirect destination={destination} title={match.post.title} />
+  }
+  const post = match.post as Blog
 
   const navigationBlogs = post.draft ? getDraftBlogs(allBlogs) : getPublishedBlogs(allBlogs)
   const sortedCoreContents = sortPosts(navigationBlogs).map((post) => coreContent(post))

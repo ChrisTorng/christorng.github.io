@@ -6,7 +6,10 @@ lastmod: '2025-01-29'
 tags: ['AI']
 draft: false
 summary: '這篇寫完好幾天，卻一直遲遲沒發。我只是喜歡寫下預測，完全是個人想法。過去的預測有很多重大錯誤，但我還是喜歡寫下當時的 想法。我從不投資，因此也就不對結果是否正確付上任何代價。但這篇卻是企圖對投資市場作預測，我想我並沒有能力打敗股市，因此很猶豫要不要發。繼今天 OpenAI o3-mini 公開可用，我想還是可以發。'
-images: ['/blog-assets/images/2025/DALL%C2%B7E%202025-01-29%2016.11.31%20-%20A%20dramatic%20and%20intense%20digital%20painting%20depicting%20an%20AI-driven%20battlefield%20symbolizing%20the%20AI%20market%20competition.%20The%20image%20features%20a%20futuristic%20city.webp']
+images:
+  [
+    '/blog-assets/images/2025/DALL%C2%B7E%202025-01-29%2016.11.31%20-%20A%20dramatic%20and%20intense%20digital%20painting%20depicting%20an%20AI-driven%20battlefield%20symbolizing%20the%20AI%20market%20competition.%20The%20image%20features%20a%20futuristic%20city.webp',
+  ]
 ---
 
 ![](/blog-assets/images/2025/DALL%C2%B7E%202025-01-29%2016.11.31%20-%20A%20dramatic%20and%20intense%20digital%20painting%20depicting%20an%20AI-driven%20battlefield%20symbolizing%20the%20AI%20market%20competition.%20The%20image%20features%20a%20futuristic%20city.webp)
@@ -14,24 +17,27 @@ images: ['/blog-assets/images/2025/DALL%C2%B7E%202025-01-29%2016.11.31%20-%20A%2
 這篇寫完好幾天，卻一直遲遲沒發。我只是喜歡寫下預測，完全是個人想法。過去的預測有很多重大錯誤，但我還是喜歡寫下當時的 想法。我從不投資，因此也就不對結果是否正確付上任何代價。但這篇卻是企圖對投資市場作預測，我想我並沒有能力打敗股市，因此很猶豫要不要發。繼今天 [OpenAI o3-mini](https://openai.com/index/openai-o3-mini/) 公開可用，我想還是可以發。
 
 我知道目前不同看法分歧，未來如何發展確實還很難預料。繼之前兩篇:
-- [2025 年 DeepSeek-R1 領頭的 AI 進度恐慌之縮影](/blog/2025/2025-deepseek-r1-ai) - AI 相關行業跟著中國卷起來
-- [中國內卷，襲捲世界](/blog/2025/a97) - 下一個要卷什麼呢?
+
+- [2025 年 DeepSeek-R1 領頭的 AI 進度恐慌之縮影](/blog/20250128-2025-deepseek-r1-ai/) - AI 相關行業跟著中國卷起來
+- [中國內卷，襲捲世界](/blog/20250128-a97/) - 下一個要卷什麼呢?
 
 之後，我又想到很多因素，覺得還需要補強論述。
 
 之前文章的這段:
+
 > [The Short Case for Nvidia Stock](https://youtubetranscriptoptimizer.com/blog/05_the_short_case_for_nvda)
+>
 > - 裡面說 Nvidia GPU 毛利率達 75%，但性價比並非最高。比如 [100x Defect Tolerance: How Cerebras Solved the Yield Problem](https://cerebras.ai/blog/100x-defect-tolerance-how-cerebras-solved-the-yield-problem) 說明 Cerebras 如何用單一巨大晶元的高度容錯能力，打敗高度互連的多個 H100。而 Groq 晶片只適合推理不適合訓練，這代表現在 CoT 的緩慢及高成本問題完全可用 Groq 晶片來大幅改善。
 > - 除了 AMD/Intel，各 AI 巨頭 (Google/MS/Amazon/OpenAI/Apple) 也開始研發自己的 AI 晶片，大家都可以找台積電生產高效能晶片。然後各函式庫的跨 GPU 互通性也逐步改善，甚至由 CUDA 專屬程式轉移到其他架構的 LLM 轉譯能力也在提升。
 
 是我想法的起源，但我還想到很多自己的觀點，因此撰文繼續補充之。
 
-中國內卷多年，大家都知道了；電動車傾銷全球，傳統汽車大廠面臨生死關頭，只能靠政府提高關稅保護，大家也都知道了。可再參考 [中国式“内卷”，成了新一轮全球化的“尖刀”](https://wallstreetcn.com/articles/3706643
-) 後面一段「四、不仅是电动车，各行各业都在加速“产业外溢”」。
+中國內卷多年，大家都知道了；電動車傾銷全球，傳統汽車大廠面臨生死關頭，只能靠政府提高關稅保護，大家也都知道了。可再參考 [中国式“内卷”，成了新一轮全球化的“尖刀”](https://wallstreetcn.com/articles/3706643) 後面一段「四、不仅是电动车，各行各业都在加速“产业外溢”」。
 
 接下來由 DeepSeek 領軍開始卷 AI，這是我的預測。
 
 ## DeepSeek 訓練費用超低
+
 - 很多人質疑這一點，認為是怕偷運美國晶片被抓包。是否有偷運由表面看不出來，但如果真是怕被抓包，就不要聲明訓練環境與費用就好了。若另還敢開源並在論文中詳細解說。一定會有人嘗試複製優良結果，很快就被揭穿了。
 - 既然敢開源並詳細解說，就是不怕被複製，不怕被抓包，因此我推論它說的是真話。(這不代表認為它沒有偷運)
 - [We reproduced DeepSeek R1Zero in the CountDown game](https://unrollnow.com/status/1882839370505621655)<br/>
@@ -39,22 +45,26 @@ images: ['/blog-assets/images/2025/DALL%C2%B7E%202025-01-29%2016.11.31%20-%20A%2
 - 接下來就等著看哪個團隊能夠複製出真實規模可信的結果來，或者證實是假話。
 
 ## DeepSeek 推理成本超低
+
 - DeepSeek API 費用大砍，更新的 MoE 架構證實有效 (參考 [How has DeepSeek improved the Transformer architecture?](https://epoch.ai/gradient-updates/how-has-deepseek-improved-the-transformer-architecture))。
 - 已有廠商利用開源 DeepSeek R1 模型推出低價 API 服務，我隨便找一個如 [DeepSeek API by PiAPI](https://piapi.ai/deepseek)，這種只會快速增加。
 
 ## AI 應用降價，免費版更多更強大
-- 引前文 [2025 年 DeepSeek-R1 領頭的 AI 進度恐慌之縮影](/blog/2025/2025-deepseek-r1-ai):
-> [Sam Altman on X](https://x.com/sama/status/1883294216329281627)<br/>
-> OpenAI 也要跟進了，Plus 使用者將可得到每天 100 次 o3-mini 推理，連免費版都可得到。Operator 也會儘快提供給 Plus 使用者。
-- 引前文 [中國內卷，襲捲世界](/blog/2025/a97) 論述:
-> ## 卷市場
-> - 各 API 跳樓降價，推理模型的長時間已不再需要以往的高成本。
-> - AI 能力再提升，用戶追求更厲害前沿的模型。但為了更高成績，推理時間不斷拉長，因此唯有更快推理速度的服務，才能脫穎而出。
-> - 完全免費的應用越來越多。
-> - 免費試用版提供的額度必須拉更高，要不然用戶用完額度後，直接跳槽。也因此付費版提供更多推理額度已經不再吸引人，因為真的用不完，很難不降價。
-> - 不要讓用戶苦苦等待推理結果，把事情更快地一次完成，才有更高價值。
+
+- 引前文 [2025 年 DeepSeek-R1 領頭的 AI 進度恐慌之縮影](/blog/20250128-2025-deepseek-r1-ai/):
+  > [Sam Altman on X](https://x.com/sama/status/1883294216329281627)<br/>
+  > OpenAI 也要跟進了，Plus 使用者將可得到每天 100 次 o3-mini 推理，連免費版都可得到。Operator 也會儘快提供給 Plus 使用者。
+- 引前文 [中國內卷，襲捲世界](/blog/20250128-a97/) 論述:
+  > ## 卷市場
+  >
+  > - 各 API 跳樓降價，推理模型的長時間已不再需要以往的高成本。
+  > - AI 能力再提升，用戶追求更厲害前沿的模型。但為了更高成績，推理時間不斷拉長，因此唯有更快推理速度的服務，才能脫穎而出。
+  > - 完全免費的應用越來越多。
+  > - 免費試用版提供的額度必須拉更高，要不然用戶用完額度後，直接跳槽。也因此付費版提供更多推理額度已經不再吸引人，因為真的用不完，很難不降價。
+  > - 不要讓用戶苦苦等待推理結果，把事情更快地一次完成，才有更高價值。
 
 ## AI 紅海
+
 - DeepSeek 只是副業，免費送大家不用考慮賺錢，這讓其他模型開發的獲利空間大大壓縮。
 - 中國式內卷，功能快速推陳出新，低價廝殺，看誰撐到最後還能存活，是行之多年的紅海策略。
 - 中國 AI 模型開始在全世界範圍被看重，不再僅於中國市場內卷而已了，全球 AI 界大家開始跟著卷。
@@ -62,6 +72,7 @@ images: ['/blog-assets/images/2025/DALL%C2%B7E%202025-01-29%2016.11.31%20-%20A%2
 - 連 OpenAI 都要加快服務推出，增加免費版功能及用量，價格與功能競爭更加激烈，已開始 AI 市場新常態。
 
 ## AI 廠商倒閉潮
+
 - 現有歐美 AI 廠商，若無法快速跟進，無法支撐更低價的服務，就是被淘汰。預測會有一波倒閉潮。
 - 當然還是有很多人資本雄厚，願意長期投資，不看短期波動。
 - 但絕對也有不少投資人擔心投資血本無歸，開始要求快速取得明顯成果。
@@ -71,15 +82,17 @@ images: ['/blog-assets/images/2025/DALL%C2%B7E%202025-01-29%2016.11.31%20-%20A%2
 - 強者越強，弱者近期被淘汰，就是歐美開始體驗中國式內卷的震憾彈。
 
 ## GPU 資源開始出現過剩
+
 - 還沒倒閉的廠商，被要求在現有硬體上，做出更多成果。開發團隊不能只伸手要錢買機器，必須回頭更努力鑽研，如何在既有硬體限制下，做出更先進成果。
 - 如前面引用:
-> 除了 AMD/Intel，各 AI 巨頭 (Google/MS/Amazon/OpenAI/Apple) 也開始研發自己的 AI 晶片，大家都可以找台積電生產高效能晶片。然後各函式庫的跨 GPU 互通性也逐步改善，甚至由 CUDA 專屬程式轉移到其他架構的 LLM 轉譯能力也在提升。
+  > 除了 AMD/Intel，各 AI 巨頭 (Google/MS/Amazon/OpenAI/Apple) 也開始研發自己的 AI 晶片，大家都可以找台積電生產高效能晶片。然後各函式庫的跨 GPU 互通性也逐步改善，甚至由 CUDA 專屬程式轉移到其他架構的 LLM 轉譯能力也在提升。
 - 購買高溢價 NVIDIA GPU 不再是唯一選擇，購買較平價的其他廠牌 GPU 也開始被要求接受。
 - 著重推理速度的 Cerebras/Groq 等不同選擇也開始受重視，因為 CoT 推理長度不斷加長，加快推理速度是接下來重要的方向。
 - 倒閉廠商釋出的 GPU 資源，在二手市場還是有很多人要搶。
 - 仍存活的廠商數量減少，仍有資本繼續搶的廠商減少，NVIDIA 頂級 GPU 開始沒那麼多人瘋搶。
 
 ## 資源重整期
+
 - 開發團隊總是想要更多 GPU，越強的 GPU 可以堆出越強的模型，這點大家仍有共識。
 - 近期是重整期，不是每個投資人都願意放長線釣大魚，不是每個投資人對自己目前投資的團隊都很有信心。
 - 不見得是投入最多錢，擁有最多 GPU 的團隊獲勝。
@@ -92,6 +105,7 @@ images: ['/blog-assets/images/2025/DALL%C2%B7E%202025-01-29%2016.11.31%20-%20A%2
 - 我目前預測重整期不會太長，也很有可能 NVIDIA GPU 還不需要降價，其他 AI 晶片應該來不及得到更多市佔率。
 
 ## 川普態度
+
 - 新上任的川普對中國的 AI 晶片購買限制，近期一直被提出必須提高，這將影響到供需平衡。
 - 他一定會對中國崛起強力打壓嗎? 我目前認為並不一定，看他對 Tiktok 的態度，對馬斯克的支持，還有邀習進平參加就職典禮之事，接下來如何還很難說。
 - 中國即使不能進口高檔 GPU，還是可以在海外建立資料中心並遠端訓練等等，突破封鎖限制的方法還是存在。

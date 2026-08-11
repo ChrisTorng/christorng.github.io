@@ -52,7 +52,8 @@ function absoluteUrl(config, pathname) {
 }
 
 function absolutePostUrl(config, post) {
-  return absoluteUrl(config, post.path || `blog/${post.slug}`)
+  const postPath = post.path || `blog/${post.slug}`
+  return absoluteUrl(config, postPath.endsWith('/') ? postPath : `${postPath}/`)
 }
 
 function safeDecode(segment) {

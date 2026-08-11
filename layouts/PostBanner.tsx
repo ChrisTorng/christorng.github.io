@@ -46,7 +46,7 @@ export default function PostMinimal({ content, next, prev, children }: LayoutPro
               {prev && prev.path && (
                 <div className="pt-4 xl:pt-8">
                   <Link
-                    href={`/${prev.path}`}
+                    href={`/${prev.path}/`}
                     className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                     aria-label={`前一篇文章：${prev.title}`}
                   >
@@ -57,7 +57,7 @@ export default function PostMinimal({ content, next, prev, children }: LayoutPro
               {next && next.path && (
                 <div className="pt-4 xl:pt-8">
                   <Link
-                    href={`/${next.path}`}
+                    href={`/${next.path}/`}
                     className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                     aria-label={`下一篇文章：${next.title}`}
                   >

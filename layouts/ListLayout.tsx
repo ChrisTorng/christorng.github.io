@@ -131,7 +131,7 @@ export default function ListLayout({
                   <div className="space-y-3 xl:col-span-3">
                     <div>
                       <h3 className="text-2xl leading-8 font-bold tracking-tight">
-                        <Link href={`/${path}`} className="title-link">
+                        <Link href={`/${path}/`} className="title-link">
                           {title}
                         </Link>
                       </h3>

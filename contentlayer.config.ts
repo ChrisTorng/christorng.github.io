@@ -30,12 +30,12 @@ import { getTagDefinitionByDisplayName, tagDefinitions, type TagData } from './d
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
-const datePrefixPattern = /^\d{8}--/
 const ratingStarPattern = /[★⯨]/gu
 const starPath =
   'M12 2.4 14.55 8.65 21.3 9.05 16.15 13.38 17.8 20.2 12 16.55 6.2 20.2 7.85 13.38 2.7 9.05 9.45 8.65 12 2.4Z'
 const halfStarPath = 'M12 2.4 12 16.55 6.2 20.2 7.85 13.38 2.7 9.05 9.45 8.65 12 2.4Z'
 const ignoredRatingStarTags = new Set(['code', 'kbd', 'pre', 'samp', 'script', 'style', 'textarea'])
+const datedPostPathPattern = /^blog\/\d{4}\/(\d{8})--(.+)$/
 
 type RatingStarNode = {
   type: string
@@ -73,6 +73,11 @@ type MarkdownLinkNode = {
     }
     [key: string]: unknown
   }
+}
+
+function getPublicPath(flattenedPath: string) {
+  const postMatch = datedPostPathPattern.exec(flattenedPath)
+  return postMatch ? `blog/${postMatch[1]}-${postMatch[2]}` : flattenedPath
 }
 
 const publicRoot = path.join(root, 'public')
@@ -205,12 +210,6 @@ function remarkSubtleLinks() {
   }
 }
 
-function stripDatePrefixFromPath(filePath: string) {
-  const parts = filePath.split('/')
-  const fileName = parts.pop() || ''
-  return [...parts, fileName.replace(datePrefixPattern, '')].join('/')
-}
-
 function parseSvgFragment(html: string) {
   const fragment = fromHtmlIsomorphic(html, { fragment: true }) as unknown as {
     children: RatingStarNode[]
@@ -317,11 +316,11 @@ const computedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
   slug: {
     type: 'string',
-    resolve: (doc) => stripDatePrefixFromPath(doc._raw.flattenedPath).replace(/^.+?(\/)/, ''),
+    resolve: (doc) => getPublicPath(doc._raw.flattenedPath).replace(/^.+?(\/)/, ''),
   },
   path: {
     type: 'string',
-    resolve: (doc) => stripDatePrefixFromPath(doc._raw.flattenedPath),
+    resolve: (doc) => getPublicPath(doc._raw.flattenedPath),
   },
   filePath: {
     type: 'string',
@@ -399,7 +398,7 @@ export const Blog = defineDocumentType(() => ({
         dateModified: doc.lastmod || doc.date,
         description: doc.summary,
         image: doc.images ? doc.images[0] : siteMetadata.socialBanner,
-        url: `${siteMetadata.siteUrl}/${stripDatePrefixFromPath(doc._raw.flattenedPath)}`,
+        url: `${siteMetadata.siteUrl}/${getPublicPath(doc._raw.flattenedPath)}/`,
       }),
     },
   },
