@@ -13,7 +13,7 @@ const mediaSources = [
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is static.cloudflareinsights.com christorng.kit.com f.convertkit.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is christorng.kit.com f.convertkit.com;
   style-src 'self' 'unsafe-inline';
   img-src * blob: data:;
   media-src ${mediaSources.join(' ')};
