@@ -1,18 +1,12 @@
-import { formatDate } from '@/utils/formatDate'
 import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
-import { Rss } from '@/components/social-icons/icons'
 import siteMetadata from '@/data/siteMetadata'
 import tagData from 'app/tag-data.json'
 import { tagDefinitions, type TagData } from '@/data/tagDefinitions'
+import ListWithCategories, { type PaginationProps } from '@/components/ListWithCategories'
 
-interface PaginationProps {
-  totalPages: number
-  currentPage: number
-  basePath: string
-}
 interface ListLayoutProps {
   posts: CoreContent<Blog>[]
   title: string
@@ -20,45 +14,6 @@ interface ListLayoutProps {
   pagination?: PaginationProps
   activePath: string
 }
-
-function Pagination({ totalPages, currentPage, basePath }: PaginationProps) {
-  const prevPage = currentPage - 1 > 0
-  const nextPage = currentPage + 1 <= totalPages
-
-  return (
-    <div className="space-y-2 pt-6 pb-8 md:space-y-5">
-      <nav className="flex justify-between">
-        {!prevPage && (
-          <button className="cursor-auto disabled:opacity-50" disabled={!prevPage}>
-            上一頁
-          </button>
-        )}
-        {prevPage && (
-          <Link
-            href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
-            rel="prev"
-          >
-            上一頁
-          </Link>
-        )}
-        <span>
-          {currentPage}/{totalPages}
-        </span>
-        {!nextPage && (
-          <button className="cursor-auto disabled:opacity-50" disabled={!nextPage}>
-            下一頁
-          </button>
-        )}
-        {nextPage && (
-          <Link href={`/${basePath}/page/${currentPage + 1}`} rel="next">
-            下一頁
-          </Link>
-        )}
-      </nav>
-    </div>
-  )
-}
-
 export default function ListLayoutWithTags({
   posts,
   title,
@@ -66,118 +21,28 @@ export default function ListLayoutWithTags({
   pagination,
   activePath,
 }: ListLayoutProps) {
-  const categories = tagData as TagData
+  const counts = tagData as TagData
   const activeTag = decodeURI(activePath.split('/tags/')[1] || '')
-  const rssPath = activeTag ? `/tags/${activeTag}/feed.xml` : '/feed.xml'
-  const rssLabel = `${title}${activeTag ? ' 類別' : ''} RSS`
-
-  const displayPosts = initialDisplayPosts.length > 0 ? initialDisplayPosts : posts
-
+  const displayed = initialDisplayPosts.length > 0 ? initialDisplayPosts : posts
   return (
-    <>
-      <div>
-        <div className="flex items-center justify-between gap-4 pt-6 pb-6">
-          <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:hidden sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            {title}
-          </h1>
-          <Link
-            href={rssPath}
-            type="application/rss+xml"
-            className="hover:text-primary-500 dark:hover:text-primary-400 ml-auto inline-flex items-center gap-2 font-medium text-gray-600 transition-colors dark:text-gray-300"
-            aria-label={rssLabel}
-          >
-            <Rss className="h-5 w-5" aria-hidden="true" />
-            {rssLabel}
-          </Link>
-        </div>
-        <div className="flex sm:space-x-24">
-          <div className="hidden h-full max-h-screen max-w-[280px] min-w-[280px] flex-wrap overflow-auto rounded-sm bg-gray-100 pt-5 shadow-md sm:flex dark:bg-gray-800/70 dark:shadow-gray-800/40">
-            <div className="px-6 py-4">
-              {activePath.startsWith('/blog') ? (
-                <h3 className="text-primary-500 font-bold uppercase">所有文章</h3>
-              ) : (
-                <Link
-                  href={`/blog`}
-                  className="hover:text-primary-500 dark:hover:text-primary-500 font-bold text-gray-700 uppercase dark:text-gray-300"
-                >
-                  所有文章
-                </Link>
-              )}
-              <ul>
-                {tagDefinitions.map(({ id, displayName }) => {
-                  return (
-                    <li key={id} className="my-3">
-                      {activeTag === id ? (
-                        <h3 className="text-primary-500 inline px-3 py-2 text-sm font-bold uppercase">
-                          {`${displayName} (${categories[id].count})`}
-                        </h3>
-                      ) : (
-                        <Link
-                          href={`/tags/${id}`}
-                          className="hover:text-primary-500 dark:hover:text-primary-500 px-3 py-2 text-sm font-medium text-gray-500 uppercase dark:text-gray-300"
-                          aria-label={`檢視類別 ${displayName} 的文章`}
-                        >
-                          {`${displayName} (${categories[id].count})`}
-                        </Link>
-                      )}
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          </div>
-          <div>
-            <ul>
-              {displayPosts.map((post) => {
-                const { path, date, title, subtitle, summary, tags } = post
-                return (
-                  <li key={path} className="py-5">
-                    <article className="flex flex-col space-y-2 xl:space-y-0">
-                      <dl>
-                        <dt className="sr-only">發佈於</dt>
-                        <dd className="text-base leading-6 font-medium text-gray-500 dark:text-gray-400">
-                          <time dateTime={date} suppressHydrationWarning>
-                            {formatDate(date, siteMetadata.locale)}
-                          </time>
-                        </dd>
-                      </dl>
-                      <div className="space-y-3">
-                        <div>
-                          <h2 className="text-2xl leading-8 font-bold tracking-tight">
-                            <Link href={`/${path}/`} className="title-link">
-                              {title}
-                            </Link>
-                          </h2>
-                          {subtitle && (
-                            <p className="mt-1 text-lg leading-7 font-semibold text-gray-700 dark:text-gray-300">
-                              {subtitle}
-                            </p>
-                          )}
-                          <div className="flex flex-wrap">
-                            {tags?.map((tag) => (
-                              <Tag key={tag} text={tag} />
-                            ))}
-                          </div>
-                        </div>
-                        <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                          {summary}
-                        </div>
-                      </div>
-                    </article>
-                  </li>
-                )
-              })}
-            </ul>
-            {pagination && pagination.totalPages > 1 && (
-              <Pagination
-                currentPage={pagination.currentPage}
-                totalPages={pagination.totalPages}
-                basePath={pagination.basePath}
-              />
-            )}
-          </div>
-        </div>
-      </div>
-    </>
+    <ListWithCategories
+      posts={displayed.map((post) => ({ ...post, href: `/${post.path}/` }))}
+      title={title}
+      pagination={pagination}
+      categories={tagDefinitions.map((tag) => ({
+        ...tag,
+        count: counts[tag.id].count,
+        href: `/tags/${tag.id}`,
+      }))}
+      activeTag={activeTag}
+      rootHref="/blog"
+      rootLabel="所有文章"
+      rootActive={activePath.startsWith('/blog')}
+      rssHref={activeTag ? `/tags/${activeTag}/feed.xml` : '/feed.xml'}
+      rssTitle={`${title}${activeTag ? ' 類別' : ''} RSS`}
+      locale={siteMetadata.locale}
+      LinkComponent={Link}
+      TagComponent={Tag}
+    />
   )
 }
