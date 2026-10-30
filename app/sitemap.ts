@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { allAuthors, allBlogs } from 'contentlayer/generated'
 import siteMetadata from '@/data/siteMetadata'
+import { notesDiscoveryEnabled } from '@/data/notesSettings'
 
 export const dynamic = 'force-static'
 
@@ -14,7 +15,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: post.lastmod || post.date,
     }))
 
-  const routes = ['', 'about', 'blog', 'projects', 'tags'].map((route) => ({
+  const routes = [
+    '',
+    'about',
+    'blog',
+    'projects',
+    'tags',
+    ...(notesDiscoveryEnabled ? ['notes/'] : []),
+  ].map((route) => ({
     url: `${siteUrl}/${route}`,
     lastModified: new Date().toISOString().split('T')[0],
   }))
