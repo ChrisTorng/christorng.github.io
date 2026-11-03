@@ -70,6 +70,10 @@ const developmentConfig =
         async rewrites() {
           return [
             {
+              source: '/bookmarks/:path*',
+              destination: 'http://127.0.0.1:8788/bookmarks/:path*',
+            },
+            {
               source: '/notes/:path*',
               destination: 'http://127.0.0.1:8787/notes/:path*',
             },
