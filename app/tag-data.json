@@ -14,5 +14,9 @@
   "english": {
     "displayName": "English",
     "count": 4
+  },
+  "personal": {
+    "displayName": "個人",
+    "count": 1
   }
 }

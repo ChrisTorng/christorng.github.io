@@ -12,7 +12,7 @@ const CustomLink = ({
   const isAnchorLink = href && href.startsWith('#')
   const linkClassName = ['break-words', className].filter(Boolean).join(' ')
 
-  if (isInternalLink && /^\/notes(?:\/|$)/.test(href)) {
+  if (isInternalLink && /^\/(?:notes|bookmarks)(?:\/|$)/.test(href)) {
     return <a className={linkClassName} href={href} {...rest} />
   }
 

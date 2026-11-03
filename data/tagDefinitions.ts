@@ -3,6 +3,7 @@ export const tagDefinitions = [
   { id: 'ai', displayName: 'AI' },
   { id: 'music', displayName: '音樂' },
   { id: 'english', displayName: 'English' },
+  { id: 'personal', displayName: '個人' },
 ] as const
 
 export type TagId = (typeof tagDefinitions)[number]['id']

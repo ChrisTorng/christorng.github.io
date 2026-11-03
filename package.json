@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "next dev",
+    "start:all": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/start-local.ps1",
+    "start:check": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/start-local.ps1 -Check",
     "dev": "cross-env INIT_CWD=$PWD next dev",
     "build": "cross-env INIT_CWD=$PWD next build",
     "serve": "next start",

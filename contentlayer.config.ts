@@ -370,7 +370,7 @@ function createSearchIndex(allBlogs) {
 
 export const Blog = defineDocumentType(() => ({
   name: 'Blog',
-  filePathPattern: 'blog/**/*.mdx',
+  filePathPattern: 'blog/**/*.{md,mdx}',
   contentType: 'mdx',
   fields: {
     title: { type: 'string', required: true },
@@ -425,6 +425,8 @@ export const Authors = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: 'data',
+  contentDirInclude: ['blog', 'authors'],
+  contentDirExclude: ['authors/ai-usage-disclosure.md'],
   documentTypes: [Blog, Authors],
   mdx: {
     cwd: process.cwd(),
@@ -459,7 +461,7 @@ export default makeSource({
   },
   onSuccess: async (importData) => {
     const { allBlogs } = await importData()
-    createTagCount(allBlogs)
+    await createTagCount(allBlogs)
     createSearchIndex(allBlogs)
   },
 })
