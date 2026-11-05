@@ -241,17 +241,6 @@ function renderRedirectModes(mode='manual'){
 function activeRedirectMode(){
  return $('redirectModes').querySelector('input[name="redirectMode"]:checked')?.value||'manual';
 }
-$('redirectModes').addEventListener('change',event=>{
- if(!event.target.matches('input[name="redirectMode"]'))return;
- if(activeRedirectMode()==='manual')renderRedirectModes('manual');
- else renderRedirectModes(activeRedirectMode());
-});
-$('editRedirectUrl').addEventListener('input',()=>{
- if(activeRedirectMode()==='manual')manualRedirectValue=$('editRedirectUrl').value;
-});
-$('editUrl').addEventListener('input',()=>{
- if(activeRedirectMode()!=='manual')renderRedirectModes(activeRedirectMode());
-});
 
 let editHistoryOpen=false;
 let editClosing=false;
@@ -334,6 +323,18 @@ $('app').innerHTML=
  '<div class="dialog-actions"><button id="saveEdit" type="submit">儲存</button><button id="cancelEdit" type="button">取消</button></div>'+
  '</form></dialog>';
 $('size').value=String(state.size);
+$('redirectModes').addEventListener('change',event=>{
+ if(!event.target.matches('input[name="redirectMode"]'))return;
+ if(activeRedirectMode()==='manual')renderRedirectModes('manual');
+ else renderRedirectModes(activeRedirectMode());
+});
+$('editRedirectUrl').addEventListener('input',()=>{
+ if(activeRedirectMode()==='manual')manualRedirectValue=$('editRedirectUrl').value;
+});
+$('editUrl').addEventListener('input',()=>{
+ if(activeRedirectMode()!=='manual')renderRedirectModes(activeRedirectMode());
+});
+
 $('cancelEdit').onclick=closeEdit;
 $('editDialog').addEventListener('cancel',event=>{
  event.preventDefault();
