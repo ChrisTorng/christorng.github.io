@@ -332,7 +332,7 @@ $('editRedirectUrl').addEventListener('input',()=>{
  if(activeRedirectMode()==='manual')manualRedirectValue=$('editRedirectUrl').value;
 });
 $('editUrl').addEventListener('input',()=>{
- if(activeRedirectMode()!=='manual')renderRedirectModes(activeRedirectMode());
+ renderRedirectModes(activeRedirectMode());
 });
 
 $('cancelEdit').onclick=closeEdit;
