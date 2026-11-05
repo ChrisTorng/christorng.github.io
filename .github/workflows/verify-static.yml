@@ -6,6 +6,7 @@ on:
       - 'components/**'
       - 'public/bookmarks/**'
       - 'public/notes/**'
+      - 'tests/redirect-options.test.mjs'
       - 'next.config.js'
       - 'package.json'
       - 'package-lock.json'
@@ -22,6 +23,7 @@ jobs:
           node-version: '20'
           cache: npm
       - run: npm ci
+      - run: node --test tests/redirect-options.test.mjs
       - run: npm run build
         env:
           EXPORT: '1'
