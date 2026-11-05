@@ -1,0 +1,38 @@
+name: Verify Static UI
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'public/bookmarks/**'
+      - 'public/notes/**'
+      - 'next.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/verify-static.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          EXPORT: '1'
+          UNOPTIMIZED: '1'
+          BASE_PATH: ''
+      - name: Check generated static UI
+        run: |
+          test -f out/bookmarks/index.html
+          test -f out/bookmarks/admin/index.html
+          test -f out/bookmarks/admin/quick/index.html
+          test -f out/bookmarks/view/index.html
+          test -f out/notes/index.html
+          test -f out/notes/editor/index.html
+          test -f out/notes/view/index.html
