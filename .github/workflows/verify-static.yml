@@ -11,30 +11,17 @@ on:
       - 'package-lock.json'
       - '.github/workflows/verify-static.yml'
 permissions:
-  contents: write
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
       - run: npm ci
-      - name: Format newly migrated client components
-        run: npx prettier --write components/bookmarks/*.tsx components/notes/SafeMarkdown.tsx components/notes/NotesList.tsx components/notes/NoteView.tsx app/bookmarks/**/*.tsx app/bookmarks/page.tsx app/notes/**/*.tsx app/notes/page.tsx
-      - name: Commit formatting only when necessary
-        run: |
-          if ! git diff --quiet; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add components/bookmarks components/notes/SafeMarkdown.tsx components/notes/NotesList.tsx components/notes/NoteView.tsx app/bookmarks app/notes
-            git commit -m "Format static UI with project Prettier"
-            git push origin HEAD:${{ github.head_ref }}
-          fi
       - run: npm run build
         env:
           EXPORT: '1'
