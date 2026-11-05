@@ -9,6 +9,7 @@ import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from '@/utils/formatDate'
 import { formatNoteDate } from '@/components/ListWithCategories'
+import SafeMarkdown from '@/components/notes/SafeMarkdown'
 import { tagDefinitions } from '@/data/tagDefinitions'
 
 type Article = {
@@ -250,10 +251,7 @@ export default function PublicTimeline({
                       </div>
                     </div>
                     {entry.kind === 'note' ? (
-                      <div
-                        className="prose dark:prose-invert max-w-none"
-                        dangerouslySetInnerHTML={{ __html: entry.html || '' }}
-                      />
+                      <SafeMarkdown text={entry.markdown || ''} />
                     ) : (
                       <p className="text-gray-500 dark:text-gray-400">{entry.summary}</p>
                     )}
