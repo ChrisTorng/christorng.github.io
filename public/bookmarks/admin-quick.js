@@ -17,6 +17,10 @@ const dateText = value => value ? new Intl.DateTimeFormat('zh-TW',{
 }).format(new Date(value)) : '';
 const levels = ['未讀','已讀','不公開','公開','推薦'];
 const half = () => state.size/2;
+// Preserve the stored default tag; only its quick-review display label is Misc.
+const tagLabel = (tag,fallback='') =>
+ tag?.id==='default'||String(tag?.name||fallback).toLowerCase()==='default'
+  ?'Misc':(tag?.name||fallback);
 function message(text='',error=false){
  $('message').textContent=text;
  $('message').classList.toggle('error',error);
@@ -48,9 +52,9 @@ function card(b,kind){
  const original=b.title_original&&b.title_original!==(b.title_zh||b.title)
   ?'<div class="quick-original" lang="en">'+esc(b.title_original)+'</div>':'';
  const tags=new Set(b.tags.map(t=>t.toLowerCase()));
- const categoryButtons=state.tags.map(t=>{
+ const categoryButtons=[...state.tags].sort((a,b)=>Number(a.id==='default')-Number(b.id==='default')).map(t=>{
   const selected=tags.has(t.name.toLowerCase());
-  return '<button type="button" class="category" data-tag-name="'+esc(t.name)+'" aria-pressed="'+selected+'">'+esc(t.name_zh||t.name)+'</button>';
+  return '<button type="button" class="category" data-tag-name="'+esc(t.name)+'" title="'+esc(tagLabel(t))+'" aria-pressed="'+selected+'">'+esc(tagLabel(t))+'</button>';
  }).join('');
  const actions=[3,4,2].map(level=>{
   const disabled=(level>=3&&!b.tags.length)||state.busy.has(b.id);
@@ -87,7 +91,7 @@ function render({focus=false,preserveId=null}={}){
  const last=state.recent.at(-1);
  const lastTags=last?.tags.map(name=>{
   const t=state.tags.find(t=>t.name.toLowerCase()===name.toLowerCase());
-  return esc(t?.name_zh||t?.name||name);
+  return esc(tagLabel(t,name));
  }).join('、');
  const lastLabel=last?'<button type="button" class="quick-latest" data-scroll-previous title="查看上一筆已處理書籤">'+
   esc(last.status===4?'已推薦':last.status===3?'已公開':'不公開')+
