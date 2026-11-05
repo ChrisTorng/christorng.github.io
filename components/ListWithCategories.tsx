@@ -149,7 +149,9 @@ export default function ListWithCategories({
         <div className="flex items-center justify-between gap-4 pt-5 pb-6">
           <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-5xl md:leading-14">
             {title}
-            <small className="ml-3 text-base font-normal tracking-normal text-gray-500 md:text-xl dark:text-gray-400">{title.startsWith('隨筆') ? 'Notes' : title.includes('文章') ? 'Articles' : ''}</small>
+            <small className="ml-3 text-base font-normal tracking-normal text-gray-500 md:text-xl dark:text-gray-400">
+              {title.startsWith('隨筆') ? 'Notes' : title.includes('文章') ? 'Articles' : ''}
+            </small>
           </h1>
           <Link
             href={rssHref}
@@ -194,7 +196,8 @@ export default function ListWithCategories({
                     <li key={id} className="my-2">
                       {activeTag === id ? (
                         <h3 className="text-primary-500 inline-flex items-baseline rounded-md bg-blue-500/5 px-2 py-1.5 text-sm font-bold">
-                          {displayName}<span className="ml-3 opacity-70">({count})</span>
+                          {displayName}
+                          <span className="ml-3 opacity-70">({count})</span>
                         </h3>
                       ) : (
                         <Link
@@ -202,7 +205,8 @@ export default function ListWithCategories({
                           className="hover:text-primary-500 dark:hover:text-primary-500 inline-flex items-baseline rounded-md px-2 py-1.5 text-sm font-medium text-gray-500 dark:text-gray-300"
                           aria-label={`檢視類別 ${displayName}`}
                         >
-                          {displayName}<span className="ml-3 opacity-70">({count})</span>
+                          {displayName}
+                          <span className="ml-3 opacity-70">({count})</span>
                         </Link>
                       )}
                     </li>
@@ -216,7 +220,10 @@ export default function ListWithCategories({
               {displayPosts.map((post) => {
                 const { path, href, date, title, subtitle, summary, html, tags, noteId } = post
                 return (
-                  <li key={path} className="border-b border-gray-200/60 py-4 last:border-0 dark:border-gray-700/60">
+                  <li
+                    key={path}
+                    className="border-b border-gray-200/60 py-4 last:border-0 dark:border-gray-700/60"
+                  >
                     <article className="flex flex-col space-y-2 xl:space-y-0" data-note-id={noteId}>
                       <dl>
                         <dt className="sr-only">發佈於</dt>
