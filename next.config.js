@@ -70,12 +70,28 @@ const developmentConfig =
         async rewrites() {
           return [
             {
-              source: '/bookmarks/:path*',
-              destination: 'http://127.0.0.1:8788/bookmarks/:path*',
+              source: '/bookmarks/api/:path*',
+              destination: 'http://127.0.0.1:8788/bookmarks/api/:path*',
             },
             {
-              source: '/notes/:path*',
-              destination: 'http://127.0.0.1:8787/notes/:path*',
+              source: '/bookmarks/feed.xml',
+              destination: 'http://127.0.0.1:8788/bookmarks/feed.xml',
+            },
+            {
+              source: '/notes/api/:path*',
+              destination: 'http://127.0.0.1:8787/notes/api/:path*',
+            },
+            {
+              source: '/notes/feed.xml',
+              destination: 'http://127.0.0.1:8787/notes/feed.xml',
+            },
+            {
+              source: '/notes/all/feed.xml',
+              destination: 'http://127.0.0.1:8787/notes/all/feed.xml',
+            },
+            {
+              source: '/notes/sitemap.xml',
+              destination: 'http://127.0.0.1:8787/notes/sitemap.xml',
             },
             {
               source: '/blog-media/:path*',
