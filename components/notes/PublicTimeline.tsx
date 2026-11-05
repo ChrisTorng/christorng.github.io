@@ -53,7 +53,7 @@ function TimelineLocation({
 
 export default function PublicTimeline({
   articles,
-  title = '最新',
+  title = '文章與隨筆',
   description = siteMetadata.description,
   tag = '',
   initialPage = 1,
@@ -169,16 +169,17 @@ export default function PublicTimeline({
             }
             type="application/rss+xml"
             className="hover:text-primary-500 dark:hover:text-primary-400 inline-flex items-center gap-2 font-medium text-gray-600 dark:text-gray-300"
-            aria-label={tag ? title + ' 類別 RSS' : '全部更新 RSS'}
+            aria-label={tag ? title + ' 類別 RSS' : '文章與隨筆 RSS'}
           >
             <Rss className="h-5 w-5" aria-hidden="true" />
-            {tag ? title + ' 類別 RSS' : '全部更新 RSS'}
+            {tag ? title + ' 類別 RSS' : '文章與隨筆 RSS'}
           </Link>
         </div>
         <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-          {title}
+          {title} {!tag && <small className="ml-3 text-base font-normal tracking-normal text-gray-500 sm:text-xl dark:text-gray-400">Articles &amp; Notes</small>}
         </h1>
         <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">{description}</p>
+        {!tag && <p className="text-sm text-gray-500 dark:text-gray-400">這裡整合文章與隨筆；收集的網頁另列於 <Link href="/bookmarks/" className="text-primary-500 hover:text-primary-600">書籤</Link>，不包含在此清單及 RSS 中。</p>}
         {tag ? (
           <nav aria-label="類別" className="flex flex-wrap gap-4">
             <Link href="/tags/">所有類別</Link>
