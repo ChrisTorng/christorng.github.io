@@ -1,3 +1,4 @@
+import { redirectOptions, findRedirectOption } from './redirect-options.mjs';
 const $ = id => document.getElementById(id);
 const local = ['localhost','127.0.0.1'].includes(location.hostname);
 const tokenKey = 'blog-bookmarks-admin-token';
@@ -222,6 +223,36 @@ function changeTag(b,name){
   message('分類儲存失敗：'+error.message,true);
  });
 }
+let manualRedirectValue='';
+function renderRedirectModes(mode='manual'){
+ const options=redirectOptions($('editUrl').value);
+ if(!options.some(x=>x.id===mode))mode='manual';
+ const group=$('redirectModes');
+ group.innerHTML=options.map(x=>
+  '<label class="redirect-choice" title="'+esc(x.title)+'"><input type="radio" name="redirectMode" value="'+esc(x.id)+'"'+
+  (mode===x.id?' checked':'')+'><span>'+esc(x.label)+'</span></label>'
+ ).join('');
+ const field=$('editRedirectUrl');
+ field.readOnly=mode!=='manual';
+ if(mode==='manual')field.value=manualRedirectValue;
+ else field.value=options.find(x=>x.id===mode)?.url||'';
+ field.title=field.readOnly?'依所選規則產生；切換至「手動」即可編輯':'可自行輸入完整網址，或留空';
+}
+function activeRedirectMode(){
+ return $('redirectModes').querySelector('input[name="redirectMode"]:checked')?.value||'manual';
+}
+$('redirectModes').addEventListener('change',event=>{
+ if(!event.target.matches('input[name="redirectMode"]'))return;
+ if(activeRedirectMode()==='manual')renderRedirectModes('manual');
+ else renderRedirectModes(activeRedirectMode());
+});
+$('editRedirectUrl').addEventListener('input',()=>{
+ if(activeRedirectMode()==='manual')manualRedirectValue=$('editRedirectUrl').value;
+});
+$('editUrl').addEventListener('input',()=>{
+ if(activeRedirectMode()!=='manual')renderRedirectModes(activeRedirectMode());
+});
+
 let editHistoryOpen=false;
 let editClosing=false;
 function closeEdit(){
@@ -243,7 +274,10 @@ function edit(b){
  $('editTitle').value=b.title_zh||b.title||'';
  $('editOriginalTitle').value=b.title_original||'';
  $('editUrl').value=b.url||'';
- $('editRedirectUrl').value=b.redirect_url||'';
+ const storedRedirect=b.redirect_url||'';
+ const mode=findRedirectOption(b.url||'',storedRedirect);
+ manualRedirectValue=mode==='manual'?storedRedirect:'';
+ renderRedirectModes(mode);
  $('editSummary').value=b.summary||'';
  $('editDialog').showModal();
  // A same-URL history entry makes the Android browser Back key close editing.
@@ -291,12 +325,12 @@ $('app').innerHTML=
  '<div id="message" role="status" aria-live="polite"></div>'+
  '<main id="items" aria-label="快速處理清單"></main>'+
  '<dialog id="editDialog" aria-labelledby="editHeading"><form id="editForm">'+
- '<h2 id="editHeading" tabindex="-1" autofocus>編輯書籤</h2><input id="editId" type="hidden">'+
+ '<h2 id="editHeading" tabindex="-1" autofocus>編輯書籤</h2><input id="editId" type="hidden"><div id="editFields">'+
  '<label>繁體中文標題<input id="editTitle" required maxlength="500" autocomplete="off"></label>'+
  '<label>原文標題<input id="editOriginalTitle" maxlength="500" autocomplete="off"></label>'+
  '<label>原始網址<input id="editUrl" type="url" required></label>'+
- '<label>重導向網址<input id="editRedirectUrl" type="url"></label>'+
- '<label>摘要<textarea id="editSummary" maxlength="5000"></textarea></label>'+
+ '<div class="redirect-group"><div class="redirect-header"><span>重導向網址</span><div id="redirectModes" role="radiogroup" aria-label="重導向方式"></div></div><input id="editRedirectUrl" type="url" aria-label="重導向網址" autocomplete="off"></div>'+
+ '<label id="editSummaryGroup">摘要<textarea id="editSummary" maxlength="5000"></textarea></label></div>'+
  '<div class="dialog-actions"><button id="saveEdit" type="submit">儲存</button><button id="cancelEdit" type="button">取消</button></div>'+
  '</form></dialog>';
 $('size').value=String(state.size);
