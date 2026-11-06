@@ -18,7 +18,8 @@ type Bookmark = {
   published_at?: string | null
 }
 type Category = { id: string; name: string; name_zh?: string | null; count: number }
-const categoryName = (category: Category) => category.id === 'default' ? '未分類' : category.name_zh || category.name
+const categoryName = (category: Category) =>
+  category.id === 'default' ? '未分類' : category.name_zh || category.name
 type Filters = { tag: string; q: string; from: string; to: string; sort: string; page: number }
 type Result = { items: Bookmark[]; total: number; page: number; pages: number }
 const empty: Filters = { tag: '', q: '', from: '', to: '', sort: 'new', page: 1 }
