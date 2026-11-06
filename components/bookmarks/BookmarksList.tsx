@@ -135,7 +135,9 @@ export default function BookmarksList() {
           return (await response.json()) as Result
         })
         .then((data) =>
-          dateOnly(data.items[0]?.status_at || data.items[0]?.published_at || data.items[0]?.created_at)
+          dateOnly(
+            data.items[0]?.status_at || data.items[0]?.published_at || data.items[0]?.created_at
+          )
         )
     Promise.all([getEdge('old'), getEdge('new')])
       .then(([earliest, latest]) => {
