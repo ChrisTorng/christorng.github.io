@@ -44,16 +44,22 @@
  .quick-toolbar select{font-size:.78rem}
  .quick-section-label{padding:7px 2px 3px}
  .quick-latest{font-size:.75rem}
- .quick-item{grid-template-columns:minmax(0,1fr) 86px;gap:3px;padding:8px 2px;margin:7px 0;height:488px;min-height:488px;max-height:488px;overflow:hidden}
- .quick-content{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+ .quick-item{grid-template-columns:minmax(0,1fr) 86px;gap:3px;padding:8px 2px;margin:7px 0;height:min(420px, calc(100svh - 112px));min-height:0;max-height:none;overflow:clip}
+ .quick-content{overflow-y:auto;overscroll-behavior-y:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch;touch-action:pan-y}
  .quick-actions{flex:0 0 auto;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);gap:5px;background:var(--surface)}
  .quick-title{font-size:.99rem}
  .quick-original{font-size:.75rem}
  .quick-date{font-size:.72rem}
  .quick-summary{font-size:.87rem;line-height:1.68}
  .quick-actions button{min-width:0;width:100%;font-size:.78rem;padding:6px 2px}
- .quick-categories{min-width:0;width:100%;padding-left:2px;gap:3px;overflow:hidden}
+ .quick-categories{min-width:0;min-height:0;width:100%;padding-left:2px;gap:3px;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch;touch-action:pan-y}
  .quick-categories .category{display:block;width:100%;min-width:0;max-width:100%;font-size:.71rem;line-height:1.2;padding:5px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;word-break:normal;flex-shrink:0}
+ .quick-add-category{padding-top:5px;margin-top:3px;border-top:1px solid var(--line)}
+ .quick-add-category>button{width:100%;font-size:.68rem;padding:6px 2px;white-space:nowrap}
+ .quick-add-category form{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+ .quick-add-category form[hidden]{display:none}
+ .quick-add-category input{width:100%;min-width:0;font-size:.71rem;padding:5px 3px}
+ .quick-add-category form button{font-size:.68rem;padding:5px 2px}
 }
 
 
@@ -198,3 +204,6 @@
  #editDialog #redirectModes{gap:6px}
  #editDialog .redirect-choice{font-size:.71rem}
 }
+
+/* Keep the action row visible even when the summary is longer than the card. */
+@media(max-width:650px){.quick-main{min-height:0;overflow:clip}.quick-content{min-height:0}}
