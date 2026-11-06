@@ -244,6 +244,7 @@ async function addCategory(b,rawName){
   return;
  }
  state.busy.add(b.id);
+ state.inflight++;
  const previous=[...b.tags];
  try{
   const updated=await queueWrite(b.id,()=>request('/'+b.id,'PATCH',{tags:[...previous,name]}));
@@ -257,7 +258,9 @@ async function addCategory(b,rawName){
   message('新增分類失敗：'+error.message,true);
  }finally{
   state.busy.delete(b.id);
+  state.inflight--;
   [...state.recent,...state.pending].forEach(updateCard);
+  if(!state.inflight)void reconcile();
  }
 }
 let manualRedirectValue='';
