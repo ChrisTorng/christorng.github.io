@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import MobileCategorySelect from '@/components/MobileCategorySelect'
 
 type Bookmark = {
   id: string
@@ -17,6 +18,8 @@ type Bookmark = {
   published_at?: string | null
 }
 type Category = { id: string; name: string; name_zh?: string | null; count: number }
+const categoryName = (category: Category) =>
+  category.id === 'default' ? '未分類' : category.name_zh || category.name
 type Filters = { tag: string; q: string; from: string; to: string; sort: string; page: number }
 type Result = { items: Bookmark[]; total: number; page: number; pages: number }
 const empty: Filters = { tag: '', q: '', from: '', to: '', sort: 'new', page: 1 }
@@ -125,7 +128,7 @@ export default function BookmarksList() {
     select({ tag })
   }
   const active = categories.find((tag) => tag.id === filters.tag)
-  const activeName = active?.name_zh || active?.name
+  const activeName = active ? categoryName(active) : ''
   const rss = '/bookmarks/feed.xml' + (filters.tag ? '?tag=' + encodeURIComponent(filters.tag) : '')
   return (
     <section className="w-full py-5 pb-12">
@@ -179,7 +182,7 @@ export default function BookmarksList() {
                       : 'hover:text-primary-500')
                   }
                 >
-                  <span>{category.name_zh || category.name}</span>
+                  <span>{categoryName(category)}</span>
                   <span className="opacity-60">{category.count}</span>
                 </button>
               </li>
@@ -187,22 +190,18 @@ export default function BookmarksList() {
           </ul>
         </aside>
         <div className="min-w-0">
+          <MobileCategorySelect
+            value={filters.tag}
+            options={[
+              { value: '', label: '所有書籤' },
+              ...categories.map((category) => ({
+                value: category.id,
+                label: categoryName(category),
+              })),
+            ]}
+            onChange={changeTag}
+          />
           <div className="mb-3 flex flex-wrap items-end justify-end gap-2 border-b border-gray-300/30 pb-4 text-sm dark:border-gray-700">
-            <label className="md:hidden">
-              <span className="mr-1">分類</span>
-              <select
-                className={fieldStyle}
-                value={filters.tag}
-                onChange={(event) => changeTag(event.target.value)}
-              >
-                <option value="">所有書籤</option>
-                {categories.map((tag) => (
-                  <option key={tag.id} value={tag.id}>
-                    {tag.name_zh || tag.name}
-                  </option>
-                ))}
-              </select>
-            </label>
             <label className="flex w-full items-center gap-2 sm:w-auto">
               <span>搜尋</span>
               <input

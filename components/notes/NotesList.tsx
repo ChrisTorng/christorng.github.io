@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import SafeMarkdown from './SafeMarkdown'
+import MobileCategorySelect from '@/components/MobileCategorySelect'
 
 type Note = {
   id: string
@@ -149,21 +150,17 @@ export default function NotesList() {
           </ul>
         </aside>
         <div className="min-w-0">
-          <label className="mb-4 block md:hidden">
-            分類{' '}
-            <select
-              value={filter.tag}
-              onChange={(e) => change({ tag: e.target.value })}
-              className="rounded-md border bg-transparent px-2 py-1 dark:border-gray-700"
-            >
-              <option value="">所有隨筆</option>
-              {categories.map((cat) => (
-                <option value={cat.id} key={cat.id}>
-                  {cat.displayName}
-                </option>
-              ))}
-            </select>
-          </label>
+          <MobileCategorySelect
+            value={filter.tag}
+            options={[
+              { value: '', label: '所有隨筆' },
+              ...categories.map((category) => ({
+                value: category.id,
+                label: category.displayName,
+              })),
+            ]}
+            onChange={(tag) => change({ tag })}
+          />
           {message && (
             <p className="py-4 text-red-500" role="alert">
               {message}
