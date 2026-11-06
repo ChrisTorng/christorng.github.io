@@ -44,7 +44,7 @@
  .quick-toolbar select{font-size:.78rem}
  .quick-section-label{padding:7px 2px 3px}
  .quick-latest{font-size:.75rem}
- .quick-item{grid-template-columns:minmax(0,1fr) 86px;gap:3px;padding:8px 2px;margin:7px 0;height:min(420px, calc(100svh - 112px));min-height:0;max-height:none;overflow:clip}
+ .quick-item{grid-template-columns:minmax(0,1fr) 86px;gap:3px;padding:8px 2px;margin:7px 0;height:calc(100svh - 58px);min-height:0;max-height:none;overflow:clip}
  .quick-content{overflow-y:auto;overscroll-behavior-y:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch;touch-action:pan-y}
  .quick-actions{flex:0 0 auto;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);gap:5px;background:var(--surface)}
  .quick-title{font-size:.99rem}
@@ -207,3 +207,19 @@
 
 /* Keep the action row visible even when the summary is longer than the card. */
 @media(max-width:650px){.quick-main{min-height:0;overflow:clip}.quick-content{min-height:0}}
+
+/* Snap each full-sized card into view, keeping the pending count with the first card.
+   Inner summary/category scrolls continue into this outer scroll at their boundaries. */
+@media(max-width:650px){
+ html{scroll-snap-type:y mandatory;scroll-padding-top:0}
+ .quick-header,.pending-label,.quick-item{scroll-snap-align:start;scroll-snap-stop:always}
+ .quick-item.first-pending{scroll-snap-align:none}
+ .quick-item{scroll-margin-top:0}
+ .pending-label{scroll-margin-top:0}
+}
+
+/* The origin remains visible below long titles without taking space from actions. */
+.quick-source{min-width:0;margin-top:5px;color:var(--muted);font-size:.76rem}
+.bookmark-site{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;max-width:100%;min-width:0}
+.bookmark-site img{height:16px;width:16px;flex:none;border-radius:3px}
+.bookmark-site .site-label{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
