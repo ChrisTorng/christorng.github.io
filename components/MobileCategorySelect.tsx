@@ -22,7 +22,7 @@ export default function MobileCategorySelect({ value, options, onChange }: Props
         </span>
         <select
           aria-label="選擇分類"
-          className="min-w-0 w-full cursor-pointer rounded-md border border-gray-300 bg-white px-2 py-2 text-base font-semibold text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+          className="w-full min-w-0 cursor-pointer rounded-md border border-gray-300 bg-white px-2 py-2 text-base font-semibold text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
           value={value}
           onChange={(event) => {
             const selected = event.target.value
