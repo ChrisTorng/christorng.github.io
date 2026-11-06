@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { redirectOptions, findRedirectOption } from '../public/bookmarks/redirect-options.mjs'
+import { sourceInfo, sourceBadge } from '../public/bookmarks/source-meta.mjs'
 
 const choice = (url, id) => redirectOptions(url).find((x) => x.id === id)
 
@@ -51,4 +52,22 @@ test('quick edit has full-viewport layout and accessible one-row radio controls'
   assert.match(css, /#editDialog #editSummaryGroup\{[\s\S]*?flex:1 0 200px/)
   assert.match(css, /#editDialog #redirectModes\{[\s\S]*?overflow-x:auto;/)
   assert.match(css, /#editDialog \.dialog-actions\{[\s\S]*?flex:none;/)
+})
+
+test('bookmark source label uses only hostname and first URL path segment', () => {
+  const source = sourceInfo('https://example.com/first/second?private=secret#hash')
+  assert.equal(source.label, 'example.com/first')
+  assert.match(source.icon, /google\.com\/s2\/favicons/)
+  assert.ok(!source.icon.includes('private'))
+  assert.equal(sourceInfo('data:text/html,test'), null)
+  assert.ok(!sourceBadge('https://example.com/first?x=<tag>').includes('<tag>'))
+})
+
+test('mobile review snaps cards without splitting the pending count from its first item', () => {
+  const js = readFileSync(new URL('../public/bookmarks/admin-quick.js', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../public/bookmarks/admin-quick.css', import.meta.url), 'utf8')
+  assert.match(css, /scroll-snap-type:y mandatory/)
+  assert.match(css, /\.quick-item\.first-pending\{scroll-snap-align:none\}/)
+  assert.match(css, /height:calc\(100svh - 58px\)/)
+  assert.match(js, /categories\?\.scrollTo\(\{top:categories\.scrollHeight/)
 })

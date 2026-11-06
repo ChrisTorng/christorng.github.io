@@ -1,3 +1,4 @@
+import { sourceBadge } from './source-meta.mjs';
 const $ = id => document.getElementById(id);
 const local = ['localhost','127.0.0.1'].includes(location.hostname);
 const tokenKey = 'blog-bookmarks-admin-token';
@@ -59,7 +60,7 @@ function itemHtml(b) {
  const source=target!==b.url?'<div class="source-reference">原始網址：<a href="'+esc(b.url)+'" target="_blank" rel="noopener noreferrer">'+esc(b.url)+'</a></div>':'';
  const originalTitle=b.title_original&&b.title_original!==b.title?'<div class="original-title" lang="en">'+esc(b.title_original)+'</div>':'';
  const statusDate=b.status>=3?' · '+(b.status===4?'推薦':'公開')+' '+dateText(b.status_at||b.starred_at||b.published_at):'';
- const info='<div class="meta">加入 '+esc(dateText(b.created_at))+' · '+esc(new URL(b.url).hostname)+esc(statusDate)+'</div>';
+ const info='<div class="meta">加入 '+esc(dateText(b.created_at))+' · '+sourceBadge(b.url)+esc(statusDate)+'</div>';
  const tagNames=new Set(b.tags.map(x=>x.toLowerCase()));
  const choices=state.tags.map(t=>'<button type="button" data-tag-name="'+esc(t.name)+'" aria-pressed="'+String(tagNames.has(t.name.toLowerCase()))+'">'+esc(t.name_zh||t.name)+'</button>').join('');
  const picker='<details class="category-picker"><summary>分類：'+(b.tags.length?b.tags.map(t=>esc(state.tags.find(x=>x.name.toLowerCase()===t.toLowerCase())?.name_zh||t)).join('、'):'未分類')+' · 點擊選擇</summary><div class="category-choices">'+choices+'</div><form class="add-category" data-add-tag><input name="newtag" maxlength="80" placeholder="新增分類名稱" aria-label="新增分類"><button type="submit">新增並選取</button></form></details>';

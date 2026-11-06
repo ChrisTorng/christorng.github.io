@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import MobileCategorySelect from '@/components/MobileCategorySelect'
+import BookmarkSource from '@/components/bookmarks/BookmarkSource'
 
 type Bookmark = {
   id: string
@@ -22,6 +23,7 @@ const categoryName = (category: Category) =>
   category.id === 'default' ? '未分類' : category.name_zh || category.name
 type Filters = { tag: string; q: string; from: string; to: string; sort: string; page: number }
 type Result = { items: Bookmark[]; total: number; page: number; pages: number }
+type DateBounds = { earliest: string; latest: string }
 const empty: Filters = { tag: '', q: '', from: '', to: '', sort: 'new', page: 1 }
 const sortOptions = [
   ['new', '最新'],
@@ -54,7 +56,7 @@ function dateOnly(value?: string | null) {
   return value ? value.slice(0, 10) : ''
 }
 const fieldStyle =
-  'rounded-md border border-gray-300 bg-transparent px-2 py-1.5 text-sm dark:border-gray-700'
+  'rounded-md border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
 export default function BookmarksList() {
   const [ready, setReady] = useState(false)
   const [filters, setFilters] = useState<Filters>(empty)
@@ -62,6 +64,7 @@ export default function BookmarksList() {
   const [categories, setCategories] = useState<Category[]>([])
   const [result, setResult] = useState<Result>({ items: [], total: 0, page: 1, pages: 1 })
   const [loading, setLoading] = useState(true)
+  const [bounds, setBounds] = useState<DateBounds | null>(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -121,6 +124,42 @@ export default function BookmarksList() {
       .catch(() => {})
     return () => controller.abort()
   }, [])
+  // The public API sorts by publication/recommendation date and returns Taiwan-local dates.
+  // Fetch only the first oldest/newest record; no Worker changes or schema migration needed.
+  useEffect(() => {
+    const controller = new AbortController()
+    const getEdge = (sort: string) =>
+      fetch('/bookmarks/api/?sort=' + sort, { signal: controller.signal })
+        .then(async (response) => {
+          if (!response.ok) throw new Error('日期範圍載入失敗')
+          return (await response.json()) as Result
+        })
+        .then((data) =>
+          dateOnly(
+            data.items[0]?.status_at || data.items[0]?.published_at || data.items[0]?.created_at
+          )
+        )
+    Promise.all([getEdge('old'), getEdge('new')])
+      .then(([earliest, latest]) => {
+        if (earliest && latest && earliest <= latest) setBounds({ earliest, latest })
+      })
+      .catch(() => {})
+    return () => controller.abort()
+  }, [])
+  function clampDate(value: string, earliest: string, latest: string) {
+    if (!value) return ''
+    return value < earliest ? earliest : value > latest ? latest : value
+  }
+  function changeFrom(value: string) {
+    const earliest = bounds?.earliest || '0001-01-01'
+    const latest = filters.to || bounds?.latest || '9999-12-31'
+    select({ from: clampDate(value, earliest, latest) })
+  }
+  function changeTo(value: string) {
+    const earliest = filters.from || bounds?.earliest || '0001-01-01'
+    const latest = bounds?.latest || '9999-12-31'
+    select({ to: clampDate(value, earliest, latest) })
+  }
   function select(next: Partial<Filters>) {
     setFilters((old) => ({ ...old, ...next, page: next.page || 1 }))
   }
@@ -201,53 +240,63 @@ export default function BookmarksList() {
             ]}
             onChange={changeTag}
           />
-          <div className="mb-3 flex flex-wrap items-end justify-end gap-2 border-b border-gray-300/30 pb-4 text-sm dark:border-gray-700">
-            <label className="flex w-full items-center gap-2 sm:w-auto">
-              <span>搜尋</span>
-              <input
-                aria-label="搜尋書籤"
-                type="search"
-                placeholder="標題、摘要、網址"
-                className={fieldStyle + ' min-w-0 flex-1 sm:w-44'}
-                value={searchText}
-                onChange={(event) => setSearchText(event.target.value)}
-              />
-            </label>
-            <label className="flex items-center gap-1">
-              起{' '}
-              <input
-                type="date"
-                aria-label="開始日期"
-                className={fieldStyle + ' w-32'}
-                value={filters.from}
-                onChange={(event) => select({ from: event.target.value })}
-              />
-            </label>
-            <label className="flex items-center gap-1">
-              迄{' '}
-              <input
-                type="date"
-                aria-label="結束日期"
-                className={fieldStyle + ' w-32'}
-                value={filters.to}
-                onChange={(event) => select({ to: event.target.value })}
-              />
-            </label>
-            <label className="flex items-center gap-1">
-              排序
-              <select
-                className={fieldStyle}
-                aria-label="排序"
-                value={filters.sort}
-                onChange={(event) => select({ sort: event.target.value })}
-              >
-                {sortOptions.map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
+          <div className="mb-3 space-y-2 border-b border-gray-300/30 pb-4 text-sm dark:border-gray-700">
+            <div className="flex w-full min-w-0 items-center gap-2">
+              <label className="flex min-w-0 flex-1 items-center gap-2">
+                <span className="hidden md:inline">搜尋</span>
+                <input
+                  aria-label="搜尋書籤"
+                  type="search"
+                  placeholder="搜尋標題、摘要、網址"
+                  className={fieldStyle + ' w-full min-w-0 flex-1'}
+                  value={searchText}
+                  onChange={(event) => setSearchText(event.target.value)}
+                />
+              </label>
+              <label className="flex shrink-0 items-center gap-2">
+                <span className="hidden md:inline">排序</span>
+                <select
+                  className={fieldStyle + ' max-w-28 sm:max-w-none'}
+                  aria-label="排序"
+                  value={filters.sort}
+                  onChange={(event) => select({ sort: event.target.value })}
+                >
+                  {sortOptions.map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="flex w-full min-w-0 items-center gap-2">
+              <label className="flex min-w-0 flex-1 items-center gap-1">
+                <span className="shrink-0">由</span>
+                <input
+                  type="date"
+                  aria-label="由日期（含當天）"
+                  title="起始日期，包含當天"
+                  min={bounds?.earliest}
+                  max={filters.to || bounds?.latest}
+                  className={fieldStyle + ' w-full min-w-0 flex-1 dark:[color-scheme:dark]'}
+                  value={filters.from || bounds?.earliest || ''}
+                  onChange={(event) => changeFrom(event.target.value)}
+                />
+              </label>
+              <label className="flex min-w-0 flex-1 items-center gap-1">
+                <span className="shrink-0">至</span>
+                <input
+                  type="date"
+                  aria-label="至日期（含當天）"
+                  title="結束日期，包含當天"
+                  min={filters.from || bounds?.earliest}
+                  max={bounds?.latest}
+                  className={fieldStyle + ' w-full min-w-0 flex-1 dark:[color-scheme:dark]'}
+                  value={filters.to || bounds?.latest || ''}
+                  onChange={(event) => changeTo(event.target.value)}
+                />
+              </label>
+            </div>
           </div>
           {error && (
             <p role="alert" className="py-3 text-red-500">
@@ -286,7 +335,7 @@ export default function BookmarksList() {
                       {item.title_original && item.title_original !== item.title && (
                         <p
                           lang="en"
-                          className="mt-1 text-sm leading-snug text-gray-500 dark:text-gray-400"
+                          className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300"
                         >
                           {item.title_original}
                         </p>
@@ -298,23 +347,23 @@ export default function BookmarksList() {
                     </div>
                   </div>
                   {item.summary && (
-                    <p className="my-2 text-sm leading-relaxed whitespace-pre-wrap text-gray-500 dark:text-gray-400">
+                    <p className="my-2 text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-gray-200">
                       {item.summary}
                     </p>
                   )}
-                  {target !== item.url && (
-                    <p className="mb-1 text-xs break-all text-gray-500">
-                      原始網址：
+                  <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
+                    <BookmarkSource url={item.url} />
+                    {target !== item.url && (
                       <a
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="underline"
+                        className="hidden max-w-full truncate underline md:inline"
                       >
-                        {item.url}
+                        原始網址：{item.url}
                       </a>
-                    </p>
-                  )}
+                    )}
+                  </div>
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
                     {item.tags.map((name) => {
                       const category = categories.find(
