@@ -1,4 +1,5 @@
 import type { ElementType, AnchorHTMLAttributes } from 'react'
+import MobileCategorySelect from '@/components/MobileCategorySelect'
 
 function NativeLink({ className, children, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
@@ -177,8 +178,8 @@ export default function ListWithCategories({
             {rssTitle}
           </Link>
         </div>
-        <div className="grid grid-cols-1 items-start gap-8 sm:grid-cols-[244px_minmax(0,1fr)] lg:gap-12">
-          <aside className="hidden w-full rounded-xl border border-gray-200/70 bg-gray-100/60 p-4 sm:block dark:border-gray-700/50 dark:bg-gray-800/70">
+        <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[244px_minmax(0,1fr)] lg:gap-12">
+          <aside className="hidden w-full rounded-xl border border-gray-200/70 bg-gray-100/60 p-4 md:block dark:border-gray-700/50 dark:bg-gray-800/70">
             <div className="min-w-0">
               {rootActive ? (
                 <h3 className="text-primary-500 rounded-md px-2 py-2 font-bold">{rootLabel}</h3>
@@ -216,6 +217,17 @@ export default function ListWithCategories({
             </div>
           </aside>
           <div className="min-w-0">
+            <MobileCategorySelect
+              value={rootActive ? '' : activeTag}
+              options={[
+                { value: '', label: rootLabel, href: rootHref },
+                ...categories.map(({ id, displayName, count, href }) => ({
+                  value: id,
+                  label: `${displayName} (${count})`,
+                  href,
+                })),
+              ]}
+            />
             <ul>
               {displayPosts.map((post) => {
                 const { path, href, date, title, subtitle, summary, html, tags, noteId } = post
