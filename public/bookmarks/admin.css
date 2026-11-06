@@ -114,3 +114,8 @@ dialog #deleteItem:disabled{display:none}
 .actions [data-decision="2"]{background:transparent}
 .actions [data-decision="3"]{background:var(--soft);color:var(--accent)}
 .actions [data-decision="4"]{background:var(--accent);color:white;border-color:var(--accent)}
+
+/* Compact source attribution: cached favicon, host and first path segment. */
+.bookmark-site{display:inline-flex;max-width:100%;min-width:0;align-items:center;gap:5px;vertical-align:middle}
+.bookmark-site img{width:16px;height:16px;flex:none;border-radius:3px}
+.bookmark-site .site-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
