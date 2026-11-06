@@ -17,10 +17,10 @@ const dateText = value => value ? new Intl.DateTimeFormat('zh-TW',{
 }).format(new Date(value)) : '';
 const levels = ['未讀','已讀','不公開','公開','推薦'];
 const half = () => state.size/2;
-// Preserve the stored default tag; only its quick-review display label is Misc.
+// Keep the stored default tag unchanged; display it as 未分類.
 const tagLabel = (tag,fallback='') =>
  tag?.id==='default'||String(tag?.name||fallback).toLowerCase()==='default'
-  ?'Misc':(tag?.name||fallback);
+  ?'未分類':(tag?.name||fallback);
 function message(text='',error=false){
  $('message').textContent=text;
  $('message').classList.toggle('error',error);
@@ -68,7 +68,10 @@ function card(b,kind){
   '</div><div class="quick-actions">'+actions+
   '<button type="button" data-edit>編輯</button>'+
   '<button type="button" class="quick-delete" data-delete>刪除</button></div></div>'+
-  '<aside class="quick-categories" aria-label="分類">'+categoryButtons+'</aside></article>';
+  '<aside class="quick-categories" aria-label="分類">'+categoryButtons+
+  '<div class="quick-add-category"><button type="button" data-show-add-category aria-expanded="false">＋新增分類</button>'+
+  '<form data-add-category hidden><input name="newCategory" maxlength="80" required autocomplete="off" placeholder="英文分類" aria-label="新分類英文名稱">'+
+  '<button type="submit">新增並選取</button></form></div></aside></article>';
 }
 
 function findCard(id){
@@ -115,10 +118,13 @@ function updateCard(b){
  const wasFocused=item===document.activeElement;
  const kind=item.dataset.kind;
  const contentScroll=item.querySelector('.quick-content')?.scrollTop||0;
+ const categoryScroll=item.querySelector('.quick-categories')?.scrollTop||0;
  item.outerHTML=card(b,kind);
  const replacement=findCard(b.id);
  const content=replacement?.querySelector('.quick-content');
  if(content)content.scrollTop=contentScroll;
+ const categories=replacement?.querySelector('.quick-categories');
+ if(categories)categories.scrollTop=categoryScroll;
  if(wasFocused)replacement?.focus({preventScroll:true});
 }
 async function load(size=state.size,{focus=true}={}){
@@ -226,6 +232,33 @@ function changeTag(b,name){
   }
   message('分類儲存失敗：'+error.message,true);
  });
+}
+async function addCategory(b,rawName){
+ if(state.busy.has(b.id)||state.loading)return;
+ const name=String(rawName||'').trim();
+ if(!name||name.length>80){message('分類名稱必須為 1～80 字',true);return;}
+ const existing=state.tags.find(t=>t.name.toLowerCase()===name.toLowerCase());
+ if(existing){
+  if(b.tags.some(t=>t.toLowerCase()===existing.name.toLowerCase()))message('此分類已選取');
+  else changeTag(b,existing.name);
+  return;
+ }
+ state.busy.add(b.id);
+ const previous=[...b.tags];
+ try{
+  const updated=await queueWrite(b.id,()=>request('/'+b.id,'PATCH',{tags:[...previous,name]}));
+  Object.assign(b,updated);
+  try{state.tags=await request('/tags');}
+  catch{state.tags=[...state.tags,{id:name.toLowerCase(),name,count:1}];}
+  state.changeVersion++;
+  message('已新增並選取分類：'+name);
+ }catch(error){
+  b.tags=previous;
+  message('新增分類失敗：'+error.message,true);
+ }finally{
+  state.busy.delete(b.id);
+  [...state.recent,...state.pending].forEach(updateCard);
+ }
 }
 let manualRedirectValue='';
 function renderRedirectModes(mode='manual'){
@@ -403,6 +436,13 @@ $('items').addEventListener('click',event=>{
  if(!element)return;
  const b=[...state.recent,...state.pending].find(x=>x.id===element.dataset.id);
  if(!b)return;
+ if(event.target.closest('[data-show-add-category]')){
+  const trigger=event.target.closest('[data-show-add-category]');
+  const form=element.querySelector('[data-add-category]');
+  form.hidden=!form.hidden;
+  trigger.setAttribute('aria-expanded',String(!form.hidden));
+  return;
+ }
  if(event.target.closest('[data-edit]')){edit(b);return;}
  if(event.target.closest('[data-delete]')){deleteBookmark(b);return;}
  const tag=event.target.closest('[data-tag-name]');
@@ -415,5 +455,14 @@ $('items').addEventListener('click',event=>{
   queueWrite(b.id,()=>request('/'+b.id,'PATCH',{status:1}))
    .catch(error=>message('已開啟原文，但標記已讀失敗：'+error.message,true));
  }
+});
+$('items').addEventListener('submit',event=>{
+ const form=event.target.closest('[data-add-category]');
+ if(!form)return;
+ event.preventDefault();
+ const element=form.closest('.quick-item');
+ const b=[...state.recent,...state.pending].find(item=>item.id===element?.dataset.id);
+ if(!b)return;
+ void addCategory(b,form.querySelector('[name="newCategory"]').value);
 });
 void load();
