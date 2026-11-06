@@ -1,4 +1,5 @@
 import { redirectOptions, findRedirectOption } from './redirect-options.mjs';
+import { sourceBadge } from './source-meta.mjs';
 const $ = id => document.getElementById(id);
 const local = ['localhost','127.0.0.1'].includes(location.hostname);
 const tokenKey = 'blog-bookmarks-admin-token';
@@ -47,7 +48,7 @@ function queueWrite(id,action){
    ()=>{if(state.writes.get(id)===task)state.writes.delete(id)});
  return task;
 }
-function card(b,kind){
+function card(b,kind,first=false){
  const target=b.preferred_url||b.redirect_url||b.url;
  const original=b.title_original&&b.title_original!==(b.title_zh||b.title)
   ?'<div class="quick-original" lang="en">'+esc(b.title_original)+'</div>':'';
@@ -61,9 +62,9 @@ function card(b,kind){
   const selected=b.status===level;
   return '<button type="button" data-decision="'+level+'" aria-pressed="'+selected+'"'+(disabled?' disabled':'')+'>'+levels[level]+'</button>';
  }).join('');
- return '<article class="quick-item '+kind+'" data-id="'+esc(b.id)+'" data-kind="'+kind+'" tabindex="-1">'+
+ return '<article class="quick-item '+kind+(first?' first-pending':'')+'" data-id="'+esc(b.id)+'" data-kind="'+kind+'" tabindex="-1">'+
   '<div class="quick-main"><div class="quick-content"><a class="quick-title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read>'+esc(b.title_zh||b.title)+' ↗</a>'+
-  original+'<div class="quick-date">'+esc(dateText(b.created_at))+'</div>'+
+  original+'<div class="quick-source">'+sourceBadge(b.url)+'</div><div class="quick-date">'+esc(dateText(b.created_at))+'</div>'+
   (b.summary?'<p class="quick-summary">'+esc(b.summary)+'</p>':'')+
   '</div><div class="quick-actions">'+actions+
   '<button type="button" data-edit>編輯</button>'+
@@ -103,7 +104,7 @@ function render({focus=false,preserveId=null}={}){
   (recent.length?'<div class="quick-section-label">最近已處理 · '+recent.length+' 筆</div>':'')+
   recent.map(b=>card(b,'recent')).join('')+
   '<div class="quick-section-label pending-label"><span>待處理 '+state.remaining.toLocaleString('zh-TW')+' 筆</span>'+lastLabel+'</div>'+
-  (pending.length?pending.map(b=>card(b,'pending')).join(''):
+  (pending.length?pending.map((b,i)=>card(b,'pending',i===0)).join(''):
    '<p class="empty">'+(state.remaining?'正在載入待處理書籤…':'目前已全部處理完成。')+'</p>');
  if(focus){focusNext();return;}
  if(top!==undefined){
@@ -119,7 +120,7 @@ function updateCard(b){
  const kind=item.dataset.kind;
  const contentScroll=item.querySelector('.quick-content')?.scrollTop||0;
  const categoryScroll=item.querySelector('.quick-categories')?.scrollTop||0;
- item.outerHTML=card(b,kind);
+ item.outerHTML=card(b,kind,item.classList.contains('first-pending'));
  const replacement=findCard(b.id);
  const content=replacement?.querySelector('.quick-content');
  if(content)content.scrollTop=contentScroll;
@@ -444,6 +445,11 @@ $('items').addEventListener('click',event=>{
   const form=element.querySelector('[data-add-category]');
   form.hidden=!form.hidden;
   trigger.setAttribute('aria-expanded',String(!form.hidden));
+  if(!form.hidden){
+   const categories=element.querySelector('.quick-categories');
+   // Scroll only the category pane, not the whole page or its active snap position.
+   requestAnimationFrame(()=>categories?.scrollTo({top:categories.scrollHeight,behavior:'smooth'}));
+  }
   return;
  }
  if(event.target.closest('[data-edit]')){edit(b);return;}
