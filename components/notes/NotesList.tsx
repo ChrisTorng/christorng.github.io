@@ -96,7 +96,8 @@ export default function NotesList() {
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="heading-accent text-3xl font-extrabold sm:text-5xl">
-            {active ? active.displayName + ' · 隨筆' : '隨筆'} <small className="ml-2 text-lg font-normal text-gray-500">Notes</small>
+            {active ? active.displayName + ' · 隨筆' : '隨筆'}{' '}
+            <small className="ml-2 text-lg font-normal text-gray-500">Notes</small>
           </h1>
           <p className="mt-3 text-gray-500 dark:text-gray-400">個人隨筆、觀察與學習心得</p>
         </div>
