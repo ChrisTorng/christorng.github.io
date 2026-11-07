@@ -102,11 +102,20 @@ export default function BookmarkPublicItem({
           const id = category?.id || name.toLowerCase()
           const label = category?.name_zh || category?.name || name
           return onTagChange ? (
-            <button key={name} type="button" onClick={() => onTagChange(id)} className="text-primary-500">
+            <button
+              key={name}
+              type="button"
+              onClick={() => onTagChange(id)}
+              className="text-primary-500"
+            >
               #{label}
             </button>
           ) : (
-            <a key={name} href={'/bookmarks/?tag=' + encodeURIComponent(id)} className="text-primary-500">
+            <a
+              key={name}
+              href={'/bookmarks/?tag=' + encodeURIComponent(id)}
+              className="text-primary-500"
+            >
               #{label}
             </a>
           )
