@@ -25,6 +25,7 @@ type Article = {
 type Entry = {
   kind: 'blog' | 'note'
   id?: string
+  slug?: string | null
   title: string | null
   displayTitle?: string
   subtitle?: string
@@ -233,7 +234,7 @@ export default function PublicTimeline({
         </div>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700" aria-busy={loading}>
           {data.items.map((entry) => {
-            const url = entry.kind === 'note' ? `/notes/${entry.id}/` : entry.url!
+            const url = entry.kind === 'note' ? `/notes/${entry.slug || entry.id}/` : entry.url!
             return (
               <li key={`${entry.kind}:${entry.id || url}`} className="py-10">
                 <article>
