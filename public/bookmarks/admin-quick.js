@@ -187,35 +187,48 @@ async function reconcile(){
 }
 function takeDecision(b,level){
  if(state.busy.has(b.id)||state.loading)return;
- if(level>=3&&!b.tags.length){message('請先選擇至少一個分類，才能公開或推薦',true);return;}
+ if([3,4].includes(level)&&!b.tags.length){message('請先選擇至少一個分類，才能公開或推薦',true);return;}
  const oldStatus=b.status;
  if(oldStatus===level)return;
  const previousRecent=[...state.recent];
  const wasPending=oldStatus<2;
+ const wasDeferred=oldStatus===5;
  state.busy.add(b.id);
  state.inflight++;
  state.changeVersion++;
  const next={...b,status:level};
  state.pending=state.pending.filter(x=>x.id!==b.id);
- state.recent=[...state.recent.filter(x=>x.id!==b.id),next].slice(-half());
+ state.deferred=state.deferred.filter(x=>x.id!==b.id);
+ state.recent=state.recent.filter(x=>x.id!==b.id);
+ if(level===5){
+  state.deferred=[...state.deferred,next]
+   .sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
+  state.expanded.delete(b.id);
+  state.deferredRemaining++;
+ }else{
+  state.recent=[...state.recent,next].slice(-state.size);
+ }
  if(wasPending)state.remaining--;
+ if(wasDeferred)state.deferredRemaining--;
  render({focus:wasPending,preserveId:wasPending?null:b.id});
  message('已選擇「'+levels[level]+'」，正在儲存…');
  queueWrite(b.id,()=>request('/'+b.id,'PATCH',{status:level,tags:[...b.tags]}))
- .then(()=>{
-  message('已儲存：'+levels[level]);
- },error=>{
-  // Restore the preceding state on failure; never silently discard a decision.
-  // Roll back only this record: other pending decisions may have advanced already.
+ .then(()=>message('已儲存：'+levels[level]),error=>{
+  // Roll back only the failed record, preserving other concurrent decisions.
+  state.pending=state.pending.filter(x=>x.id!==b.id);
+  state.deferred=state.deferred.filter(x=>x.id!==b.id);
   state.recent=state.recent.filter(x=>x.id!==b.id);
+  if(level===5)state.deferredRemaining--;
   if(wasPending){
-   if(!state.pending.some(x=>x.id===b.id)){
-    state.pending=[...state.pending,{...b,status:oldStatus}]
-     .sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
-    state.remaining++;
-   }
+   state.pending=[...state.pending,b]
+    .sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
+   state.remaining++;
+  }else if(wasDeferred){
+   state.deferred=[...state.deferred,b]
+    .sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
+   state.deferredRemaining++;
   }else{
-   const original=previousRecent.find(x=>x.id===b.id)||{...b,status:oldStatus};
+   const original=previousRecent.find(x=>x.id===b.id)||b;
    const position=previousRecent.findIndex(x=>x.id===b.id);
    state.recent.splice(Math.min(Math.max(0,position),state.recent.length),0,original);
    state.recent=state.recent.slice(-state.size);
@@ -337,13 +350,15 @@ function edit(b){
 function deleteBookmark(b){
  if(state.busy.has(b.id)||state.loading)return;
  if(!confirm('確定永久刪除這筆書籤？'))return;
- const wasPending=b.status<2;
+ const wasPending=b.status<2,wasDeferred=b.status===5;
  state.busy.add(b.id);
  state.inflight++;
  state.changeVersion++;
  state.recent=state.recent.filter(item=>item.id!==b.id);
+ state.deferred=state.deferred.filter(item=>item.id!==b.id);
  state.pending=state.pending.filter(item=>item.id!==b.id);
  if(wasPending)state.remaining--;
+ if(wasDeferred)state.deferredRemaining--;
  render({focus:wasPending});
  message('正在刪除…');
  queueWrite(b.id,()=>request('/'+b.id,'DELETE')).then(result=>{
@@ -354,7 +369,11 @@ function deleteBookmark(b){
    state.pending.push(b);
    state.pending.sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
    state.remaining++;
-  }else state.recent=[...state.recent,b].slice(-half());
+  }else if(wasDeferred){
+   state.deferred.push(b);
+   state.deferred.sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
+   state.deferredRemaining++;
+  }else state.recent=[...state.recent,b].slice(-state.size);
   state.changeVersion++;
   render({focus:wasPending});
   message('刪除失敗：'+error.message,true);
