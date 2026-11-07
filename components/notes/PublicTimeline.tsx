@@ -261,7 +261,8 @@ export default function PublicTimeline({
                             <Tag
                               key={value}
                               text={
-                                tagDefinitions.find((item) => item.id === value)?.displayName || value
+                                tagDefinitions.find((item) => item.id === value)?.displayName ||
+                                value
                               }
                             />
                           ))}
