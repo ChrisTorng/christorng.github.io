@@ -74,6 +74,10 @@ export default function BookmarkView() {
     return () => controller.abort()
   }, [])
 
+  useEffect(() => {
+    if (item) document.title = item.title + ' | ChrisTorng 學習天地'
+  }, [item])
+
   const target = item?.preferred_url || item?.redirect_url || item?.url
   const date = (item?.status_at || item?.published_at || item?.created_at || '').slice(0, 10)
 
