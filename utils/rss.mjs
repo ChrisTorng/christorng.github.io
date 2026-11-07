@@ -252,6 +252,9 @@ export async function generateRss(config, posts, page = 'feed.xml') {
   const latestPosts = posts.slice(0, 20)
   const siteUrl = getSiteUrl(config)
   const feedUrl = absoluteUrl(config, page)
+  const channelPath = page.startsWith('tags/')
+    ? '/' + page.slice(0, -'feed.xml'.length)
+    : '/blog/'
   const lastBuildDate = latestPosts[0]?.lastmod || latestPosts[0]?.date || new Date().toISOString()
   const items = await Promise.all(latestPosts.map((post) => generateRssItem(config, post)))
 
@@ -259,7 +262,7 @@ export async function generateRss(config, posts, page = 'feed.xml') {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>${escapeXml(config.title)}</title>
-    <link>${escapeXml(`${siteUrl}/blog`)}</link>
+    <link>${escapeXml(`${siteUrl}${channelPath}`)}</link>
     <description>${escapeXml(config.description)}</description>
     <language>${escapeXml(config.language)}</language>
     ${editorXml(config, 'managingEditor')}
