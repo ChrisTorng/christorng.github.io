@@ -11,6 +11,8 @@ import { formatDate } from '@/utils/formatDate'
 import { formatNoteDate } from '@/components/ListWithCategories'
 import SafeMarkdown from '@/components/notes/SafeMarkdown'
 import { tagDefinitions } from '@/data/tagDefinitions'
+import PublicCategorySidebar from '@/components/PublicCategorySidebar'
+import MobileCategorySelect from '@/components/MobileCategorySelect'
 
 type Article = {
   slug: string
@@ -157,8 +159,35 @@ export default function PublicTimeline({
     setPage(next)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+  const categoryLabel = tagDefinitions.find((item) => item.id === tag)?.displayName || tag
+  const rssLabel = tag
+    ? categoryLabel + ' · 文章與隨筆 RSS'
+    : '所有文章與隨筆 RSS'
+  const topicOptions = [
+    { value: '', label: '所有文章與隨筆', href: '/' },
+    ...tagDefinitions.map(({ id, displayName }) => ({
+      value: id,
+      label: displayName,
+      href: '/tags/' + id + '/',
+    })),
+  ]
   return (
-    <div className="responsive-layout-container divide-y divide-gray-200 dark:divide-gray-700">
+    <div className={tag ? 'grid grid-cols-1 items-start gap-6 md:grid-cols-[244px_minmax(0,1fr)] lg:gap-12' : ''}>
+      {tag && (
+        <PublicCategorySidebar
+          rootLabel="所有文章與隨筆"
+          rootHref="/"
+          activeTag={tag}
+          categories={tagDefinitions.map(({ id, displayName }) => ({
+            id,
+            label: displayName,
+            href: '/tags/' + id + '/',
+          }))}
+          LinkComponent={Link}
+        />
+      )}
+      <div className="responsive-layout-container min-w-0 divide-y divide-gray-200 dark:divide-gray-700">
+        {tag && <MobileCategorySelect value={tag} options={topicOptions} />}
       <Suspense fallback={null}>
         <TimelineLocation initialPage={initialPage} onPageChange={setPage} />
       </Suspense>
@@ -170,10 +199,10 @@ export default function PublicTimeline({
             }
             type="application/rss+xml"
             className="hover:text-primary-500 dark:hover:text-primary-400 inline-flex items-center gap-2 font-medium text-gray-600 dark:text-gray-300"
-            aria-label={tag ? title + ' 類別 RSS' : '文章與隨筆 RSS'}
+            aria-label={rssLabel}
           >
             <Rss className="h-5 w-5" aria-hidden="true" />
-            {tag ? title + ' 類別 RSS' : '文章與隨筆 RSS'}
+            {rssLabel}
           </Link>
         </div>
         <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
@@ -194,20 +223,6 @@ export default function PublicTimeline({
             ，不包含在此清單及 RSS 中。
           </p>
         )}
-        {tag ? (
-          <nav aria-label="類別" className="flex flex-wrap gap-4">
-            <Link href="/tags/">所有類別</Link>
-            {tagDefinitions.map((item) => (
-              <Link
-                key={item.id}
-                href={`/tags/${item.id}/`}
-                aria-current={item.id === tag ? 'page' : undefined}
-              >
-                {item.displayName}
-              </Link>
-            ))}
-          </nav>
-        ) : null}
         {warning ? (
           <p role="status" className="text-sm text-amber-700 dark:text-amber-400">
             {warning}
@@ -286,6 +301,7 @@ export default function PublicTimeline({
           </button>
         </nav>
       ) : null}
+      </div>
     </div>
   )
 }
