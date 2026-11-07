@@ -322,7 +322,11 @@ export default function BookmarksList() {
                   className="border-b border-gray-300/40 py-4 dark:border-gray-700"
                 >
                   <div className="mb-2 flex items-center justify-between gap-3 text-xs">
-                    <a className="text-gray-500 hover:text-primary-500" href={'/bookmarks/view/?id=' + encodeURIComponent(item.id)} aria-label={date + ' · 書籤永久連結'}>
+                    <a
+                      className="hover:text-primary-500 text-gray-500"
+                      href={'/bookmarks/view/?id=' + encodeURIComponent(item.id)}
+                      aria-label={date + ' · 書籤永久連結'}
+                    >
                       <time dateTime={date}>{date}</time>
                     </a>
                     {item.status === 4 && <span className="text-primary-500">☆ 推薦</span>}
@@ -338,7 +342,10 @@ export default function BookmarksList() {
                     </a>
                   </h2>
                   {item.title_original && item.title_original !== item.title && (
-                    <p lang="en" className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300">
+                    <p
+                      lang="en"
+                      className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300"
+                    >
                       {item.title_original}
                     </p>
                   )}
@@ -375,7 +382,6 @@ export default function BookmarksList() {
                         </button>
                       )
                     })}
-
                   </div>
                 </article>
               )
