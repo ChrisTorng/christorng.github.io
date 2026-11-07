@@ -39,7 +39,9 @@ export default function NotePublicItem({
 }) {
   const title = publicNoteTitle(note)
   const date = (note.published_at || note.created_at).slice(0, 10)
-  const href = note.slug ? '/notes/' + encodeURIComponent(note.slug) + '/' : '/notes/view/?id=' + encodeURIComponent(note.id)
+  const href = note.slug
+    ? '/notes/' + encodeURIComponent(note.slug) + '/'
+    : '/notes/view/?id=' + encodeURIComponent(note.id)
   const titleMarkup = detail ? (
     <h1 className="mt-2 text-xl leading-snug font-bold">{title}</h1>
   ) : (
@@ -70,7 +72,12 @@ export default function NotePublicItem({
         {note.tags.map((id) => {
           const label = categories.find((category) => category.id === id)?.displayName || id
           return onTagChange ? (
-            <button key={id} type="button" className="text-primary-500" onClick={() => onTagChange(id)}>
+            <button
+              key={id}
+              type="button"
+              className="text-primary-500"
+              onClick={() => onTagChange(id)}
+            >
               #{label}
             </button>
           ) : (
