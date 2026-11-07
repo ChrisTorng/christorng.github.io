@@ -42,6 +42,10 @@ export default function NoteView() {
       .find((x) => x.trim())
       ?.slice(0, 120) ||
     '隨筆'
+  useEffect(() => {
+    if (note) document.title = title + ' | ChrisTorng 學習天地'
+  }, [note, title])
+
   return (
     <section className="py-8">
       <a className="text-primary-500" href="/notes/">
