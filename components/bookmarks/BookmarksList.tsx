@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import MobileCategorySelect from '@/components/MobileCategorySelect'
 import BookmarkSource from '@/components/bookmarks/BookmarkSource'
+import SafeMarkdown from '@/components/notes/SafeMarkdown'
 
 type Bookmark = {
   id: string
@@ -320,36 +321,31 @@ export default function BookmarksList() {
                   key={item.id}
                   className="border-b border-gray-300/40 py-4 dark:border-gray-700"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <h2 className="text-xl leading-snug font-bold">
-                        <a
-                          href={target}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-primary-500"
-                        >
-                          {item.title} ↗
-                        </a>
-                      </h2>
-                      {item.title_original && item.title_original !== item.title && (
-                        <p
-                          lang="en"
-                          className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300"
-                        >
-                          {item.title_original}
-                        </p>
-                      )}
-                    </div>
-                    <div className="shrink-0 text-right text-xs text-gray-500">
+                  <div className="mb-2 flex items-center justify-between gap-3 text-xs">
+                    <a className="text-gray-500 hover:text-primary-500" href={'/bookmarks/view/?id=' + encodeURIComponent(item.id)} aria-label={date + ' · 書籤永久連結'}>
                       <time dateTime={date}>{date}</time>
-                      {item.status === 4 && <div className="text-primary-500 mt-1">☆ 推薦</div>}
-                    </div>
+                    </a>
+                    {item.status === 4 && <span className="text-primary-500">☆ 推薦</span>}
                   </div>
-                  {item.summary && (
-                    <p className="my-2 text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-gray-200">
-                      {item.summary}
+                  <h2 className="text-xl leading-snug font-bold">
+                    <a
+                      href={target}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                    >
+                      {item.title}
+                    </a>
+                  </h2>
+                  {item.title_original && item.title_original !== item.title && (
+                    <p lang="en" className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300">
+                      {item.title_original}
                     </p>
+                  )}
+                  {item.summary && (
+                    <div className="my-2 text-sm leading-relaxed text-gray-700 dark:text-gray-200">
+                      <SafeMarkdown text={item.summary} />
+                    </div>
                   )}
                   <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
                     <BookmarkSource url={item.url} />
@@ -379,12 +375,7 @@ export default function BookmarksList() {
                         </button>
                       )
                     })}
-                    <a
-                      className="hover:text-primary-500 ml-auto text-xs text-gray-500"
-                      href={'/bookmarks/view/?id=' + encodeURIComponent(item.id)}
-                    >
-                      書籤詳情
-                    </a>
+
                   </div>
                 </article>
               )
