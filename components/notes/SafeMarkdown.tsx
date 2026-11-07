@@ -7,6 +7,8 @@ import remarkGfm from 'remark-gfm'
 type MdNode = {
   type: string
   value?: string
+  alt?: string
+  checked?: boolean | null
   url?: string
   title?: string
   depth?: number
@@ -15,18 +17,18 @@ type MdNode = {
   children?: MdNode[]
 }
 
-function safeUrl(value?: string) {
+function safeUrl(value?: string, baseUrl = 'https://christorng.idv.tw') {
   if (!value) return ''
   try {
-    const url = new URL(value, 'https://christorng.idv.tw')
+    const url = new URL(value, baseUrl)
     if (!['http:', 'https:', 'mailto:'].includes(url.protocol)) return ''
-    return value
+    return url.href
   } catch {
     return ''
   }
 }
-function render(node: MdNode, key: number): ReactNode {
-  const children = node.children?.map(render)
+function render(node: MdNode, key: number, baseUrl: string): ReactNode {
+  const children = node.children?.map((child, index) => render(child, index, baseUrl))
   switch (node.type) {
     case 'root':
       return <Fragment key={key}>{children}</Fragment>
@@ -73,9 +75,16 @@ function render(node: MdNode, key: number): ReactNode {
         <ul key={key}>{children}</ul>
       )
     case 'listItem':
-      return <li key={key}>{children}</li>
+      return (
+        <li key={key}>
+          {typeof node.checked === 'boolean' && (
+            <input type="checkbox" checked={node.checked} disabled aria-label="清單勾選狀態" />
+          )}
+          {children}
+        </li>
+      )
     case 'link': {
-      const target = safeUrl(node.url)
+      const target = safeUrl(node.url, baseUrl)
       return target ? (
         <a key={key} href={target} rel="noopener noreferrer" target="_blank">
           {children}
@@ -86,11 +95,18 @@ function render(node: MdNode, key: number): ReactNode {
     }
     case 'image': {
       const target = safeUrl(node.url)
-      const label = node.title || node.value || '圖片'
-      return target ? (
-        <a key={key} href={target} rel="noopener noreferrer" target="_blank">
-          {label} ↗
-        </a>
+      const label = node.alt || node.title || node.value || '圖片'
+      return target && /^https?:\/\//.test(target) ? (
+        // Dynamic Markdown images have no known dimensions; retain their intrinsic aspect ratio.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={key}
+          src={target}
+          alt={label}
+          loading="lazy"
+          decoding="async"
+          className="my-2 h-auto max-w-full rounded"
+        />
       ) : (
         <span key={key}>{label}</span>
       )
@@ -109,7 +125,13 @@ function render(node: MdNode, key: number): ReactNode {
       return <Fragment key={key}>{children}</Fragment>
   }
 }
-export default function SafeMarkdown({ text }: { text: string }) {
+export default function SafeMarkdown({
+  text,
+  baseUrl = 'https://christorng.idv.tw',
+}: {
+  text: string
+  baseUrl?: string
+}) {
   const tree = useMemo(
     () =>
       remark()
@@ -117,5 +139,7 @@ export default function SafeMarkdown({ text }: { text: string }) {
         .parse(text || '') as MdNode,
     [text]
   )
-  return <div className="prose dark:prose-invert max-w-none text-sm">{render(tree, 0)}</div>
+  return (
+    <div className="prose dark:prose-invert max-w-none text-sm">{render(tree, 0, baseUrl)}</div>
+  )
 }

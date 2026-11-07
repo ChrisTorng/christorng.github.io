@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react'
 import MobileCategorySelect from '@/components/MobileCategorySelect'
 import PublicCategorySidebar from '@/components/PublicCategorySidebar'
-import BookmarkSource from '@/components/bookmarks/BookmarkSource'
-import SafeMarkdown from '@/components/notes/SafeMarkdown'
+import BookmarkPublicItem from '@/components/bookmarks/BookmarkPublicItem'
 
 type Bookmark = {
   id: string
@@ -300,83 +299,14 @@ export default function BookmarksList() {
             <p className="py-6 text-gray-500">沒有符合條件的書籤。</p>
           )}
           {!loading &&
-            result.items.map((item) => {
-              const target = item.preferred_url || item.redirect_url || item.url
-              const date = dateOnly(item.status_at || item.published_at || item.created_at)
-              return (
-                <article
-                  key={item.id}
-                  className="border-b border-gray-300/40 py-4 dark:border-gray-700"
-                >
-                  <div className="mb-2 flex items-center justify-between gap-3 text-xs">
-                    <a
-                      className="hover:text-primary-500 text-gray-500"
-                      href={
-                        item.slug
-                          ? '/bookmarks/' + encodeURIComponent(item.slug) + '/'
-                          : '/bookmarks/view/?id=' + encodeURIComponent(item.id)
-                      }
-                      aria-label={date + ' · 書籤永久連結'}
-                    >
-                      <time dateTime={date}>{date}</time>
-                    </a>
-                    {item.status === 4 && <span className="text-primary-500">☆ 推薦</span>}
-                  </div>
-                  <h2 className="text-xl leading-snug font-bold">
-                    <a
-                      href={target}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                    >
-                      {item.title}
-                    </a>
-                  </h2>
-                  {item.title_original && item.title_original !== item.title && (
-                    <p
-                      lang="en"
-                      className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300"
-                    >
-                      {item.title_original}
-                    </p>
-                  )}
-                  {item.summary && (
-                    <div className="my-2 text-sm leading-relaxed text-gray-700 dark:text-gray-200">
-                      <SafeMarkdown text={item.summary} />
-                    </div>
-                  )}
-                  <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
-                    <BookmarkSource url={item.url} />
-                    {target !== item.url && (
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hidden max-w-full truncate underline md:inline"
-                      >
-                        原始網址：{item.url}
-                      </a>
-                    )}
-                  </div>
-                  <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-                    {item.tags.map((name) => {
-                      const category = categories.find(
-                        (tag) => tag.name.toLowerCase() === name.toLowerCase()
-                      )
-                      return (
-                        <button
-                          key={name}
-                          onClick={() => changeTag(category?.id || name.toLowerCase())}
-                          className="text-primary-500"
-                        >
-                          #{category?.name_zh || name}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </article>
-              )
-            })}
+            result.items.map((item) => (
+              <BookmarkPublicItem
+                key={item.id}
+                item={item}
+                categories={categories}
+                onTagChange={changeTag}
+              />
+            ))}
           {!loading && result.pages > 1 && (
             <nav aria-label="書籤分頁" className="mt-6 flex items-center justify-between">
               <button
