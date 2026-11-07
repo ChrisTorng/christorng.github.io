@@ -171,7 +171,11 @@ export default function NotesList() {
                 <h2 className="mt-2 text-xl font-bold">
                   <a
                     className="hover:text-primary-500"
-                    href={note.slug ? '/notes/' + encodeURIComponent(note.slug) + '/' : '/notes/view/?id=' + encodeURIComponent(note.id)}
+                    href={
+                      note.slug
+                        ? '/notes/' + encodeURIComponent(note.slug) + '/'
+                        : '/notes/view/?id=' + encodeURIComponent(note.id)
+                    }
                   >
                     {noteTitle(note)}
                   </a>
