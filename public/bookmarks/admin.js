@@ -2,10 +2,10 @@ import { sourceBadge } from './source-meta.mjs';
 const $ = id => document.getElementById(id);
 const local = ['localhost','127.0.0.1'].includes(location.hostname);
 const tokenKey = 'blog-bookmarks-admin-token';
-const allowedFilters = ['pending','unread','readPending','private','decided','read','all','published','starred'];
+const allowedFilters = ['pending','unread','readPending','deferred','private','decided','read','all','published','starred'];
 const allowedSorts = ['new','old','recommended','title'];
 const stateKeys = ['filter','sort','tag','q','page'];
-const defaultSort = filter => ['pending','unread','readPending'].includes(filter)?'old':'new';
+const defaultSort = filter => ['pending','unread','readPending','deferred'].includes(filter)?'old':'new';
 function readLocationState(){
  const query = new URLSearchParams(location.search);
  const rawPage = query.get('page') || '1';
@@ -55,21 +55,22 @@ async function request(path, method='GET', body) {
 }
 function status(msg,error=false){$('message').textContent=msg;$('message').classList.toggle('error',error);}
 function options(){const q=new URLSearchParams();for(const k of ['filter','sort','tag','q','page'])q.set(k,state[k]);return q.toString();}
-const levelName=['未讀','已讀 · 待決定','已讀 · 確定不公開','已公開','★ 已推薦'];
+const levelName=['未讀','已讀 · 待決定','已讀 · 確定不公開','已公開','★ 已推薦','稍後再決定'];
 function itemHtml(b) {
  const label=levelName[b.status]||'';
  const target=b.preferred_url||b.redirect_url||b.url;
  const source=target!==b.url?'<div class="source-reference">原始網址：<a href="'+esc(b.url)+'" target="_blank" rel="noopener noreferrer">'+esc(b.url)+'</a></div>':'';
  const originalTitle=b.title_original&&b.title_original!==b.title?'<div class="original-title" lang="en">'+esc(b.title_original)+'</div>':'';
- const statusDate=b.status>=3?' · '+(b.status===4?'推薦':'公開')+' '+dateText(b.status_at||b.starred_at||b.published_at):'';
+ const statusDate=[3,4].includes(b.status)?' · '+(b.status===4?'推薦':'公開')+' '+dateText(b.status_at||b.starred_at||b.published_at):'';
  const info='<div class="meta">加入 '+esc(dateText(b.created_at))+' · '+sourceBadge(b.url)+esc(statusDate)+'</div>';
  const tagNames=new Set(b.tags.map(x=>x.toLowerCase()));
  const choices=state.tags.map(t=>'<button type="button" data-tag-name="'+esc(t.name)+'" aria-pressed="'+String(tagNames.has(t.name.toLowerCase()))+'">'+esc(t.name_zh||t.name)+'</button>').join('');
  const picker='<details class="category-picker"><summary>分類：'+(b.tags.length?b.tags.map(t=>esc(state.tags.find(x=>x.name.toLowerCase()===t.toLowerCase())?.name_zh||t)).join('、'):'未分類')+' · 點擊選擇</summary><div class="category-choices">'+choices+'</div><form class="add-category" data-add-tag><input name="newtag" maxlength="80" placeholder="新增分類名稱" aria-label="新增分類"><button type="submit">新增並選取</button></form></details>';
- const note=b.status>=3?'<a class="write-note" href="/notes/editor/?bookmark='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener">寫隨筆 ↗</a>':'';
+ const note=[3,4].includes(b.status)?'<a class="write-note" href="/notes/editor/?bookmark='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener">寫隨筆 ↗</a>':'';
  const blocked=!b.tags.length||b.savingTags;
  const disabled=blocked?' disabled title="請先選擇至少一個分類並完成儲存"':'';
- const actions='<div class="actions"><button type="button" data-decision="2">不公開</button><button type="button" data-decision="3"'+disabled+'>公開</button><button type="button" data-decision="4"'+disabled+'>推薦</button><button type="button" data-edit>編輯</button>'+note+'</div>';
+ const preview='<a class="preview-link" href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer">預覽</a>';
+ const actions='<div class="actions"><button type="button" data-decision="2">不公開</button><button type="button" data-decision="3"'+disabled+'>公開</button><button type="button" data-decision="4"'+disabled+'>推薦</button><button type="button" data-decision="5">稍後再決定</button><button type="button" data-edit>編輯</button>'+preview+note+'</div>';
  return '<article class="item" data-id="'+esc(b.id)+'"><div class="item-header"><div class="item-heading"><a class="title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read="'+esc(b.id)+'">'+esc(b.title)+' ↗</a>'+originalTitle+info+source+'</div><span class="status-name">'+label+'</span></div>'+(b.summary?'<p class="summary">'+esc(b.summary)+'</p>':'')+picker+actions+'</article>';
 }
 function renderItem(b){
@@ -134,7 +135,7 @@ $('app').innerHTML=`
 <header><h1>書籤管理 <small>Bookmarks</small></h1><nav><a href="/bookmarks/admin/quick/">快速處理</a> · <a href="/bookmarks/" target="_blank" rel="noopener">公開列表 ↗</a></nav></header>
 <div class="auth" id="auth"></div>
 <form class="filters" id="filters">
- <select id="filter" aria-label="狀態"><option value="pending">待決定（未讀＋已讀待決定）</option><option value="unread">未讀</option><option value="readPending">已讀待決定</option><option value="private">確定不公開</option><option value="decided">已決定（不公開＋公開＋推薦）</option><option value="published">公開及推薦</option><option value="starred">推薦</option><option value="read">全部已讀</option><option value="all">全部</option></select>
+ <select id="filter" aria-label="狀態"><option value="pending">待決定（未讀＋已讀待決定）</option><option value="unread">未讀</option><option value="readPending">已讀待決定</option><option value="deferred">稍後再決定</option><option value="private">確定不公開</option><option value="decided">已決定（不公開＋公開＋推薦）</option><option value="published">公開及推薦</option><option value="starred">推薦</option><option value="read">全部已讀</option><option value="all">全部</option></select>
  <select id="tag" aria-label="標籤"><option value="">全部標籤</option></select>
  <select id="sort" aria-label="排序"><option value="new">加入時間：最新</option><option value="old">加入時間：最舊</option><option value="recommended">推薦優先</option><option value="title">標題</option></select>
  <button type="button" id="manageTags">標籤中英對照</button>
@@ -150,7 +151,7 @@ $('app').innerHTML=`
  <label>原文標題（例如英文）<input id="editOriginalTitle" maxlength="500" autocomplete="off"></label>
  <label>原始網址<input id="editUrl" type="url" required autocomplete="url"></label>
  <label>重導向網址（選填，優先開啟）<input id="editRedirectUrl" type="url" autocomplete="off"></label>
- <label>網站摘要（選填）<textarea id="editSummary" maxlength="5000"></textarea></label>
+ <label>網站摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown：連結、清單、引用、粗體等"></textarea></label>
  <div class="dialog-actions"><button type="submit">儲存書籤</button><button type="button" id="cancelEdit">取消</button><button type="button" id="deleteItem">刪除</button></div>
 </form></dialog>
 <dialog id="tagsDialog" aria-labelledby="tagsHeading"><form id="tagsForm">
@@ -248,10 +249,11 @@ $('items').addEventListener('click',async e=>{
  const decision=e.target.closest('[data-decision]');
  if(decision){
   const level=Number(decision.dataset.decision);
-  if(level>=3&&(!b.tags.length||b.savingTags)){
+  if(level===b.status)return;
+  if([3,4].includes(level)&&(!b.tags.length||b.savingTags)){
    status('公開或推薦前，請先選擇並儲存至少一個分類',true);return;
   }
-  const queue=['pending','unread','readPending'].includes(state.filter);
+  const queue=['pending','unread','readPending','deferred'].includes(state.filter);
   const previous=b.status;
   if(queue){
    itemElement.remove();

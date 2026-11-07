@@ -119,3 +119,8 @@ dialog #deleteItem:disabled{display:none}
 .bookmark-site{display:inline-flex;max-width:100%;min-width:0;align-items:center;gap:5px;vertical-align:middle}
 .bookmark-site img{width:16px;height:16px;flex:none;border-radius:3px}
 .bookmark-site .site-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Deferred workflow and saved Markdown preview. */
+.actions [data-decision="5"]{background:transparent;border-color:var(--line)}
+.actions .preview-link{font-size:.84rem;color:var(--accent)}
+

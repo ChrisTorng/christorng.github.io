@@ -223,3 +223,36 @@
 .bookmark-site{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;max-width:100%;min-width:0}
 .bookmark-site img{height:16px;width:16px;flex:none;border-radius:3px}
 .bookmark-site .site-label{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Three groups: deferred bookmarks are one-line title-only rows until expanded. */
+.quick-item.deferred.collapsed{
+ display:block;height:auto!important;min-height:0!important;
+ padding:5px 9px;border-left:3px solid var(--line);
+ scroll-snap-stop:normal;
+}
+.quick-expand{
+ display:block;width:100%;border:0;background:transparent;color:var(--ink);
+ padding:6px 2px;text-align:left;font-size:.96rem;font-weight:650;
+ line-height:1.4;white-space:normal;overflow-wrap:anywhere;
+}
+.quick-item.deferred.expanded{grid-template-rows:auto minmax(0,1fr)}
+.quick-item.deferred.expanded .quick-collapse{
+ grid-column:1/-1;grid-row:1;border:0;background:transparent;
+ padding:0;text-align:left;font-size:.8rem;color:var(--accent);
+}
+.quick-item.deferred.expanded .quick-main{grid-column:1;grid-row:2}
+.quick-item.deferred.expanded .quick-categories{grid-column:2;grid-row:2}
+.quick-date a{color:var(--accent);text-decoration:none}
+.quick-date a:hover{text-decoration:underline}
+/* Keep buttons usable in the narrow left pane without a four-column layout. */
+.quick-actions [data-decision="3"]{grid-column:1/span 2;grid-row:1}
+.quick-actions [data-decision="4"]{grid-column:3;grid-row:1}
+.quick-actions [data-decision="2"]{grid-column:1;grid-row:2}
+.quick-actions [data-decision="5"]{grid-column:2/span 2;grid-row:2;font-size:.76rem}
+.quick-actions [data-edit]{grid-column:1/span 2;grid-row:3}
+.quick-actions [data-delete]{grid-column:3;grid-row:3}
+@media(max-width:650px){
+ .quick-item.deferred.expanded{height:calc(100svh - 58px)}
+ .quick-item.deferred.expanded .quick-main{min-height:0}
+ .quick-actions [data-decision="5"]{font-size:.72rem;padding-inline:1px}
+}
