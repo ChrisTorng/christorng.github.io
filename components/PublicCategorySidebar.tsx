@@ -46,13 +46,22 @@ export default function PublicCategorySidebar({
       className="hidden w-full rounded-xl border border-gray-200/70 bg-gray-100/60 p-4 md:block dark:border-gray-700/50 dark:bg-gray-800/70"
     >
       {onChange ? (
-        <button type="button" className={rootStyle} aria-current={rootActive ? 'page' : undefined} onClick={() => onChange('')}>
+        <button
+          type="button"
+          className={rootStyle}
+          aria-current={rootActive ? 'page' : undefined}
+          onClick={() => onChange('')}
+        >
           {rootLabel}
         </button>
       ) : rootActive ? (
-        <span className={rootStyle} aria-current="page">{rootLabel}</span>
+        <span className={rootStyle} aria-current="page">
+          {rootLabel}
+        </span>
       ) : (
-        <LinkComponent href={rootHref} className={rootStyle}>{rootLabel}</LinkComponent>
+        <LinkComponent href={rootHref} className={rootStyle}>
+          {rootLabel}
+        </LinkComponent>
       )}
       <ul className="mt-2 space-y-1 border-t border-gray-200/70 pt-2 pl-3 dark:border-gray-700/60">
         {categories.map(({ id, label, count, href }) => {
@@ -60,7 +69,9 @@ export default function PublicCategorySidebar({
           const content = (
             <>
               <span className="min-w-0 break-words">{label}</span>
-              {count !== undefined && <span className="shrink-0 text-xs tabular-nums opacity-60">{count}</span>}
+              {count !== undefined && (
+                <span className="shrink-0 text-xs tabular-nums opacity-60">{count}</span>
+              )}
             </>
           )
           return (
@@ -75,9 +86,13 @@ export default function PublicCategorySidebar({
                   {content}
                 </button>
               ) : selected ? (
-                <span className={categoryStyle(true)} aria-current="page">{content}</span>
+                <span className={categoryStyle(true)} aria-current="page">
+                  {content}
+                </span>
               ) : (
-                <LinkComponent href={href} className={categoryStyle(false)}>{content}</LinkComponent>
+                <LinkComponent href={href} className={categoryStyle(false)}>
+                  {content}
+                </LinkComponent>
               )}
             </li>
           )
