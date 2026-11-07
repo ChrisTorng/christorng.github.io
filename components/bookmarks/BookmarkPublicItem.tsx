@@ -80,7 +80,7 @@ export default function BookmarkPublicItem({
       )}
       {item.summary && (
         <div className="my-2 text-gray-700 dark:text-gray-200">
-          <SafeMarkdown text={item.summary} />
+          <SafeMarkdown text={item.summary} baseUrl={item.url} />
         </div>
       )}
       <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
