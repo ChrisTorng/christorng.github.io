@@ -8,6 +8,7 @@ import SafeMarkdown from '@/components/notes/SafeMarkdown'
 
 type Bookmark = {
   id: string
+  slug?: string | null
   title: string
   title_original?: string | null
   summary?: string | null
@@ -310,7 +311,7 @@ export default function BookmarksList() {
                   <div className="mb-2 flex items-center justify-between gap-3 text-xs">
                     <a
                       className="hover:text-primary-500 text-gray-500"
-                      href={'/bookmarks/view/?id=' + encodeURIComponent(item.id)}
+                      href={item.slug ? '/bookmarks/' + encodeURIComponent(item.slug) + '/' : '/bookmarks/view/?id=' + encodeURIComponent(item.id)}
                       aria-label={date + ' · 書籤永久連結'}
                     >
                       <time dateTime={date}>{date}</time>
