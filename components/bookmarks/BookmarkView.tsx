@@ -119,12 +119,7 @@ export default function BookmarkView() {
             </div>
           )}
           <div className="mt-4 flex min-w-0 flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-            <a
-              href={target}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary-500"
-            >
+            <a href={target} target="_blank" rel="noopener noreferrer" className="text-primary-500">
               前往網站
             </a>
             <BookmarkSource url={item.url} />
