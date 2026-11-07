@@ -179,7 +179,8 @@ export default function BookmarksList() {
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="heading-accent text-3xl font-extrabold sm:text-5xl">
-            {activeName ? activeName + ' · 書籤' : '書籤'} <small className="ml-2 text-lg font-normal text-gray-500">Bookmarks</small>
+            {activeName ? activeName + ' · 書籤' : '書籤'}{' '}
+            <small className="ml-2 text-lg font-normal text-gray-500">Bookmarks</small>
           </h1>
           <p className="mt-3 text-gray-500 dark:text-gray-400">閱讀與分享的網頁收藏</p>
         </div>
