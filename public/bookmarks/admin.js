@@ -5,12 +5,14 @@ const tokenKey = 'blog-bookmarks-admin-token';
 const allowedFilters = ['pending','unread','readPending','private','decided','read','all','published','starred'];
 const allowedSorts = ['new','old','recommended','title'];
 const stateKeys = ['filter','sort','tag','q','page'];
+const defaultSort = filter => ['pending','unread','readPending'].includes(filter)?'old':'new';
 function readLocationState(){
  const query = new URLSearchParams(location.search);
  const rawPage = query.get('page') || '1';
+ const filter=allowedFilters.includes(query.get('filter')) ? query.get('filter') : 'pending';
  return {
-  filter: allowedFilters.includes(query.get('filter')) ? query.get('filter') : 'pending',
-  sort: allowedSorts.includes(query.get('sort')) ? query.get('sort') : 'new',
+  filter,
+  sort: allowedSorts.includes(query.get('sort')) ? query.get('sort') : defaultSort(filter),
   tag: (query.get('tag') || '').slice(0,80),
   q: (query.get('q') || '').slice(0,100),
   page: /^\d+$/.test(rawPage) ? Math.min(100000, Math.max(1,Number(rawPage))) : 1
@@ -28,7 +30,7 @@ function updateLocation(replace=false){
  const url=new URL(location.href);
  for(const key of stateKeys)url.searchParams.delete(key);
  if(state.filter!=='pending')url.searchParams.set('filter',state.filter);
- if(state.sort!=='new')url.searchParams.set('sort',state.sort);
+ if(state.sort!==defaultSort(state.filter))url.searchParams.set('sort',state.sort);
  if(state.tag)url.searchParams.set('tag',state.tag);
  if(state.q)url.searchParams.set('q',state.q);
  if(state.page!==1)url.searchParams.set('page',String(state.page));

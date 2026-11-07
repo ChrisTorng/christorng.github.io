@@ -40,6 +40,14 @@ async function request(path,method='GET',body){
  if(!response.ok)throw Error(data.error||'HTTP '+response.status);
  return data;
 }
+// Older Workers returned only the newest pending window. Until the updated Worker
+// is deployed, use the existing paged admin API to obtain the oldest 20 items.
+async function quickWindow(size){
+ const data=await request('/quick?size='+size);
+ if(data.pending_order==='oldest')return data;
+ const oldest=await request('/?filter=pending&sort=old&page=1');
+ return {...data,pending:oldest.items,remaining:oldest.total};
+}
 function queueWrite(id,action){
  const earlier=state.writes.get(id)||Promise.resolve();
  const task=earlier.catch(()=>{}).then(action);
@@ -133,7 +141,7 @@ async function load(size=state.size,{focus=true}={}){
  state.loading=true;
  message('載入中…');
  try{
-  const [data,tags]=await Promise.all([request('/quick?size='+size),request('/tags')]);
+  const [data,tags]=await Promise.all([quickWindow(size),request('/tags')]);
   if(generation!==state.generation)return;
   state.size=size;
   state.recent=data.recent;
@@ -157,7 +165,7 @@ async function reconcile(){
  const anchor=firstPending()?.dataset.id;
  try{
   const [data,tags]=await Promise.all([
-   request('/quick?size='+state.size),request('/tags')
+   quickWindow(state.size),request('/tags')
   ]);
   if(generation!==state.generation||version!==state.changeVersion||state.inflight)return;
   state.recent=data.recent;
@@ -193,7 +201,7 @@ function takeDecision(b,level){
   if(wasPending){
    if(!state.pending.some(x=>x.id===b.id)){
     state.pending=[...state.pending,{...b,status:oldStatus}]
-     .sort((a,z)=>z.created_at.localeCompare(a.created_at)||z.id.localeCompare(a.id));
+     .sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
     state.remaining++;
    }
   }else{
@@ -334,7 +342,7 @@ function deleteBookmark(b){
  },error=>{
   if(wasPending){
    state.pending.push(b);
-   state.pending.sort((a,z)=>z.created_at.localeCompare(a.created_at)||z.id.localeCompare(a.id));
+   state.pending.sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
    state.remaining++;
   }else state.recent=[...state.recent,b].slice(-half());
   state.changeVersion++;
