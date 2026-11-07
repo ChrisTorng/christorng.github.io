@@ -12,7 +12,9 @@ export async function generateMetadata({ params }: { params: Promise<{ tag: stri
   const { tag } = await params
   return genPageMetadata({
     title: `${getTagDefinitionById(tag)?.displayName || tag} · 文章與隨筆`,
-    alternates: { types: { 'application/rss+xml': '/notes/all/feed.xml?tag=' + encodeURIComponent(tag) } },
+    alternates: {
+      types: { 'application/rss+xml': '/notes/all/feed.xml?tag=' + encodeURIComponent(tag) },
+    },
   })
 }
 export default async function TagPage({ params }: { params: Promise<{ tag: string }> }) {
