@@ -99,7 +99,14 @@ function render(node: MdNode, key: number, baseUrl: string): ReactNode {
       return target && /^https?:\/\//.test(target) ? (
         // Dynamic Markdown images have no known dimensions; retain their intrinsic aspect ratio.
         // eslint-disable-next-line @next/next/no-img-element
-        <img key={key} src={target} alt={label} loading="lazy" decoding="async" className="my-2 h-auto max-w-full rounded" />
+        <img
+          key={key}
+          src={target}
+          alt={label}
+          loading="lazy"
+          decoding="async"
+          className="my-2 h-auto max-w-full rounded"
+        />
       ) : (
         <span key={key}>{label}</span>
       )
@@ -118,7 +125,13 @@ function render(node: MdNode, key: number, baseUrl: string): ReactNode {
       return <Fragment key={key}>{children}</Fragment>
   }
 }
-export default function SafeMarkdown({ text, baseUrl = 'https://christorng.idv.tw' }: { text: string; baseUrl?: string }) {
+export default function SafeMarkdown({
+  text,
+  baseUrl = 'https://christorng.idv.tw',
+}: {
+  text: string
+  baseUrl?: string
+}) {
   const tree = useMemo(
     () =>
       remark()
@@ -126,5 +139,7 @@ export default function SafeMarkdown({ text, baseUrl = 'https://christorng.idv.t
         .parse(text || '') as MdNode,
     [text]
   )
-  return <div className="prose dark:prose-invert max-w-none text-sm">{render(tree, 0, baseUrl)}</div>
+  return (
+    <div className="prose dark:prose-invert max-w-none text-sm">{render(tree, 0, baseUrl)}</div>
+  )
 }
