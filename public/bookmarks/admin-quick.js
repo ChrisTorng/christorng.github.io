@@ -193,7 +193,7 @@ function takeDecision(b,level){
   if(wasPending){
    if(!state.pending.some(x=>x.id===b.id)){
     state.pending=[...state.pending,{...b,status:oldStatus}]
-     .sort((a,z)=>z.created_at.localeCompare(a.created_at)||z.id.localeCompare(a.id));
+     .sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
     state.remaining++;
    }
   }else{
@@ -334,7 +334,7 @@ function deleteBookmark(b){
  },error=>{
   if(wasPending){
    state.pending.push(b);
-   state.pending.sort((a,z)=>z.created_at.localeCompare(a.created_at)||z.id.localeCompare(a.id));
+   state.pending.sort((a,z)=>a.created_at.localeCompare(z.created_at)||a.id.localeCompare(z.id));
    state.remaining++;
   }else state.recent=[...state.recent,b].slice(-half());
   state.changeVersion++;
