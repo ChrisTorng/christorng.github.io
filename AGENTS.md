@@ -24,3 +24,23 @@
 - Run `npm run build` in `blog-assets` after adding or changing article images. Commit both the generated `blog-assets/responsive` files and this repository's updated `data/responsive-images.json` manifest.
 - Do not add responsive image generation back to this repository's GitHub Actions workflow; generated image assets are local build artifacts committed before deployment.
 - RSS is served by the App Router routes under `app/feed.xml` and `app/tags/[tag]/feed.xml`. RSS content resolves `/blog-assets/*` and `/blog-media/*` to their production hostnames. Do not generate `public/feed.xml` or `public/tags/*/feed.xml`; those files conflict with the routes during development.
+
+## Public Articles / Notes / Bookmarks Consistency (authoritative)
+
+The **main site repository is the single visual source of truth** for the three public sections:
+- Articles: `/blog/` and `/tags/*/`, primarily `components/ListWithCategories.tsx`, `components/notes/PublicTimeline.tsx` and `layouts/ListLayoutWithTags.tsx`.
+- Notes: `/notes/`, primarily `components/notes/NotesList.tsx`.
+- Bookmarks: `/bookmarks/`, primarily `components/bookmarks/BookmarksList.tsx` and `components/bookmarks/BookmarkView.tsx`.
+
+The backend repositories [blog-notes](https://github.com/ChrisTorng/blog-notes) and [blog-bookmarks](https://github.com/ChrisTorng/blog-bookmarks) own their APIs, persistence and dynamic RSS, **not** independently maintained public designs. Do not fork the public sidebar, colors, typography, navigation, card spacing, title/links or responsive rules. The shared desktop category navigation lives in `components/PublicCategorySidebar.tsx`, and its mobile counterpart in `components/MobileCategorySelect.tsx`. When modifying one public section, inspect the equivalent behavior in the other two and apply intentional changes consistently. Test light/dark and narrow/mobile layouts as well as desktop. Internal/admin screens can legitimately differ.
+
+### Names and navigation
+- Root public headings: `文章`, `隨筆`, `書籤`. Root category selectors: `所有文章`, `所有隨筆`, `所有書籤`. Category headings: `{category} · 文章`, `{category} · 隨筆`, `{category} · 書籤`.
+- `/tags/*/` currently combines Articles **and** Notes; call this `{category} · 文章與隨筆`, never misleadingly imply that it is articles only. If the distinction needs changing, coordinate the route, navigation, and RSS across all three repositories.
+- Root visible RSS labels: `所有文章 RSS`, `所有隨筆 RSS`, `所有書籤 RSS`. Category labels use `{category} · {section} RSS`. Combined feed labels use `所有文章與隨筆 RSS` or `{category} · 文章與隨筆 RSS`.
+- XML `<channel><title>` adds ` | ChrisTorng 學習天地` to the visible RSS label, using the same pipe separator as document titles. The **visible site RSS link does not append the site title**. Avoid the old dash separator.
+- RSS `<item><link>` must resolve to the website's public article/note/bookmark detail page, so a reader's “View article” action opens the local entry. For Bookmarks, its content also links the Chinese title to the original/selected external URL, includes the distinct original English title and description, and retains stable GUIDs. Keep XML/HTML escaped.
+- For Notes and Articles, use stored published timestamps. Bookmark public records intentionally suppress precise reading/publication times; keep the date-only API and use documented deterministic synthetic per-day RSS seconds instead of revealing private times. Do not present synthetic times as recorded publishing times.
+
+### Required review when changing any of these areas
+Check page heading/document title, browser subscriptions and in-page RSS links, feed XML channel title/link/item link/GUID/description, category selection and counts, list/detail item links, date formatting, desktop sidebar/mobile select, color and layout. Verify that other conversations/branches do not have unmerged parallel changes. When a backend change affects public markup, update this canonical main-site implementation rather than changing a legacy Worker view in isolation.
