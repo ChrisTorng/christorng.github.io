@@ -11,7 +11,10 @@ export const generateStaticParams = async () => tagDefinitions.map(({ id }) => (
 export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }) {
   const { tag } = await params
   return genPageMetadata({
-    title: getTagDefinitionById(tag)?.displayName || tag,
+    title: `${getTagDefinitionById(tag)?.displayName || tag} · 文章與隨筆`,
+    alternates: {
+      types: { 'application/rss+xml': '/notes/all/feed.xml?tag=' + encodeURIComponent(tag) },
+    },
   })
 }
 export default async function TagPage({ params }: { params: Promise<{ tag: string }> }) {
@@ -29,7 +32,7 @@ export default async function TagPage({ params }: { params: Promise<{ tag: strin
         posts={posts}
         initialDisplayPosts={posts.slice((1 - 1) * 20, 1 * 20)}
         pagination={{ currentPage: 1, totalPages, basePath: 'tags/' + id }}
-        title={tag.displayName}
+        title={tag.displayName + ' · 文章'}
         activePath={'/tags/' + id}
       />
     )
@@ -37,7 +40,7 @@ export default async function TagPage({ params }: { params: Promise<{ tag: strin
   return (
     <PublicTimeline
       articles={posts}
-      title={tag.displayName}
+      title={tag.displayName + ' · 文章與隨筆'}
       description="此類別的文章與隨筆，依發布時間排列。"
       tag={id}
     />

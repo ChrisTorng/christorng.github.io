@@ -8,7 +8,10 @@ export const dynamic = 'force-static'
 
 export async function GET() {
   const posts = sortPosts(getPublishedBlogs(allBlogs))
-  const rss = await generateRss(siteMetadata, posts)
+  const rss = await generateRss(
+    { ...siteMetadata, title: `所有文章 RSS | ${siteMetadata.title}` },
+    posts
+  )
 
   return new Response(rss, {
     headers: {

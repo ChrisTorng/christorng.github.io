@@ -38,7 +38,7 @@ export default async function TagPage({
           totalPages,
           basePath: 'tags/' + id,
         }}
-        title={tag.displayName}
+        title={tag.displayName + ' · 文章'}
         activePath={'/tags/' + id}
       />
     )
@@ -46,7 +46,7 @@ export default async function TagPage({
   return (
     <PublicTimeline
       articles={articles}
-      title={tag.displayName}
+      title={tag.displayName + ' · 文章與隨筆'}
       description="此類別的文章與隨筆，依發布時間排列。"
       tag={id}
       initialPage={current}

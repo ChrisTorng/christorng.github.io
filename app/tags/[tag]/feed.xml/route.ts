@@ -23,7 +23,7 @@ export async function GET(_request: Request, props: { params: Promise<{ tag: str
     getPublishedBlogs(allBlogs).filter((post) => post.tags.includes(tag.displayName))
   )
   const rss = await generateRss(
-    { ...siteMetadata, title: `${siteMetadata.title} - ${tag.displayName}` },
+    { ...siteMetadata, title: `${tag.displayName} · 文章 RSS | ${siteMetadata.title}` },
     posts,
     `tags/${tagId}/feed.xml`
   )

@@ -78,7 +78,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <meta name="darkreader-lock" />
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f9fafb" />
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111827" />
-      <link rel="alternate" type="application/rss+xml" href={`${basePath}/notes/all/feed.xml`} />
       <body className="overflow-x-hidden bg-gray-50 pl-[calc(100vw-100%)] text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-200">
         <ExternalLinkHandler />
         <ThemeProviders>

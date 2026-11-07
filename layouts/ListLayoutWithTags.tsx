@@ -39,7 +39,9 @@ export default function ListLayoutWithTags({
       rootLabel="所有文章"
       rootActive={activePath.startsWith('/blog')}
       rssHref={activeTag ? `/tags/${activeTag}/feed.xml` : '/feed.xml'}
-      rssTitle={`${title}${activeTag ? ' 類別' : ''} RSS`}
+      rssTitle={activeTag
+        ? `${tagDefinitions.find((tag) => tag.id === activeTag)?.displayName || activeTag} · 文章 RSS`
+        : '所有文章 RSS'}
       locale={siteMetadata.locale}
       LinkComponent={Link}
       TagComponent={Tag}

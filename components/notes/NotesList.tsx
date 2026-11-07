@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import SafeMarkdown from './SafeMarkdown'
 import MobileCategorySelect from '@/components/MobileCategorySelect'
+import PublicCategorySidebar from '@/components/PublicCategorySidebar'
 
 type Note = {
   id: string
@@ -16,7 +17,6 @@ type Note = {
 }
 type Category = { id: string; displayName: string; noteCount: number }
 type List = { items: Note[]; pages: number; page: number; total: number }
-const kinds = [{ id: '', displayName: '所有隨筆' }]
 function noteTitle(note: Note) {
   return (
     note.title ||
@@ -87,13 +87,17 @@ export default function NotesList() {
     setFilter((previous) => ({ ...previous, ...next, page: next.page || 1 }))
   }
   const active = categories.find((category) => category.id === filter.tag)
+  useEffect(() => {
+    document.title = (active ? active.displayName + ' · 隨筆' : '隨筆') + ' | ChrisTorng 學習天地'
+  }, [active])
   const feed = '/notes/feed.xml' + (filter.tag ? '?tag=' + encodeURIComponent(filter.tag) : '')
   return (
     <section className="w-full py-5 pb-12">
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="heading-accent text-3xl font-extrabold sm:text-5xl">
-            隨筆 <small className="ml-2 text-lg font-normal text-gray-500">Notes</small>
+            {active ? active.displayName + ' · 隨筆' : '隨筆'}{' '}
+            <small className="ml-2 text-lg font-normal text-gray-500">Notes</small>
           </h1>
           <p className="mt-3 text-gray-500 dark:text-gray-400">個人隨筆、觀察與學習心得</p>
         </div>
@@ -114,41 +118,20 @@ export default function NotesList() {
             <path d="M4 4a16 16 0 0 1 16 16" />
             <circle cx="5" cy="19" r="1" />
           </svg>
-          {active ? active.displayName + ' · ' : ''}隨筆 RSS
+          {active ? active.displayName + ' · 隨筆 RSS' : '所有隨筆 RSS'}
         </a>
       </header>
       <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[244px_minmax(0,1fr)] lg:gap-12">
-        <aside className="hidden rounded-xl border border-gray-200/70 bg-gray-100/60 p-4 md:block dark:border-gray-700/50 dark:bg-gray-800/70">
-          {kinds.map((kind) => (
-            <button
-              key={kind.id}
-              onClick={() => change({ tag: kind.id })}
-              className={
-                'w-full px-2 py-2 text-left font-bold ' + (!filter.tag ? 'text-primary-500' : '')
-              }
-            >
-              {kind.displayName}
-            </button>
-          ))}
-          <ul className="mt-2 border-t border-gray-300/40 pt-2 pl-3 dark:border-gray-700/60">
-            {categories.map((category) => (
-              <li key={category.id}>
-                <button
-                  onClick={() => change({ tag: category.id })}
-                  className={
-                    'flex w-full justify-between rounded-md px-2 py-1.5 text-left text-sm ' +
-                    (filter.tag === category.id
-                      ? 'text-primary-500 bg-blue-500/10 font-bold'
-                      : 'hover:text-primary-500')
-                  }
-                >
-                  <span>{category.displayName}</span>
-                  <span className="opacity-60">{category.noteCount}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </aside>
+        <PublicCategorySidebar
+          rootLabel="所有隨筆"
+          activeTag={filter.tag}
+          categories={categories.map((category) => ({
+            id: category.id,
+            label: category.displayName,
+            count: category.noteCount,
+          }))}
+          onChange={(tag) => change({ tag })}
+        />
         <div className="min-w-0">
           <MobileCategorySelect
             value={filter.tag}

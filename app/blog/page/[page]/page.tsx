@@ -40,7 +40,7 @@ export default async function Page(props: { params: Promise<{ page: string }> })
       posts={posts}
       initialDisplayPosts={initialDisplayPosts}
       pagination={pagination}
-      title="所有文章"
+      title="文章"
       activePath="/blog"
     />
   )
