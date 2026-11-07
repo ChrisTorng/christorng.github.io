@@ -6,7 +6,10 @@ import { getPublishedBlogs } from 'app/blog-utils'
 
 const POSTS_PER_PAGE = 20
 
-export const metadata = genPageMetadata({ title: '文章', alternates: { types: { 'application/rss+xml': '/feed.xml' } } })
+export const metadata = genPageMetadata({
+  title: '文章',
+  alternates: { types: { 'application/rss+xml': '/feed.xml' } },
+}
 
 export default async function BlogPage(props: { searchParams: Promise<{ page: string }> }) {
   const publishedBlogs = getPublishedBlogs(allBlogs)
