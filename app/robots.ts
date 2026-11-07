@@ -12,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
     },
     sitemap: [
       `${siteMetadata.siteUrl}/sitemap.xml`,
+      `${siteMetadata.siteUrl}/bookmarks/sitemap.xml`,
       ...(notesDiscoveryEnabled ? [`${siteMetadata.siteUrl}/notes/sitemap.xml`] : []),
     ],
     host: siteMetadata.siteUrl,
