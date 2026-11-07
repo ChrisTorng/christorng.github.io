@@ -249,6 +249,7 @@ $('items').addEventListener('click',async e=>{
  const decision=e.target.closest('[data-decision]');
  if(decision){
   const level=Number(decision.dataset.decision);
+  if(level===b.status)return;
   if([3,4].includes(level)&&(!b.tags.length||b.savingTags)){
    status('公開或推薦前，請先選擇並儲存至少一個分類',true);return;
   }
