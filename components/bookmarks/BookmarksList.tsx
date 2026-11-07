@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import MobileCategorySelect from '@/components/MobileCategorySelect'
+import PublicCategorySidebar from '@/components/PublicCategorySidebar'
 import BookmarkSource from '@/components/bookmarks/BookmarkSource'
 import SafeMarkdown from '@/components/notes/SafeMarkdown'
 
@@ -169,13 +170,16 @@ export default function BookmarksList() {
   }
   const active = categories.find((tag) => tag.id === filters.tag)
   const activeName = active ? categoryName(active) : ''
+  useEffect(() => {
+    document.title = (activeName ? activeName + ' · 書籤' : '書籤') + ' | ChrisTorng 學習天地'
+  }, [activeName])
   const rss = '/bookmarks/feed.xml' + (filters.tag ? '?tag=' + encodeURIComponent(filters.tag) : '')
   return (
     <section className="w-full py-5 pb-12">
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="heading-accent text-3xl font-extrabold sm:text-5xl">
-            書籤 <small className="ml-2 text-lg font-normal text-gray-500">Bookmarks</small>
+            {activeName ? activeName + ' · 書籤' : '書籤'} <small className="ml-2 text-lg font-normal text-gray-500">Bookmarks</small>
           </h1>
           <p className="mt-3 text-gray-500 dark:text-gray-400">閱讀與分享的網頁收藏</p>
         </div>
@@ -196,39 +200,20 @@ export default function BookmarksList() {
             <path d="M4 4a16 16 0 0 1 16 16" />
             <circle cx="5" cy="19" r="1" />
           </svg>
-          {activeName ? activeName + ' · ' : ''}書籤 RSS
+          {activeName ? activeName + ' · 書籤 RSS' : '所有書籤 RSS'}
         </a>
       </header>
       <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[244px_minmax(0,1fr)] lg:gap-12">
-        <aside className="hidden rounded-xl border border-gray-200/70 bg-gray-100/60 p-4 md:block dark:border-gray-700/50 dark:bg-gray-800/70">
-          <button
-            onClick={() => changeTag('')}
-            className={
-              'w-full rounded-md px-2 py-2 text-left font-semibold ' +
-              (!filters.tag ? 'text-primary-500' : '')
-            }
-          >
-            所有書籤
-          </button>
-          <ul className="mt-2 border-t border-gray-300/40 pt-2 pl-3 dark:border-gray-700/60">
-            {categories.map((category) => (
-              <li key={category.id}>
-                <button
-                  onClick={() => changeTag(category.id)}
-                  className={
-                    'flex w-full justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm ' +
-                    (filters.tag === category.id
-                      ? 'text-primary-500 bg-blue-500/10 font-semibold'
-                      : 'hover:text-primary-500')
-                  }
-                >
-                  <span>{categoryName(category)}</span>
-                  <span className="opacity-60">{category.count}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </aside>
+        <PublicCategorySidebar
+          rootLabel="所有書籤"
+          activeTag={filters.tag}
+          categories={categories.map((category) => ({
+            id: category.id,
+            label: categoryName(category),
+            count: category.count,
+          }))}
+          onChange={changeTag}
+        />
         <div className="min-w-0">
           <MobileCategorySelect
             value={filters.tag}
