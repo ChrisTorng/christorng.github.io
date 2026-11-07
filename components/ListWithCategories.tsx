@@ -1,5 +1,6 @@
 import type { ElementType, AnchorHTMLAttributes } from 'react'
 import MobileCategorySelect from '@/components/MobileCategorySelect'
+import PublicCategorySidebar from '@/components/PublicCategorySidebar'
 
 function NativeLink({ className, children, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
@@ -147,11 +148,11 @@ export default function ListWithCategories({
   return (
     <>
       <div>
-        <div className="flex items-center justify-between gap-4 pt-5 pb-6">
+        <div className="flex flex-wrap items-start justify-between gap-4 pt-5 pb-6">
           <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-5xl md:leading-14">
             {title}
             <small className="ml-3 text-base font-normal tracking-normal text-gray-500 md:text-xl dark:text-gray-400">
-              {title.startsWith('隨筆') ? 'Notes' : title.includes('文章') ? 'Articles' : ''}
+              {title.includes('隨筆') ? 'Notes' : title.includes('文章') ? 'Articles' : ''}
             </small>
           </h1>
           <Link
@@ -179,43 +180,18 @@ export default function ListWithCategories({
           </Link>
         </div>
         <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[244px_minmax(0,1fr)] lg:gap-12">
-          <aside className="hidden w-full rounded-xl border border-gray-200/70 bg-gray-100/60 p-4 md:block dark:border-gray-700/50 dark:bg-gray-800/70">
-            <div className="min-w-0">
-              {rootActive ? (
-                <h3 className="text-primary-500 rounded-md px-2 py-2 font-bold">{rootLabel}</h3>
-              ) : (
-                <Link
-                  href={rootHref}
-                  className="hover:text-primary-500 dark:hover:text-primary-500 block rounded-md px-2 py-2 font-bold text-gray-700 dark:text-gray-300"
-                >
-                  {rootLabel}
-                </Link>
-              )}
-              <ul className="mt-2 border-t border-gray-200/70 pt-2 pl-3 dark:border-gray-700/60">
-                {categories.map(({ id, displayName, count, href }) => {
-                  return (
-                    <li key={id} className="my-2">
-                      {activeTag === id ? (
-                        <h3 className="text-primary-500 inline-flex items-baseline rounded-md bg-blue-500/5 px-2 py-1.5 text-sm font-bold">
-                          {displayName}
-                          <span className="ml-3 opacity-70">({count})</span>
-                        </h3>
-                      ) : (
-                        <Link
-                          href={href}
-                          className="hover:text-primary-500 dark:hover:text-primary-500 inline-flex items-baseline rounded-md px-2 py-1.5 text-sm font-medium text-gray-500 dark:text-gray-300"
-                          aria-label={`檢視類別 ${displayName}`}
-                        >
-                          {displayName}
-                          <span className="ml-3 opacity-70">({count})</span>
-                        </Link>
-                      )}
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          </aside>
+          <PublicCategorySidebar
+            rootLabel={rootLabel}
+            rootHref={rootHref}
+            activeTag={rootActive ? '' : activeTag}
+            categories={categories.map(({ id, displayName, count, href }) => ({
+              id,
+              label: displayName,
+              count,
+              href,
+            }))}
+            LinkComponent={Link}
+          />
           <div className="min-w-0">
             <MobileCategorySelect
               value={rootActive ? '' : activeTag}
