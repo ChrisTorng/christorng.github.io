@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import SafeMarkdown from './SafeMarkdown'
+import NotePublicItem from './NotePublicItem'
 import MobileCategorySelect from '@/components/MobileCategorySelect'
 import PublicCategorySidebar from '@/components/PublicCategorySidebar'
 
@@ -18,17 +18,6 @@ type Note = {
 }
 type Category = { id: string; displayName: string; noteCount: number }
 type List = { items: Note[]; pages: number; page: number; total: number }
-function noteTitle(note: Note) {
-  return (
-    note.title ||
-    note.bookmark_title ||
-    note.markdown
-      .split('\n')
-      .find((x) => x.trim())
-      ?.slice(0, 120) ||
-    '隨筆'
-  )
-}
 export default function NotesList() {
   const [filter, setFilter] = useState({ tag: '', page: 1 })
   const [categories, setCategories] = useState<Category[]>([])
@@ -158,51 +147,12 @@ export default function NotesList() {
           {!busy && !data.items.length && <p className="py-4 text-gray-500">目前沒有隨筆。</p>}
           {!busy &&
             data.items.map((note) => (
-              <article
+              <NotePublicItem
                 key={note.id}
-                className="border-b border-gray-300/40 py-4 dark:border-gray-700"
-              >
-                <time
-                  className="text-xs text-gray-500"
-                  dateTime={(note.published_at || note.created_at).slice(0, 10)}
-                >
-                  {(note.published_at || note.created_at).slice(0, 10)}
-                </time>
-                <h2 className="mt-2 text-xl font-bold">
-                  <a
-                    className="hover:text-primary-500"
-                    href={
-                      note.slug
-                        ? '/notes/' + encodeURIComponent(note.slug) + '/'
-                        : '/notes/view/?id=' + encodeURIComponent(note.id)
-                    }
-                  >
-                    {noteTitle(note)}
-                  </a>
-                </h2>
-                <div className="mt-3">
-                  <SafeMarkdown text={note.markdown} />
-                </div>
-                {note.bookmark_id && (
-                  <a
-                    className="text-primary-500 mt-3 inline-block text-sm"
-                    href={'/bookmarks/view/?id=' + note.bookmark_id}
-                  >
-                    參考書籤 ↗
-                  </a>
-                )}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {note.tags.map((tag) => (
-                    <button
-                      key={tag}
-                      className="text-primary-500 text-sm"
-                      onClick={() => change({ tag })}
-                    >
-                      #{categories.find((c) => c.id === tag)?.displayName || tag}
-                    </button>
-                  ))}
-                </div>
-              </article>
+                note={note}
+                categories={categories}
+                onTagChange={(tag) => change({ tag })}
+              />
             ))}
           {!busy && data.pages > 1 && (
             <nav className="mt-6 flex justify-between" aria-label="分頁">
