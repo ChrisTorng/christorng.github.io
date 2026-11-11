@@ -12,6 +12,7 @@ export type PublicBookmark = {
   url: string
   preferred_url?: string | null
   redirect_url?: string | null
+  references?: {url: string; title: string; kind: string}[]
   status: number
   tags: string[]
   created_at: string
@@ -96,6 +97,40 @@ export default function BookmarkPublicItem({
           </a>
         )}
       </div>
+      {!!item.references?.length && (
+        <div
+          className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm"
+          aria-label="延伸參考網址"
+        >
+          {item.references.map((reference) => (
+            <a
+              key={reference.url}
+              href={reference.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={reference.title}
+              className="text-primary-500 hover:text-primary-600 inline-flex min-w-0 max-w-full items-center gap-1.5"
+            >
+              {reference.kind === 'hacker-news' ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src="https://news.ycombinator.com/favicon.ico"
+                  alt=""
+                  width={16}
+                  height={16}
+                  loading="lazy"
+                  className="h-4 w-4 shrink-0"
+                />
+              ) : (
+                <span aria-hidden="true">↗</span>
+              )}
+              <span className="min-w-0 break-words">
+                {reference.kind === 'hacker-news' ? 'Hacker News 留言' : reference.title}
+              </span>
+            </a>
+          ))}
+        </div>
+      )}
       <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
         {item.tags.map((name) => {
           const category = categories.find((t) => t.name.toLowerCase() === name.toLowerCase())
