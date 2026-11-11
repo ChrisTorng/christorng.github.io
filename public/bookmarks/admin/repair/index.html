@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>書籤摘要修復 | ChrisTorng 學習天地</title>
+<style>
+:root{color-scheme:light dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+*{box-sizing:border-box}
+body{max-width:960px;margin:0 auto;padding:14px 14px 64px;background:Canvas;color:CanvasText}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:1.35rem;margin:0} h2{font-size:1.18rem;line-height:1.45;margin:8px 0}
+a{color:LinkText;overflow-wrap:anywhere}
+button{font:inherit;padding:8px 12px;border:1px solid #8887;border-radius:8px;background:ButtonFace;color:ButtonText;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+button.primary{background:#135cab;color:white;border-color:#135cab;font-weight:600}
+nav,.buttons{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+fieldset{border:1px solid #8886;border-radius:12px;padding:14px;margin:12px 0}
+legend{font-weight:600;padding:0 4px}
+.small,.help{font-size:.9rem;color:GrayText}
+.original{font-size:.95rem;overflow-wrap:anywhere}
+.linkrow{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.old{white-space:pre-wrap;overflow-wrap:anywhere;max-height:160px;overflow:auto}
+textarea{display:block;width:100%;height:38vh;min-height:210px;resize:vertical;border:1px solid #888;border-radius:8px;padding:10px;background:Field;color:FieldText;font:inherit;line-height:1.55}
+#message{min-height:28px;white-space:pre-wrap;overflow-wrap:anywhere}
+#message.error{color:#b32b32}
+#metadata{white-space:pre-wrap;overflow-wrap:anywhere}
+#count{font-variant-numeric:tabular-nums}
+[hidden]{display:none!important}
+@media(max-width:600px){body{padding:10px 10px 50px}h1{font-size:1.2rem}fieldset{padding:10px}textarea{height:39vh}button{padding:9px 11px}}
+</style>
+</head>
+<body>
+<header>
+ <h1>書籤摘要修復</h1>
+ <nav><a href="/bookmarks/admin/quick/">快速處理</a><a href="/bookmarks/admin/">完整管理</a></nav>
+</header>
+<p class="help">僅列出摘要缺漏、封鎖頁或其他明顯異常的書籤；不變更分類與公開狀態。一次送出一篇，成功後才移除項目。貼入中的內容會即時儲存在目前瀏覽器，重新整理後可繼續。</p>
+<div class="buttons">
+ <button id="previous" type="button">上一篇</button>
+ <strong id="count">載入中…</strong>
+ <button id="next" type="button">下一篇</button>
+ <button id="reload" type="button">重新載入清單</button>
+</div>
+<section id="entry" hidden>
+ <fieldset>
+  <legend>待修復項目</legend>
+  <h2 id="title"></h2>
+  <div id="original" class="original"></div>
+  <div id="links" class="linkrow"></div>
+  <p id="created" class="small"></p>
+  <div class="small">目前摘要</div>
+  <div id="old" class="old"></div>
+ </fieldset>
+ <fieldset>
+  <legend>重新嘗試原文來源</legend>
+  <div class="buttons"><button type="button" id="retry">嘗試原始網址與可驗證轉址</button><button type="button" id="usemeta" hidden>採用已核對的來源描述並儲存</button></div>
+  <p id="metadata" class="small">找回網站提供的原始描述時，可選擇採用；若沒有足夠的原文，請貼入全文以重新摘要。</p>
+ </fieldset>
+ <fieldset>
+  <legend>貼入文章全文</legend>
+  <label for="content" class="small">請複製網頁主要內文，不必包含導覽選單與留言。最多 15 萬字元。</label>
+  <textarea id="content" autocomplete="off" spellcheck="false" placeholder="將這篇文章的原始全文貼在這裡。"></textarea>
+  <div class="buttons" style="margin-top:12px">
+   <button class="primary" type="button" id="submit">摘要並儲存這一篇</button>
+   <button type="button" id="clear">清除此篇草稿</button>
+   <span class="small" id="length"></span>
+  </div>
+ </fieldset>
+</section>
+<p id="message" role="status" aria-live="polite"></p>
+<script type="module">
+const $=id=>document.getElementById(id);
+const local=['localhost','127.0.0.1'].includes(location.hostname);
+const lastKey='blog-bookmarks-summary-repair-last-id';
+const draftKey=id=>'blog-bookmarks-summary-repair-draft:'+id;
+let items=[],index=0,working=false,report=null;
+const current=()=>items[index];
+const headers=()=>{const token=local&&sessionStorage.getItem('blog-bookmarks-admin-token');return token?{Authorization:'Bearer '+token}:{};};
+async function api(path,method='GET',body){
+ const response=await fetch('/bookmarks/api/admin'+path,{
+  method,credentials:'same-origin',cache:'no-store',
+  headers:{...headers(),...(body===undefined?{}:{'Content-Type':'application/json'})},
+  body:body===undefined?undefined:JSON.stringify(body)
+ });
+ const data=await response.json().catch(()=>({error:'伺服器回應格式錯誤'}));
+ if(!response.ok)throw Error(data.error||'HTTP '+response.status);
+ return data;
+}
+function message(value='',error=false){$('message').textContent=value;$('message').classList.toggle('error',error);}
+function setBusy(value){working=value;for(const id of ['previous','next','reload','retry','usemeta','submit','clear'])$(id).disabled=value;}
+function link(label,url){
+ try{
+  const u=new URL(url);
+  if(!['https:','http:'].includes(u.protocol))return;
+  const a=document.createElement('a');
+  a.textContent=label;a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';
+  $('links').append(a);
+ }catch{}
+}
+function saveDraft(){
+ const item=current();if(!item)return;
+ const value=$('content').value;
+ try {
+  if(value)localStorage.setItem(draftKey(item.id),value);
+  else localStorage.removeItem(draftKey(item.id));
+  $('length').textContent=value.length.toLocaleString('zh-TW')+' 字元，草稿已保留';
+ }catch {
+  $('length').textContent='儲存空間不足：草稿未能保留，請勿關閉網頁';
+ }
+}
+function render(){
+ const item=current();
+ $('entry').hidden=!item;
+ $('count').textContent=items.length?(index+1)+' / '+items.length+' 篇仍待修復':'全部已完成';
+ $('previous').disabled=working||index<=0;
+ $('next').disabled=working||index>=items.length-1;
+ if(!item){message('目前沒有需要人工補上原文的摘要。');return;}
+ try{localStorage.setItem(lastKey,item.id)}catch{}
+ $('title').textContent=item.title_zh||item.title;
+ $('original').textContent=item.title_original||'（未儲存英文原始標題）';
+ $('created').textContent='加入時間：'+new Date(item.created_at).toLocaleString('zh-TW');
+ $('links').replaceChildren();
+ link('原始網頁 ↗',item.url);
+ if(item.redirect_url&&item.redirect_url!==item.url)link('轉址網址 ↗',item.redirect_url);
+ $('old').textContent=item.summary?.trim()||'（空白）';
+ try{$('content').value=localStorage.getItem(draftKey(item.id))||''}catch{$('content').value=''}
+ report=null;$('usemeta').hidden=true;$('metadata').textContent='先嘗試從原網站及經驗證的轉址取得描述，無法取得再貼入原文。';
+ saveDraft();
+ message('');
+}
+async function load({keep=true}={}){
+ const previous=keep?current()?.id||localStorage.getItem(lastKey):null;
+ setBusy(true);
+ try {
+  const result=await api('/summary-repair');
+  items=result.items||[];
+  index=Math.max(0,items.findIndex(x=>x.id===previous));
+  render();
+ }catch(err){message('讀取失敗：'+err.message,true);}
+ finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
+}
+function completed(summary){
+ const done=current();
+ if(done){
+  try{localStorage.removeItem(draftKey(done.id))}catch{}
+  items.splice(index,1);
+  if(index>=items.length)index=Math.max(0,items.length-1);
+ }
+ render();
+ message('已儲存摘要：\n'+summary);
+}
+$('content').addEventListener('input',saveDraft);
+$('previous').addEventListener('click',()=>{if(index>0){index--;render();}});
+$('next').addEventListener('click',()=>{if(index<items.length-1){index++;render();}});
+$('reload').addEventListener('click',()=>load());
+$('clear').addEventListener('click',()=>{
+ if(!confirm('確定清除此篇尚未送出的原文草稿？'))return;
+ $('content').value='';saveDraft();
+});
+$('retry').addEventListener('click',async()=>{
+ const item=current();if(!item)return;
+ setBusy(true);$('metadata').textContent='正在檢查原始網址與來源…';
+ try{
+  const result=await api('/enrich','POST',{id:item.id});
+  report=result.verified&&result.proposed?.summary?result:null;
+  $('usemeta').hidden=!report;
+  $('metadata').textContent=report
+   ?'來源：'+(result.source||'')+'\n原始標題：'+(result.title_original||'')+'\n可採用描述：'+result.proposed.summary
+   :'未找到足夠可信的原文描述；請開啟原始網站或轉址網頁，複製全文貼入下方。';
+ }catch(err){$('metadata').textContent='來源檢查失敗：'+err.message;}
+ finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
+});
+$('usemeta').addEventListener('click',async()=>{
+ const item=current();if(!item||!report?.proposed?.summary)return;
+ setBusy(true);
+ try{
+  const value=report.proposed.summary;
+  await api('/'+item.id,'PATCH',{summary:value});
+  completed(value);
+ }catch(err){message('儲存失敗：'+err.message,true);}
+ finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
+});
+$('submit').addEventListener('click',async()=>{
+ const item=current();if(!item)return;
+ const content=$('content').value.trim();
+ if(content.length<60){message('請貼入至少 60 個字元的文章主要內文。',true);return;}
+ saveDraft();
+ setBusy(true);
+ message('正在根據貼入的原文產生繁體中文摘要；草稿已保留，失敗可重試。');
+ try{
+  const result=await api('/summary-repair','POST',{id:item.id,content});
+  if(!result.saved)throw Error('伺服器未確認儲存成功');
+  completed(result.summary);
+ }catch(err){message('未完成儲存：'+err.message+'。貼入原文仍保留於此瀏覽器。',true);}
+ finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
+});
+load();
+</script>
+</body>
+</html>
