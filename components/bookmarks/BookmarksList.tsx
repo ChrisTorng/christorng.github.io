@@ -14,7 +14,7 @@ type Bookmark = {
   url: string
   preferred_url?: string | null
   redirect_url?: string | null
-  references?: {url: string; title: string; kind: string}[]
+  references?: { url: string; title: string; kind: string }[]
   status: number
   tags: string[]
   created_at: string
