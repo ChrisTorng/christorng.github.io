@@ -12,7 +12,7 @@ export type PublicBookmark = {
   url: string
   preferred_url?: string | null
   redirect_url?: string | null
-  references?: {url: string; title: string; kind: string}[]
+  references?: { url: string; title: string; kind: string }[]
   status: number
   tags: string[]
   created_at: string
@@ -109,7 +109,7 @@ export default function BookmarkPublicItem({
               target="_blank"
               rel="noopener noreferrer"
               title={reference.title}
-              className="text-primary-500 hover:text-primary-600 inline-flex min-w-0 max-w-full items-center gap-1.5"
+              className="text-primary-500 hover:text-primary-600 inline-flex max-w-full min-w-0 items-center gap-1.5"
             >
               {reference.kind === 'hacker-news' ? (
                 // eslint-disable-next-line @next/next/no-img-element
