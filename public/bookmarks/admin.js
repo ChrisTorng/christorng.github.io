@@ -132,7 +132,7 @@ function edit(b) {
  $('editDialog').showModal();
 }
 $('app').innerHTML=`
-<header><h1>書籤管理 <small>Bookmarks</small></h1><nav><a href="/bookmarks/admin/quick/">快速處理</a> · <a href="/bookmarks/" target="_blank" rel="noopener">公開列表 ↗</a></nav></header>
+<header><h1>書籤管理 <small>Bookmarks</small></h1><nav><a href="/bookmarks/admin/quick/">快速處理</a> · <a href="/bookmarks/admin/repair/">修復摘要</a> · <a href="/bookmarks/" target="_blank" rel="noopener">公開列表 ↗</a></nav></header>
 <div class="auth" id="auth"></div>
 <form class="filters" id="filters">
  <select id="filter" aria-label="狀態"><option value="pending">待決定（未讀＋已讀待決定）</option><option value="unread">未讀</option><option value="readPending">已讀待決定</option><option value="deferred">稍後再決定</option><option value="private">確定不公開</option><option value="decided">已決定（不公開＋公開＋推薦）</option><option value="published">公開及推薦</option><option value="starred">推薦</option><option value="read">全部已讀</option><option value="all">全部</option></select>
