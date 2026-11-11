@@ -1,4 +1,5 @@
 import { sourceBadge } from './source-meta.mjs';
+import {createReferenceEditor,referenceEditorMarkup} from './reference-editor.mjs';
 const $ = id => document.getElementById(id);
 const local = ['localhost','127.0.0.1'].includes(location.hostname);
 const tokenKey = 'blog-bookmarks-admin-token';
@@ -127,6 +128,7 @@ function edit(b) {
  $('editRedirectUrl').value=b?.redirect_url||'';
  $('editUrl').value=b?.url||'';
  $('editSummary').value=b?.summary||'';
+ referenceEditor.reset(b?.references||[]);
  $('editHeading').textContent=b?'編輯書籤':'新增書籤';
  $('deleteItem').disabled=!b;
  $('editDialog').showModal();
@@ -152,6 +154,7 @@ $('app').innerHTML=`
  <label>原始網址<input id="editUrl" type="url" required autocomplete="url"></label>
  <label>重導向網址（選填，優先開啟）<input id="editRedirectUrl" type="url" autocomplete="off"></label>
  <label>網站摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown：連結、清單、引用、粗體等"></textarea></label>
+ ${referenceEditorMarkup}
  <div class="dialog-actions"><button type="submit">儲存書籤</button><button type="button" id="cancelEdit">取消</button><button type="button" id="deleteItem">刪除</button></div>
 </form></dialog>
 <dialog id="tagsDialog" aria-labelledby="tagsHeading"><form id="tagsForm">
@@ -161,6 +164,7 @@ $('app').innerHTML=`
  <div id="tagRows"></div>
  <div class="dialog-actions"><button type="submit">儲存對照</button><button type="button" id="closeTags">關閉</button></div>
  </form></dialog>`;
+const referenceEditor=createReferenceEditor(request,()=>({url:$('editUrl').value.trim(),redirect_url:$('editRedirectUrl').value.trim()}));
 if(local){
  $('auth').innerHTML='<input id="token" type="password" autocomplete="off" placeholder="本機管理 Token"><button id="login">登入</button><span class="hint">Token 僅儲存在此分頁</span>';
  $('token').value=sessionStorage.getItem(tokenKey)||'';
@@ -294,7 +298,7 @@ $('items').addEventListener('submit',async e=>{
 $('editForm').onsubmit=async e=>{
  e.preventDefault();
  const id=$('editId').value;
- const body={title:$('editTitle').value,title_zh:$('editTitle').value,title_original:$('editOriginalTitle').value,url:$('editUrl').value,redirect_url:$('editRedirectUrl').value,summary:$('editSummary').value};
+ const body={title:$('editTitle').value,title_zh:$('editTitle').value,title_original:$('editOriginalTitle').value,url:$('editUrl').value,redirect_url:$('editRedirectUrl').value,summary:$('editSummary').value,references:await referenceEditor.collect()};
  try{await request(id?'/'+id:'',id?'PATCH':'POST',body);$('editDialog').close();await refresh();status('已儲存');}
  catch(err){status(err.message,true);}
 };
