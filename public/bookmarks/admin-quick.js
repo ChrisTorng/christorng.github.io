@@ -1,5 +1,6 @@
 import { redirectOptions, findRedirectOption } from './redirect-options.mjs';
 import { sourceBadge } from './source-meta.mjs';
+import {createReferenceEditor,referenceEditorMarkup} from './reference-editor.mjs';
 const $ = id => document.getElementById(id);
 const local = ['localhost','127.0.0.1'].includes(location.hostname);
 const tokenKey = 'blog-bookmarks-admin-token';
@@ -340,6 +341,7 @@ function edit(b){
  manualRedirectValue=mode==='manual'?storedRedirect:'';
  renderRedirectModes(mode);
  $('editSummary').value=b.summary||'';
+ referenceEditor.reset(b.references||[]);
  $('editDialog').showModal();
  // A same-URL history entry makes the Android browser Back key close editing.
  // Keep focus on a non-input element so opening the dialog never raises the IME.
@@ -397,9 +399,10 @@ $('app').innerHTML=
  '<label>原文標題<input id="editOriginalTitle" maxlength="500" autocomplete="off"></label>'+
  '<label>原始網址<input id="editUrl" type="url" required></label>'+
  '<div class="redirect-group"><div class="redirect-header"><span>重導向網址</span><div id="redirectModes" role="radiogroup" aria-label="重導向方式"></div></div><input id="editRedirectUrl" type="url" aria-label="重導向網址" autocomplete="off"></div>'+
- '<label id="editSummaryGroup">摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown；儲存後點日期預覽"></textarea></label></div>'+
+ '<label id="editSummaryGroup">摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown；儲存後點日期預覽"></textarea></label>'+referenceEditorMarkup+'</div>'+
  '<div class="dialog-actions"><button id="saveEdit" type="submit">儲存</button><button id="cancelEdit" type="button">取消</button></div>'+
  '</form></dialog>';
+const referenceEditor=createReferenceEditor(request,()=>({url:$('editUrl').value.trim(),redirect_url:$('editRedirectUrl').value.trim()}));
 $('size').value=String(state.size);
 $('redirectModes').addEventListener('change',event=>{
  if(!event.target.matches('input[name="redirectMode"]'))return;
@@ -428,7 +431,8 @@ $('editForm').addEventListener('submit',async event=>{
   title_original:$('editOriginalTitle').value.trim(),
   url:$('editUrl').value.trim(),
   redirect_url:$('editRedirectUrl').value.trim(),
-  summary:$('editSummary').value.trim()
+  summary:$('editSummary').value.trim(),
+  references:await referenceEditor.collect()
  };
  if(!raw.title_zh||!raw.url)return;
  state.busy.add(id);

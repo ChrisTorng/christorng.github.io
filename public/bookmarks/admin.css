@@ -124,3 +124,23 @@ dialog #deleteItem:disabled{display:none}
 .actions [data-decision="5"]{background:transparent;border-color:var(--line)}
 .actions .preview-link{font-size:.84rem;color:var(--accent)}
 
+
+/* Shared extra reference URL editor (full and quick management). */
+.reference-editor{display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--line);padding-top:10px;min-width:0}
+.reference-header{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.87rem}
+.reference-header button,.reference-row button{font-size:.78rem;padding:5px 8px}
+dialog label.reference-hn-choice{display:flex;flex-direction:row;align-items:center;gap:8px;font-weight:500;color:var(--ink)}
+.reference-hn-choice input[type=checkbox]{width:19px;height:19px;flex:none;accent-color:var(--accent);margin:0}
+.reference-rows{display:flex;flex-direction:column;gap:6px}
+.reference-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr) auto auto;gap:5px;min-width:0}
+.reference-row input{font-size:.81rem;min-width:0;padding:6px 8px}
+.reference-row .reference-remove{font-size:1.05rem;line-height:1;color:#dc2626}
+.reference-status{font-size:.76rem;line-height:1.35;color:var(--muted);margin:0}
+.reference-status:empty{display:none}
+.reference-status.error{color:#dc2626}
+@media(max-width:650px){
+ .reference-row{grid-template-columns:minmax(0,1fr) auto auto}
+ .reference-row .reference-url{grid-column:1/-1}
+ .reference-row .reference-title{grid-column:1/2}
+ .reference-row button{font-size:.73rem;padding:5px 6px}
+}
