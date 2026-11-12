@@ -144,3 +144,11 @@ dialog label.reference-hn-choice{display:flex;flex-direction:row;align-items:cen
  .reference-row .reference-title{grid-column:1/2}
  .reference-row button{font-size:.73rem;padding:5px 6px}
 }
+
+/* Optional article text used to regenerate a summary; it is never persisted. */
+#editFullTextPanel{border-top:1px solid var(--line);padding:9px 0}
+#editFullTextPanel>summary{cursor:pointer;color:var(--accent);font-weight:600}
+#editFullTextPanel label{margin-top:8px}
+#editFullTextPanel #editArticleText{display:block;min-height:130px;max-height:42dvh;resize:vertical}
+#editFullTextPanel #regenerateSummary{margin-top:8px}
+#editFullTextPanel #summaryProgress{display:block;font-size:.8rem;color:var(--muted);margin-top:6px}
