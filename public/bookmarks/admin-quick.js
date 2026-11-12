@@ -347,6 +347,7 @@ function activeRedirectMode(){
  return $('redirectModes').querySelector('input[name="redirectMode"]:checked')?.value||'manual';
 }
 
+let summarizedArticleText='';
 let editHistoryOpen=false;
 let editClosing=false;
 function closeEdit(){
@@ -373,6 +374,10 @@ function edit(b){
  manualRedirectValue=mode==='manual'?storedRedirect:'';
  renderRedirectModes(mode);
  $('editSummary').value=b.summary||'';
+ $('editArticleText').value='';
+ $('editFullTextPanel').open=false;
+ $('summaryProgress').textContent='';
+ summarizedArticleText='';
  referenceEditor.reset(b.references||[]);
  $('editDialog').showModal();
  // A same-URL history entry makes the Android browser Back key close editing.
@@ -431,7 +436,11 @@ $('app').innerHTML=
  '<label>原文標題<input id="editOriginalTitle" maxlength="500" autocomplete="off"></label>'+
  '<label>原始網址<input id="editUrl" type="url" required></label>'+
  '<div class="redirect-group"><div class="redirect-header"><span>重導向網址</span><div id="redirectModes" role="radiogroup" aria-label="重導向方式"></div></div><input id="editRedirectUrl" type="url" aria-label="重導向網址" autocomplete="off"></div>'+
- '<label id="editSummaryGroup">摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown；儲存後點日期預覽"></textarea></label>'+referenceEditorMarkup+'</div>'+
+ '<label id="editSummaryGroup">摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown；儲存後點日期預覽"></textarea></label>'+
+ '<details id="editFullTextPanel"><summary>貼文章全文，重新產生摘要</summary>'+
+ '<label>文章全文（僅用於此次 AI 處理，不儲存於資料庫）<textarea id="editArticleText" placeholder="貼入文章全文，最多 15 萬字元" spellcheck="false"></textarea></label>'+
+ '<button type="button" id="regenerateSummary">重新摘要並填入上方欄位</button><span id="summaryProgress" role="status"></span></details>'+
+ referenceEditorMarkup+'</div>'+
  '<div class="dialog-actions"><button id="saveEdit" type="submit">儲存</button><button id="cancelEdit" type="button">取消</button></div>'+
  '</form></dialog>'+
  '<dialog id="categoryDialog" aria-labelledby="categoryHeading"><form id="categoryForm">'+
@@ -467,6 +476,23 @@ $('categoryForm').addEventListener('submit',async event=>{
  const b=[...state.recent,...state.deferred,...state.pending].find(x=>x.id===state.categoryTarget);
  if(b&&await addCategory(b,$('categoryEnglish').value,$('categoryChinese').value))$('categoryDialog').close();
 });
+async function regenerateSummary(id){
+ const content=$('editArticleText').value.trim();
+ if(content.length<60||content.length>150000)throw Error('請貼入 60～150000 字元的原文');
+ $('regenerateSummary').disabled=true;
+ $('summaryProgress').textContent='正在根據原文重新摘要…';
+ try{
+  const result=await request('/summary-repair/preview','POST',{id,content});
+  $('editSummary').value=result.summary;
+  summarizedArticleText=content;
+  $('summaryProgress').textContent='已重新摘要；請檢查上方欄位，再按儲存';
+  return result.summary;
+ }finally{$('regenerateSummary').disabled=false;}
+}
+$('regenerateSummary').onclick=async()=>{
+ try{await regenerateSummary($('editId').value);}
+ catch(error){$('summaryProgress').textContent='摘要失敗：'+error.message;}
+};
 $('cancelEdit').onclick=closeEdit;
 $('editDialog').addEventListener('cancel',event=>{
  event.preventDefault();
@@ -477,12 +503,17 @@ $('editForm').addEventListener('submit',async event=>{
  const id=$('editId').value;
  const b=[...state.recent,...state.deferred,...state.pending].find(x=>x.id===id);
  if(!b||state.busy.has(id))return;
+ let generatedSummary;
+ try{
+  if($('editArticleText').value.trim()&&$('editArticleText').value.trim()!==summarizedArticleText)
+   generatedSummary=await regenerateSummary(id);
+ }catch(error){$('summaryProgress').textContent='摘要失敗：'+error.message;return;}
  const raw={
   title_zh:$('editTitle').value.trim(),
   title_original:$('editOriginalTitle').value.trim(),
   url:$('editUrl').value.trim(),
   redirect_url:$('editRedirectUrl').value.trim(),
-  summary:$('editSummary').value.trim(),
+  summary:generatedSummary||$('editSummary').value.trim(),
   references:await referenceEditor.collect()
  };
  if(!raw.title_zh||!raw.url)return;
