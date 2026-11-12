@@ -69,7 +69,7 @@ test('mobile review snaps cards without splitting the pending count from its fir
   assert.match(css, /scroll-snap-type:y mandatory/)
   assert.match(css, /\.quick-item\.first-pending\{scroll-snap-align:none\}/)
   assert.match(css, /height:calc\(100svh - 58px\)/)
-  assert.match(js, /categoryDialog'\\)\\.showModal\\(\\)/)
+  assert.ok(js.includes("$('categoryDialog').showModal()"))
   assert.match(js, /categoryEnglish/)
   assert.match(js, /categoryChinese/)
   assert.match(js, /tagOrders/)
