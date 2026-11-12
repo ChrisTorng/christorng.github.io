@@ -286,35 +286,47 @@ function changeTag(b,name){
   message('分類儲存失敗：'+error.message,true);
  });
 }
-async function addCategory(b,rawName){
- if(state.busy.has(b.id)||state.loading)return;
- const name=String(rawName||'').trim();
- if(!name||name.length>80){message('分類名稱必須為 1～80 字',true);return;}
- const existing=state.tags.find(t=>t.name.toLowerCase()===name.toLowerCase());
- if(existing){
-  if(b.tags.some(t=>t.toLowerCase()===existing.name.toLowerCase()))message('此分類已選取');
-  else changeTag(b,existing.name);
-  return;
+async function addCategory(b,rawName,rawZh){
+ if(state.busy.has(b.id)||state.loading)return false;
+ const name=String(rawName||'').trim(),name_zh=String(rawZh||'').trim();
+ if(!name||!name_zh||name.length>80||name_zh.length>80){
+  $('categoryError').textContent='請輸入 1～80 字的英文與繁體中文分類名稱';
+  return false;
  }
- state.busy.add(b.id);
- state.inflight++;
+ if(state.tags.some(t=>t.name.toLowerCase()===name.toLowerCase())){
+  $('categoryError').textContent='英文分類已存在，請直接選取現有分類';
+  return false;
+ }
+ state.busy.add(b.id);state.inflight++;
+ $('saveCategory').disabled=true;
  const previous=[...b.tags];
  try{
-  const updated=await queueWrite(b.id,()=>request('/'+b.id,'PATCH',{tags:[...previous,name]}));
-  Object.assign(b,updated);
-  try{state.tags=await request('/tags');}
-  catch{state.tags=[...state.tags,{id:name.toLowerCase(),name,count:1}];}
+  const result=await queueWrite(b.id,()=>request('/tags','POST',{name,name_zh,bookmark_id:b.id}));
+  Object.assign(b,result.item);
+  state.tags=await request('/tags');
   state.changeVersion++;
+  [...state.recent,...state.deferred,...state.pending].forEach(updateCard);
   message('已新增並選取分類：'+name);
+  return true;
  }catch(error){
   b.tags=previous;
-  message('新增分類失敗：'+error.message,true);
+  $('categoryError').textContent='新增分類失敗：'+error.message;
+  return false;
  }finally{
-  state.busy.delete(b.id);
-  state.inflight--;
-  [...state.recent,...state.deferred,...state.pending].forEach(updateCard);
+  state.busy.delete(b.id);state.inflight--;
+  $('saveCategory').disabled=false;
   if(!state.inflight)void reconcile();
  }
+}
+function openCategoryDialog(b){
+ state.categoryTarget=b.id;
+ state.categoryScrollY=window.scrollY;
+ $('categoryEnglish').value='';
+ $('categoryChinese').value='';
+ $('categoryError').textContent='';
+ document.documentElement.style.scrollSnapType='none';
+ $('categoryDialog').showModal();
+ $('categoryHeading').focus({preventScroll:true});
 }
 let manualRedirectValue='';
 function renderRedirectModes(mode='manual'){
@@ -421,6 +433,13 @@ $('app').innerHTML=
  '<div class="redirect-group"><div class="redirect-header"><span>重導向網址</span><div id="redirectModes" role="radiogroup" aria-label="重導向方式"></div></div><input id="editRedirectUrl" type="url" aria-label="重導向網址" autocomplete="off"></div>'+
  '<label id="editSummaryGroup">摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown；儲存後點日期預覽"></textarea></label>'+referenceEditorMarkup+'</div>'+
  '<div class="dialog-actions"><button id="saveEdit" type="submit">儲存</button><button id="cancelEdit" type="button">取消</button></div>'+
+ '</form></dialog>'+
+ '<dialog id="categoryDialog" aria-labelledby="categoryHeading"><form id="categoryForm">'+
+ '<h2 id="categoryHeading" tabindex="-1">新增分類</h2>'+
+ '<label>英文名稱<input id="categoryEnglish" maxlength="80" required autocomplete="off"></label>'+
+ '<label>繁體中文名稱<input id="categoryChinese" maxlength="80" required autocomplete="off"></label>'+
+ '<p id="categoryError" role="alert"></p>'+
+ '<div class="dialog-actions"><button id="saveCategory" type="submit">儲存並選取</button><button id="cancelCategory" type="button">取消</button></div>'+
  '</form></dialog>';
 const referenceEditor=createReferenceEditor(request,()=>({url:$('editUrl').value.trim(),redirect_url:$('editRedirectUrl').value.trim()}));
 $('size').value=String(state.size);
@@ -436,6 +455,18 @@ $('editUrl').addEventListener('input',()=>{
  renderRedirectModes(activeRedirectMode());
 });
 
+$('cancelCategory').onclick=()=>$('categoryDialog').close();
+$('categoryDialog').addEventListener('cancel',event=>{event.preventDefault();$('categoryDialog').close();});
+$('categoryDialog').addEventListener('close',()=>{
+ const y=state.categoryScrollY;
+ document.documentElement.style.scrollSnapType='';
+ requestAnimationFrame(()=>window.scrollTo({top:y,behavior:'instant'}));
+});
+$('categoryForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const b=[...state.recent,...state.deferred,...state.pending].find(x=>x.id===state.categoryTarget);
+ if(b&&await addCategory(b,$('categoryEnglish').value,$('categoryChinese').value))$('categoryDialog').close();
+});
 $('cancelEdit').onclick=closeEdit;
 $('editDialog').addEventListener('cancel',event=>{
  event.preventDefault();
@@ -507,18 +538,7 @@ $('items').addEventListener('click',event=>{
   updateCard(b);
   return;
  }
- if(event.target.closest('[data-show-add-category]')){
-  const trigger=event.target.closest('[data-show-add-category]');
-  const form=element.querySelector('[data-add-category]');
-  form.hidden=!form.hidden;
-  trigger.setAttribute('aria-expanded',String(!form.hidden));
-  if(!form.hidden){
-   const categories=element.querySelector('.quick-categories');
-   // Scroll only the category pane, not the whole page or its active snap position.
-   requestAnimationFrame(()=>categories?.scrollTo({top:categories.scrollHeight,behavior:'smooth'}));
-  }
-  return;
- }
+ if(event.target.closest('[data-show-add-category]')){openCategoryDialog(b);return;}
  if(event.target.closest('[data-edit]')){edit(b);return;}
  if(event.target.closest('[data-delete]')){deleteBookmark(b);return;}
  const tag=event.target.closest('[data-tag-name]');
@@ -531,14 +551,5 @@ $('items').addEventListener('click',event=>{
   queueWrite(b.id,()=>request('/'+b.id,'PATCH',{status:1}))
    .catch(error=>message('已開啟原文，但標記已讀失敗：'+error.message,true));
  }
-});
-$('items').addEventListener('submit',event=>{
- const form=event.target.closest('[data-add-category]');
- if(!form)return;
- event.preventDefault();
- const element=form.closest('.quick-item');
- const b=[...state.recent,...state.deferred,...state.pending].find(item=>item.id===element?.dataset.id);
- if(!b)return;
- void addCategory(b,form.querySelector('[name="newCategory"]').value);
 });
 void load();
