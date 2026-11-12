@@ -121,6 +121,7 @@ async function refresh() {
   status('');
  }catch(e){if(generation===refreshGeneration)status(e.message,true);}
 }
+let summarizedArticleText='';
 function edit(b) {
  $('editId').value=b?.id||'';
  $('editTitle').value=b?.title_zh||b?.title||'';
@@ -128,6 +129,10 @@ function edit(b) {
  $('editRedirectUrl').value=b?.redirect_url||'';
  $('editUrl').value=b?.url||'';
  $('editSummary').value=b?.summary||'';
+ $('editArticleText').value='';
+ $('editFullTextPanel').open=false;
+ $('summaryProgress').textContent=b?'':'新增書籤請先儲存，才能利用全文重新摘要';
+ summarizedArticleText='';
  referenceEditor.reset(b?.references||[]);
  $('editHeading').textContent=b?'編輯書籤':'新增書籤';
  $('deleteItem').disabled=!b;
@@ -154,6 +159,9 @@ $('app').innerHTML=`
  <label>原始網址<input id="editUrl" type="url" required autocomplete="url"></label>
  <label>重導向網址（選填，優先開啟）<input id="editRedirectUrl" type="url" autocomplete="off"></label>
  <label>網站摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown：連結、清單、引用、粗體等"></textarea></label>
+ <details id="editFullTextPanel"><summary>貼文章全文，重新產生摘要</summary>
+ <label>文章全文（僅供此次 AI 處理，不儲存資料庫）<textarea id="editArticleText" spellcheck="false" placeholder="貼入全文，最多 15 萬字元"></textarea></label>
+ <button type="button" id="regenerateSummary">重新摘要並填入上方欄位</button><span id="summaryProgress" role="status"></span></details>
  ${referenceEditorMarkup}
  <div class="dialog-actions"><button type="submit">儲存書籤</button><button type="button" id="cancelEdit">取消</button><button type="button" id="deleteItem">刪除</button></div>
 </form></dialog>
@@ -225,6 +233,24 @@ $('tagsForm').onsubmit=async e=>{
  }catch(error){status('標籤儲存失敗：'+error.message,true);}
  finally{save.disabled=false;}
 };
+async function regenerateSummary(id) {
+ const content=$('editArticleText').value.trim();
+ if(!id)throw Error('請先儲存新增書籤，再貼全文重新摘要');
+ if(content.length<60||content.length>150000)throw Error('請貼入 60～150000 字元的原文');
+ $('regenerateSummary').disabled=true;
+ $('summaryProgress').textContent='正在根據全文重新摘要…';
+ try{
+  const result=await request('/summary-repair/preview','POST',{id,content});
+  $('editSummary').value=result.summary;
+  summarizedArticleText=content;
+  $('summaryProgress').textContent='摘要完成，請檢查上方內容並按儲存書籤';
+  return result.summary;
+ }finally{$('regenerateSummary').disabled=false;}
+}
+$('regenerateSummary').onclick=async()=>{
+ try{await regenerateSummary($('editId').value);}
+ catch(e){$('summaryProgress').textContent='重新摘要失敗：'+e.message;}
+};
 $('new').onclick=()=>edit(null);
 $('cancelEdit').onclick=()=>$('editDialog').close();
 $('items').addEventListener('click',async e=>{
@@ -254,6 +280,9 @@ $('items').addEventListener('click',async e=>{
  if(decision){
   const level=Number(decision.dataset.decision);
   if(level===b.status)return;
+  if([2,3,4].includes(level)&&!String(b.summary||'').trim()){
+   status('摘要不可空白；請編輯補上或貼全文重新摘要後再完成決定',true);return;
+  }
   if([3,4].includes(level)&&(!b.tags.length||b.savingTags)){
    status('公開或推薦前，請先選擇並儲存至少一個分類',true);return;
   }
@@ -298,7 +327,12 @@ $('items').addEventListener('submit',async e=>{
 $('editForm').onsubmit=async e=>{
  e.preventDefault();
  const id=$('editId').value;
- const body={title:$('editTitle').value,title_zh:$('editTitle').value,title_original:$('editOriginalTitle').value,url:$('editUrl').value,redirect_url:$('editRedirectUrl').value,summary:$('editSummary').value,references:await referenceEditor.collect()};
+ let summary=$('editSummary').value;
+ try{
+  if($('editArticleText').value.trim()&&$('editArticleText').value.trim()!==summarizedArticleText)
+   summary=await regenerateSummary(id);
+ }catch(error){$('summaryProgress').textContent='重新摘要失敗：'+error.message;return;}
+ const body={title:$('editTitle').value,title_zh:$('editTitle').value,title_original:$('editOriginalTitle').value,url:$('editUrl').value,redirect_url:$('editRedirectUrl').value,summary,references:await referenceEditor.collect()};
  try{await request(id?'/'+id:'',id?'PATCH':'POST',body);$('editDialog').close();await refresh();status('已儲存');}
  catch(err){status(err.message,true);}
 };
