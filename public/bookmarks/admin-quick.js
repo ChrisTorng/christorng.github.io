@@ -11,7 +11,8 @@ const state = {
  recent:[], pending:[], deferred:[], tags:[], remaining:0, deferredRemaining:0,
  expanded:new Set(),
  loading:false, inflight:0, generation:0, changeVersion:0,
- writes:new Map(), busy:new Set()
+ writes:new Map(), busy:new Set(), tagOrders:new Map(), refreshTagOrder:false,
+ categoryTarget:null, categoryScrollY:0
 };
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dateText = value => value ? new Intl.DateTimeFormat('zh-TW',{
@@ -57,6 +58,22 @@ function queueWrite(id,action){
    ()=>{if(state.writes.get(id)===task)state.writes.delete(id)});
  return task;
 }
+function orderedTags(b) {
+ let order=state.tagOrders.get(b.id);
+ if(!order){
+  const selected=new Set((b.tags||[]).map(x=>x.toLowerCase()));
+  order=[...state.tags].sort((a,z)=>{
+   if((a.id==='default')!==(z.id==='default'))return a.id==='default'?1:-1;
+   const as=selected.has(a.name.toLowerCase()),zs=selected.has(z.name.toLowerCase());
+   if(as!==zs)return as?-1:1;
+   return Number(z.count||0)-Number(a.count||0)||a.name.localeCompare(z.name);
+  }).map(t=>t.id);
+  state.tagOrders.set(b.id,order);
+ }
+ const byId=new Map(state.tags.map(t=>[t.id,t]));
+ return [...order.map(id=>byId.get(id)).filter(Boolean),
+  ...state.tags.filter(t=>!order.includes(t.id))];
+}
 function card(b,kind,first=false){
  const target=b.preferred_url||b.redirect_url||b.url;
  const expanded=state.expanded.has(b.id);
@@ -64,7 +81,7 @@ function card(b,kind,first=false){
  const original=b.title_original&&b.title_original!==(b.title_zh||b.title)
   ?'<div class="quick-original" lang="en">'+esc(b.title_original)+'</div>':'';
  const tags=new Set(b.tags.map(t=>t.toLowerCase()));
- const categoryButtons=[...state.tags].sort((a,b)=>Number(a.id==='default')-Number(b.id==='default')).map(t=>{
+ const categoryButtons=orderedTags(b).map(t=>{
   const selected=tags.has(t.name.toLowerCase());
   return '<button type="button" class="category" data-tag-name="'+esc(t.name)+'" title="'+esc(tagLabel(t))+'" aria-pressed="'+selected+'">'+esc(tagLabel(t))+'</button>';
  }).join('');
@@ -77,14 +94,12 @@ function card(b,kind,first=false){
   (kind==='deferred'?'<button type="button" class="quick-collapse" data-toggle-deferred aria-expanded="true">▾ 收合</button>':'')+
   '<div class="quick-main"><div class="quick-content"><a class="quick-title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read>'+esc(b.title_zh||b.title)+' ↗</a>'+
   original+'<div class="quick-source">'+sourceBadge(b.url)+'</div><div class="quick-date"><a href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer" title="預覽書籤單項頁">'+esc(dateText(b.created_at))+'</a></div>'+
-  (b.summary?'<p class="quick-summary">'+esc(b.summary)+'</p>':'')+
+  (b.summary?'<p class="quick-summary">'+esc(b.summary)+'</p>':'<p class="quick-summary missing-summary">尚無摘要，請先編輯補上，才能完成決定。</p>')+
   '</div><div class="quick-actions">'+actions+
   '<button type="button" data-edit>編輯</button>'+
   '<button type="button" class="quick-delete" data-delete>刪除</button></div></div>'+
   '<aside class="quick-categories" aria-label="分類">'+categoryButtons+
-  '<div class="quick-add-category"><button type="button" data-show-add-category aria-expanded="false">＋新增分類</button>'+
-  '<form data-add-category hidden><input name="newCategory" maxlength="80" required autocomplete="off" placeholder="英文分類" aria-label="新分類英文名稱">'+
-  '<button type="submit">新增並選取</button></form></div></aside></article>';
+  '<div class="quick-add-category"><button type="button" data-show-add-category>＋新增分類</button></div></aside></article>';
 }
 
 function findCard(id){
@@ -157,6 +172,7 @@ async function load(size=state.size,{focus=true}={}){
   state.pending=data.pending;
   state.remaining=data.remaining;
   state.tags=tags;
+  state.tagOrders.clear();
   state.loading=false;
   $('size').value=String(size);
   render({focus});
@@ -183,12 +199,14 @@ async function reconcile(){
   state.pending=data.pending;
   state.remaining=data.remaining;
   state.tags=tags;
+  if(state.refreshTagOrder){state.tagOrders.clear();state.refreshTagOrder=false;}
   render({preserveId:anchor});
  }catch(error){message('已儲存，但同步清單失敗：'+error.message,true);}
 }
 function takeDecision(b,level){
  if(state.busy.has(b.id)||state.loading)return;
- if([3,4].includes(level)&&!b.tags.length){message('請先選擇至少一個分類，才能公開或推薦',true);return;}
+ if([2,3,4].includes(level)&&!String(b.summary||'').trim()){message('摘要不可空白，請先編輯補上或貼全文重新摘要',true);return;}
+ if([3,4].includes(level)&&!b.tags.some(t=>t.toLowerCase()!=='default')){message('請先選擇至少一個分類，才能公開或推薦',true);return;}
  const oldStatus=b.status;
  if(oldStatus===level)return;
  const previousRecent=[...state.recent];
@@ -209,6 +227,8 @@ function takeDecision(b,level){
  }else{
   state.recent=[...state.recent,next].slice(-state.size);
  }
+  state.tagOrders.clear();
+  state.refreshTagOrder=true;
  if(wasPending)state.remaining--;
  if(wasDeferred)state.deferredRemaining--;
  render({focus:wasPending,preserveId:wasPending?null:b.id});
