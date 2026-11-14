@@ -1,4 +1,5 @@
 import SafeMarkdown from './SafeMarkdown'
+import BookmarkInline from './BookmarkInline'
 
 export type PublicNote = {
   id: string
@@ -57,17 +58,10 @@ export default function NotePublicItem({
         {date}
       </time>
       {titleMarkup}
+      {note.bookmark_id && <BookmarkInline id={note.bookmark_id} />}
       <div className="mt-3">
         <SafeMarkdown text={note.markdown} />
       </div>
-      {note.bookmark_id && (
-        <a
-          className="text-primary-500 mt-3 inline-block text-sm"
-          href={'/bookmarks/view/?id=' + encodeURIComponent(note.bookmark_id)}
-        >
-          參考書籤 ↗
-        </a>
-      )}
       <div className="mt-3 flex flex-wrap gap-2 text-sm">
         {note.tags.map((id) => {
           const label = categories.find((category) => category.id === id)?.displayName || id
