@@ -348,6 +348,12 @@
     & :where(code):not(pre code) {
       color: var(--color-indigo-500);
     }
+    /* Typography adds visible backticks around inline code even though Markdown
+       already parsed them. Match the editor preview without changing source text. */
+    & :where(code):not(pre code)::before,
+    & :where(code):not(pre code)::after {
+      content: none;
+    }
   }
 
   .dark .prose {
