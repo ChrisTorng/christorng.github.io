@@ -13,6 +13,7 @@ export type PublicBookmark = {
   preferred_url?: string | null
   redirect_url?: string | null
   references?: { url: string; title: string; kind: string }[]
+  related_notes_html?: string
   status: number
   tags: string[]
   created_at: string
@@ -25,11 +26,13 @@ export default function BookmarkPublicItem({
   item,
   categories = [],
   detail = false,
+  embedded = false,
   onTagChange,
 }: {
   item: PublicBookmark
   categories?: BookmarkCategory[]
   detail?: boolean
+  embedded?: boolean
   onTagChange?: (tag: string) => void
 }) {
   const target = item.preferred_url || item.redirect_url || item.url
@@ -96,6 +99,11 @@ export default function BookmarkPublicItem({
             原始網址：{item.url}
           </a>
         )}
+        {embedded && (
+          <a className="text-primary-500" href={permalink}>
+            書籤永久連結
+          </a>
+        )}
       </div>
       {!!item.references?.length && (
         <div
@@ -156,6 +164,13 @@ export default function BookmarkPublicItem({
           )
         })}
       </div>
+      {!embedded && item.related_notes_html && (
+        <aside
+          aria-label="引用隨筆"
+          className="border-primary-500 mt-3 min-w-0 rounded-r-lg border-l-4 bg-gray-50/60 px-3 py-2 dark:bg-gray-800/40"
+          dangerouslySetInnerHTML={{ __html: item.related_notes_html }}
+        />
+      )}
     </article>
   )
 }
