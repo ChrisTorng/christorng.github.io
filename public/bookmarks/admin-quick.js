@@ -286,7 +286,10 @@ function takeDecision(b,level){
  render({focus:wasPending,preserveId:wasPending?null:b.id});
  message('已選擇「'+levels[level]+'」，正在儲存…');
  queueWrite(b.id,()=>request('/'+b.id,'PATCH',{status:level,tags:[...b.tags]}))
- .then(()=>message('已儲存：'+levels[level]),error=>{
+ .then(item=>{
+  next.status=item.status;
+  message('已儲存：'+levels[item.status]);
+ },error=>{
   // Roll back only the failed record, preserving other concurrent decisions.
   state.pending=state.pending.filter(x=>x.id!==b.id);
   state.deferred=state.deferred.filter(x=>x.id!==b.id);

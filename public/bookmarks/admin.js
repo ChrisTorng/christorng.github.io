@@ -67,7 +67,7 @@ function itemHtml(b) {
  const tagNames=new Set(b.tags.map(x=>x.toLowerCase()));
  const choices=state.tags.map(t=>'<button type="button" data-tag-name="'+esc(t.name)+'" aria-pressed="'+String(tagNames.has(t.name.toLowerCase()))+'">'+esc(t.name_zh||t.name)+'</button>').join('');
  const picker='<details class="category-picker"><summary>分類：'+(b.tags.length?b.tags.map(t=>esc(state.tags.find(x=>x.name.toLowerCase()===t.toLowerCase())?.name_zh||t)).join('、'):'未分類')+' · 點擊選擇</summary><div class="category-choices">'+choices+'</div><form class="add-category" data-add-tag><input name="newtag" maxlength="80" placeholder="新增分類名稱" aria-label="新增分類"><button type="submit">新增並選取</button></form></details>';
- const note=[3,4].includes(b.status)?'<a class="write-note" href="/notes/editor/?bookmark='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener">寫隨筆 ↗</a>':'';
+ const note='<a class="write-note" href="/notes/editor/?bookmark='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener">寫隨筆 ↗</a>';
  const blocked=!b.tags.length||b.savingTags;
  const disabled=blocked?' disabled title="請先選擇至少一個分類並完成儲存"':'';
  const preview='<a class="preview-link" href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer">預覽</a>';
@@ -91,7 +91,7 @@ async function persistStatus(b,target){
  try {
   const item=await chain;
   if(b.status===target)Object.assign(b,item);
-  status('已儲存「'+levelName[target]+'」');
+  status('已儲存「'+levelName[item.status]+'」');
   return item;
  }catch(e){
   if(b.status===target)b.status=previous;
