@@ -46,12 +46,17 @@ export default function BookmarkInline({ id }: { id: string }) {
   }, [id])
 
   return (
-    <aside aria-label="引用書籤"
-      className="mt-3 min-w-0 rounded-r-lg border-l-4 border-primary-500 bg-gray-50/60 px-3 py-2 dark:bg-gray-800/40">
-      {item ? <BookmarkPublicItem item={item} categories={categories} /> :
+    <aside
+      aria-label="引用書籤"
+      className="border-primary-500 mt-3 min-w-0 rounded-r-lg border-l-4 bg-gray-50/60 px-3 py-2 dark:bg-gray-800/40"
+    >
+      {item ? (
+        <BookmarkPublicItem item={item} categories={categories} />
+      ) : (
         <p role="status" className="text-sm text-gray-500">
           {error || '正在載入引用書籤……'}
-        </p>}
+        </p>
+      )}
     </aside>
   )
 }
