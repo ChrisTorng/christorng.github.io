@@ -257,7 +257,10 @@
    fixed modal, not a growing item in the page's scroll-snap layout. */
 .quick-add-category{flex-shrink:0;margin-top:5px;padding-top:6px;border-top:1px solid var(--line)}
 .quick-add-category>button{width:100%;padding:6px 3px;font-size:.75rem}
-.quick-summary.missing-summary{color:#b35435;font-weight:600}
+.quick-summary-repair{margin:11px 0 12px}
+.quick-summary.missing-summary{color:var(--muted);margin:0 0 5px}
+.quick-summary.missing-summary.error{color:var(--danger,#b32b32)}
+.quick-summary-repair button{font-size:.81rem;padding:5px 9px}
 #categoryDialog{
  position:fixed;inset:auto;top:clamp(12px,18vh,170px);left:50%;
  transform:translateX(-50%);margin:0;
