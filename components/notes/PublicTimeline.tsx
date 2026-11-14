@@ -10,6 +10,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from '@/utils/formatDate'
 import { formatNoteDate } from '@/components/ListWithCategories'
 import SafeMarkdown from '@/components/notes/SafeMarkdown'
+import BookmarkInline from '@/components/notes/BookmarkInline'
 import { tagDefinitions } from '@/data/tagDefinitions'
 import PublicCategorySidebar from '@/components/PublicCategorySidebar'
 import MobileCategorySelect from '@/components/MobileCategorySelect'
@@ -31,6 +32,7 @@ type Entry = {
   subtitle?: string
   summary?: string
   markdown?: string
+  bookmark_id?: string | null
   html?: string
   url?: string
   date: string
@@ -270,7 +272,12 @@ export default function PublicTimeline({
                         </div>
                       </div>
                       {entry.kind === 'note' ? (
-                        <SafeMarkdown text={entry.markdown || ''} />
+                        <div>
+                          {entry.bookmark_id && <BookmarkInline id={entry.bookmark_id} />}
+                          <div className="mt-3">
+                            <SafeMarkdown text={entry.markdown || ''} />
+                          </div>
+                        </div>
                       ) : (
                         <p className="text-gray-500 dark:text-gray-400">{entry.summary}</p>
                       )}

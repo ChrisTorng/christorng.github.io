@@ -137,9 +137,14 @@ function render({focus=false,preserveId=null}={}){
   const t=state.tags.find(t=>t.name.toLowerCase()===name.toLowerCase());
   return esc(tagLabel(t,name));
  }).join('、');
- const lastLabel=last?'<button type="button" class="quick-latest" data-scroll-previous title="查看上一筆已處理書籤">'+
-  esc(last.status===4?'已推薦':last.status===3?'已公開':'不公開')+
-  (lastTags?' · '+lastTags:'')+'</button>':'';
+ const lastLabel=last?'<span class="quick-latest-group">'+
+  '<button type="button" class="quick-latest" data-scroll-previous title="查看上一筆已處理書籤">'+
+   esc(last.status===4?'已推薦':last.status===3?'已公開':'不公開')+
+   (lastTags?' · '+lastTags:'')+'</button>'+
+   (last.status===4&&!state.busy.has(last.id)
+    ?'<a class="quick-write-note" href="/notes/editor/?bookmark='+encodeURIComponent(last.id)+
+      '" target="_blank" rel="noopener noreferrer" title="另開隨筆編輯器並引用這筆推薦書籤">另開寫隨筆 ↗</a>':'')+
+   '</span>':'';
  $('items').innerHTML=
   (deferred.length?'<div class="quick-section-label">稍後再決定 · '+state.deferredRemaining+' 筆（點標題展開）</div>':'')+
   deferred.map(b=>card(b,'deferred')).join('')+
