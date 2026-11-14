@@ -285,3 +285,9 @@
  #categoryDialog #categoryForm{padding:14px;gap:10px}
  #editFullTextPanel #editArticleText{min-height:120px}
 }
+
+/* Recommendation shortcut beside the last decided bookmark, never overlaid. */
+.quick-latest-group{justify-self:end;display:flex;align-items:center;justify-content:flex-end;gap:6px 10px;flex-wrap:wrap;min-width:0;text-align:right}
+.quick-latest-group .quick-latest{justify-self:auto}
+.quick-write-note{font-size:.8rem;line-height:1.5;color:var(--accent);font-weight:650;white-space:nowrap;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:650px){.quick-latest-group{gap:1px 8px}.quick-write-note{font-size:.75rem}}
