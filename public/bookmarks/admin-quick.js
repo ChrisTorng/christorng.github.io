@@ -11,7 +11,7 @@ const state = {
  recent:[], pending:[], deferred:[], tags:[], remaining:0, deferredRemaining:0,
  expanded:new Set(),
  loading:false, inflight:0, generation:0, changeVersion:0,
- writes:new Map(), busy:new Set(), tagOrders:new Map(), refreshTagOrder:false,
+ writes:new Map(), busy:new Set(), summaryActivity:new Map(), tagOrders:new Map(), refreshTagOrder:false,
  categoryTarget:null, categoryScrollY:0
 };
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -32,9 +32,9 @@ function headers(){
  const token=local&&sessionStorage.getItem(tokenKey);
  return token?{Authorization:'Bearer '+token}:{};
 }
-async function request(path,method='GET',body){
+async function request(path,method='GET',body,signal){
  const response=await fetch('/bookmarks/api/admin'+path,{
-  method,credentials:'same-origin',cache:'no-store',
+  method,signal,credentials:'same-origin',cache:'no-store',
   headers:{...headers(),...(body===undefined?{}:{'Content-Type':'application/json'})},
   body:body===undefined?undefined:JSON.stringify(body)
  });
@@ -74,6 +74,18 @@ function orderedTags(b) {
  return [...order.map(id=>byId.get(id)).filter(Boolean),
   ...state.tags.filter(t=>!order.includes(t.id))];
 }
+function decisionDisabled(b,level){
+ return state.busy.has(b.id) ||
+  ([2,3,4].includes(level)&&!String(b.summary||'').trim()) ||
+  ([3,4].includes(level)&&!b.tags.some(tag=>tag.toLowerCase()!=='default'));
+}
+function summaryMarkup(b){
+ if(String(b.summary||'').trim())return '<p class="quick-summary">'+esc(b.summary)+'</p>';
+ const activity=state.summaryActivity.get(b.id);
+ return '<div class="quick-summary-repair">'+
+  '<p class="quick-summary missing-summary'+(activity?.startsWith('摘要失敗')?' error':'')+'" role="status">'+esc(activity||'尚無摘要')+'</p>'+
+  '<button type="button" data-summarize-clipboard'+(state.busy.has(b.id)?' disabled':'')+'>從剪貼簿產生摘要</button></div>';
+}
 function card(b,kind,first=false){
  const target=b.preferred_url||b.redirect_url||b.url;
  const expanded=state.expanded.has(b.id);
@@ -86,7 +98,7 @@ function card(b,kind,first=false){
   return '<button type="button" class="category" data-tag-name="'+esc(t.name)+'" title="'+esc(tagLabel(t))+'" aria-pressed="'+selected+'">'+esc(tagLabel(t))+'</button>';
  }).join('');
  const actions=[3,4,2,5].map(level=>{
-  const disabled=([3,4].includes(level)&&!b.tags.length)||state.busy.has(b.id);
+  const disabled=decisionDisabled(b,level);
   const selected=b.status===level;
   return '<button type="button" data-decision="'+level+'" aria-pressed="'+selected+'"'+(disabled?' disabled':'')+'>'+levels[level]+'</button>';
  }).join('');
@@ -94,7 +106,7 @@ function card(b,kind,first=false){
   (kind==='deferred'?'<button type="button" class="quick-collapse" data-toggle-deferred aria-expanded="true">▾ 收合</button>':'')+
   '<div class="quick-main"><div class="quick-content"><a class="quick-title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read>'+esc(b.title_zh||b.title)+' ↗</a>'+
   original+'<div class="quick-source">'+sourceBadge(b.url)+'</div><div class="quick-date"><a href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer" title="預覽書籤單項頁">'+esc(dateText(b.created_at))+'</a></div>'+
-  (b.summary?'<p class="quick-summary">'+esc(b.summary)+'</p>':'<p class="quick-summary missing-summary">尚無摘要，請先編輯補上，才能完成決定。</p>')+
+  summaryMarkup(b)+
   '</div><div class="quick-actions">'+actions+
   '<button type="button" data-edit>編輯</button>'+
   '<button type="button" class="quick-delete" data-delete>刪除</button></div></div>'+
@@ -203,10 +215,45 @@ async function reconcile(){
   render({preserveId:anchor});
  }catch(error){message('已儲存，但同步清單失敗：'+error.message,true);}
 }
+async function summarizeClipboard(b){
+ const id=b.id;
+ if(state.loading||state.busy.has(id)||String(b.summary||'').trim())return;
+ state.busy.add(id);
+ state.inflight++;
+ state.changeVersion++;
+ state.summaryActivity.set(id,'正在讀取剪貼簿…');
+ updateCard(b);
+ try{
+  if(!navigator.clipboard?.readText)throw Error('瀏覽器無法讀取剪貼簿，可在編輯視窗貼上原文。');
+  let content;
+  try{
+   content=(await navigator.clipboard.readText()).trim();
+  }catch{
+   throw Error('無法讀取剪貼簿，請允許存取後重試，或在編輯視窗貼上原文。');
+  }
+  if(!content)throw Error('剪貼簿沒有文字，請先複製文章。');
+  if(content.length>150000)throw Error('剪貼簿文字超過 15 萬字元，請縮短後重試。');
+  state.summaryActivity.set(id,'正在產生摘要…');
+  updateCard(b);
+  const result=await queueWrite(id,()=>request('/summary-repair','POST',{id,content},AbortSignal.timeout(35000)));
+  b.summary=result.summary;
+  state.summaryActivity.delete(id);
+ }catch(error){
+  const reason=error.name==='TimeoutError'?'等待摘要逾時，請重試。':error.message;
+  state.summaryActivity.set(id,'摘要失敗：'+reason);
+ }finally{
+  state.busy.delete(id);
+  state.inflight--;
+  const current=[...state.recent,...state.deferred,...state.pending].find(item=>item.id===id);
+  if(current){
+   if(!state.summaryActivity.has(id))current.summary=b.summary;
+   updateCard(current);
+  }
+  if(!state.inflight)void reconcile();
+ }
+}
 function takeDecision(b,level){
- if(state.busy.has(b.id)||state.loading)return;
- if([2,3,4].includes(level)&&!String(b.summary||'').trim()){message('摘要不可空白，請先編輯補上或貼全文重新摘要',true);return;}
- if([3,4].includes(level)&&!b.tags.some(t=>t.toLowerCase()!=='default')){message('請先選擇至少一個分類，才能公開或推薦',true);return;}
+ if(state.loading||decisionDisabled(b,level))return;
  const oldStatus=b.status;
  if(oldStatus===level)return;
  const previousRecent=[...state.recent];
@@ -525,6 +572,7 @@ $('editForm').addEventListener('submit',async event=>{
  try{
   const updated=await queueWrite(id,()=>request('/'+id,'PATCH',raw));
   Object.assign(b,updated);
+  state.summaryActivity.delete(id);
   updateCard(b);
   closeEdit();
   message('已儲存');
@@ -569,6 +617,7 @@ $('items').addEventListener('click',event=>{
   updateCard(b);
   return;
  }
+ if(event.target.closest('[data-summarize-clipboard]')){void summarizeClipboard(b);return;}
  if(event.target.closest('[data-show-add-category]')){openCategoryDialog(b);return;}
  if(event.target.closest('[data-edit]')){edit(b);return;}
  if(event.target.closest('[data-delete]')){deleteBookmark(b);return;}
