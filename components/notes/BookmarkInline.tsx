@@ -50,6 +50,8 @@ export default function BookmarkInline({ id }: { id: string }) {
       aria-label="引用書籤"
       className="border-primary-500 mt-3 min-w-0 rounded-r-lg border-l-4 bg-gray-50/60 px-3 py-2 dark:bg-gray-800/40"
     >
+      <hr />
+      <p><strong>引用書籤</strong></p>
       {item ? (
         <BookmarkPublicItem item={item} categories={categories} embedded />
       ) : (
