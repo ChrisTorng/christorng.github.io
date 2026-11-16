@@ -52,8 +52,8 @@ export default function BookmarkInline({ id }: { id: string }) {
     >
       <hr />
       <p>
-          <strong>引用書籤</strong>
-        </p>
+        <strong>引用書籤</strong>
+      </p>
       {item ? (
         <BookmarkPublicItem item={item} categories={categories} embedded />
       ) : (
