@@ -38,6 +38,7 @@ export default function BookmarkSource({ url }: { url: string }) {
         referrerPolicy="no-referrer"
         className="h-4 w-4 shrink-0 rounded-sm"
       />
+      {'\u00a0'}
       <span className="min-w-0 truncate">{source.label}</span>
     </span>
   )

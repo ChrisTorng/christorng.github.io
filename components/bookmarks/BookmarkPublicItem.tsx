@@ -99,12 +99,14 @@ export default function BookmarkPublicItem({
             原始網址：{item.url}
           </a>
         )}
-        {embedded && (
+      </div>
+      {embedded && (
+        <p className="mt-2 text-xs">
           <a className="text-primary-500" href={permalink}>
             書籤永久連結
           </a>
-        )}
-      </div>
+        </p>
+      )}
       {!!item.references?.length && (
         <div
           className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm"
@@ -168,8 +170,13 @@ export default function BookmarkPublicItem({
         <aside
           aria-label="引用隨筆"
           className="border-primary-500 mt-3 min-w-0 rounded-r-lg border-l-4 bg-gray-50/60 px-3 py-2 dark:bg-gray-800/40"
-          dangerouslySetInnerHTML={{ __html: item.related_notes_html }}
-        />
+        >
+          <hr />
+          <p>
+            <strong>引用隨筆</strong>
+          </p>
+          <div dangerouslySetInnerHTML={{ __html: item.related_notes_html }} />
+        </aside>
       )}
     </article>
   )
