@@ -23,9 +23,19 @@ function safeUrl(value?: string, baseUrl = 'https://christorng.idv.tw') {
     const url = new URL(value, baseUrl)
     if (!['http:', 'https:', 'mailto:'].includes(url.protocol)) return ''
     if (url.origin === 'https://christorng.idv.tw' && url.pathname.startsWith('/blog-assets/'))
-      return 'https://assets.christorng.idv.tw/' + url.pathname.slice('/blog-assets/'.length) + url.search + url.hash
+      return (
+        'https://assets.christorng.idv.tw/' +
+        url.pathname.slice('/blog-assets/'.length) +
+        url.search +
+        url.hash
+      )
     if (url.origin === 'https://christorng.idv.tw' && url.pathname.startsWith('/blog-media/'))
-      return 'https://media.christorng.idv.tw/' + url.pathname.slice('/blog-media/'.length) + url.search + url.hash
+      return (
+        'https://media.christorng.idv.tw/' +
+        url.pathname.slice('/blog-media/'.length) +
+        url.search +
+        url.hash
+      )
     return url.href
   } catch {
     return ''
