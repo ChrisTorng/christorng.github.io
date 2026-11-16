@@ -27,6 +27,8 @@ textarea{display:block;width:100%;height:38vh;min-height:210px;resize:vertical;b
 #message.error{color:#b32b32}
 #metadata{white-space:pre-wrap;overflow-wrap:anywhere}
 #count{font-variant-numeric:tabular-nums}
+.repaired-item{border-top:1px solid #8886;padding:10px 0;overflow-wrap:anywhere}
+.repaired-item p{white-space:pre-wrap;margin:8px 0}
 [hidden]{display:none!important}
 @media(max-width:600px){body{padding:10px 10px 50px}h1{font-size:1.2rem}fieldset{padding:10px}textarea{height:39vh}button{padding:9px 11px}}
 </style>
@@ -70,6 +72,11 @@ textarea{display:block;width:100%;height:38vh;min-height:210px;resize:vertical;b
  </fieldset>
 </section>
 <p id="message" role="status" aria-live="polite"></p>
+<section aria-labelledby="repaired-heading">
+ <h2 id="repaired-heading">上次修復</h2>
+ <p id="repaired-info" class="small">載入中…</p>
+ <div id="repaired-items"></div>
+</section>
 <script type="module">
 const $=id=>document.getElementById(id);
 const local=['localhost','127.0.0.1'].includes(location.hostname);
@@ -90,13 +97,13 @@ async function api(path,method='GET',body){
 }
 function message(value='',error=false){$('message').textContent=value;$('message').classList.toggle('error',error);}
 function setBusy(value){working=value;for(const id of ['previous','next','reload','retry','usemeta','submit','clear'])$(id).disabled=value;}
-function link(label,url){
+function link(label,url,container=$('links')){
  try{
   const u=new URL(url);
   if(!['https:','http:'].includes(u.protocol))return;
   const a=document.createElement('a');
   a.textContent=label;a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';
-  $('links').append(a);
+  container.append(a);
  }catch{}
 }
 function saveDraft(){
@@ -130,6 +137,34 @@ function render(){
  saveDraft();
  message('');
 }
+function renderLastRepair(repair){
+ const container=$('repaired-items');
+ container.replaceChildren();
+ if(!repair?.items?.length){
+  $('repaired-info').textContent='目前沒有修復紀錄。';
+  return;
+ }
+ const date=new Date(repair.repaired_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'});
+ $('repaired-info').textContent=date+'（台灣時間） · '+repair.items.length+' 篇';
+ for(const item of repair.items){
+  const article=document.createElement('article');
+  article.className='repaired-item';
+  const title=document.createElement('h3');
+  title.textContent=item.title;
+  article.append(title);
+  if(item.title_original&&item.title_original!==item.title){
+   const original=document.createElement('p');
+   original.className='original';
+   original.textContent=item.title_original;
+   article.append(original);
+  }
+  link(item.url,item.url,article);
+  const summary=document.createElement('p');
+  summary.textContent=item.summary;
+  article.append(summary);
+  container.append(article);
+ }
+}
 async function load({keep=true}={}){
  const previous=keep?current()?.id||localStorage.getItem(lastKey):null;
  setBusy(true);
@@ -138,10 +173,16 @@ async function load({keep=true}={}){
   items=result.items||[];
   index=Math.max(0,items.findIndex(x=>x.id===previous));
   render();
- }catch(err){message('讀取失敗：'+err.message,true);}
+  renderLastRepair(result.last_repair);
+ }catch(err){
+  message('讀取失敗：'+err.message,true);
+  $('repaired-info').textContent='無法載入修復紀錄。';
+  $('repaired-items').replaceChildren();
+ }
  finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
 }
-function completed(summary){
+function completed(result){
+ if(!result.saved)throw Error('伺服器未確認儲存成功');
  const done=current();
  if(done){
   try{localStorage.removeItem(draftKey(done.id))}catch{}
@@ -149,7 +190,8 @@ function completed(summary){
   if(index>=items.length)index=Math.max(0,items.length-1);
  }
  render();
- message('已儲存摘要：\n'+summary);
+ renderLastRepair(result.last_repair);
+ message('已儲存摘要，可在下方「上次修復」查看。');
 }
 $('content').addEventListener('input',saveDraft);
 $('previous').addEventListener('click',()=>{if(index>0){index--;render();}});
@@ -177,8 +219,8 @@ $('usemeta').addEventListener('click',async()=>{
  setBusy(true);
  try{
   const value=report.proposed.summary;
-  await api('/'+item.id,'PATCH',{summary:value});
-  completed(value);
+  const result=await api('/summary-repair','POST',{id:item.id,description:value});
+  completed(result);
  }catch(err){message('儲存失敗：'+err.message,true);}
  finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
 });
@@ -191,8 +233,7 @@ $('submit').addEventListener('click',async()=>{
  message('正在根據貼入的原文產生繁體中文摘要；草稿已保留，失敗可重試。');
  try{
   const result=await api('/summary-repair','POST',{id:item.id,content});
-  if(!result.saved)throw Error('伺服器未確認儲存成功');
-  completed(result.summary);
+  completed(result);
  }catch(err){message('未完成儲存：'+err.message+'。貼入原文仍保留於此瀏覽器。',true);}
  finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
 });
