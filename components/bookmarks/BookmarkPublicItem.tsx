@@ -172,7 +172,9 @@ export default function BookmarkPublicItem({
           className="border-primary-500 mt-3 min-w-0 rounded-r-lg border-l-4 bg-gray-50/60 px-3 py-2 dark:bg-gray-800/40"
         >
           <hr />
-          <p><strong>引用隨筆</strong></p>
+          <p>
+            <strong>引用隨筆</strong>
+          </p>
           <div dangerouslySetInnerHTML={{ __html: item.related_notes_html }} />
         </aside>
       )}
