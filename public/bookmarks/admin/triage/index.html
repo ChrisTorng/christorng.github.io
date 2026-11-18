@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>書籤閱讀預篩 | ChrisTorng 學習天地</title>
+<link rel="stylesheet" href="/bookmarks/admin.css?v=20261119">
+<link rel="stylesheet" href="/bookmarks/admin-triage.css?v=20261119">
+</head>
+<body>
+<div id="app">
+<header class="triage-header"><div><h1>書籤閱讀預篩</h1><p class="hint">先淘汰低價值項目，仍由你決定是否公開。</p></div>
+<nav><a href="/bookmarks/admin/quick/">快速處理</a> · <a href="/bookmarks/admin/">完整管理</a> · <a href="/bookmarks/admin/repair/">摘要修復</a></nav></header>
+<section class="triage-toolbar" aria-label="預篩條件">
+ <label>排序面向<select id="dimension">
+  <option value="score">總分</option><option value="learning">學習價值</option>
+  <option value="depth">資訊深度</option><option value="durability">長期有效性</option>
+  <option value="novelty">新知增量</option><option value="fit">學習天地適合度</option></select></label>
+ <label>顯示原因<select id="reason">
+  <option value="">所有項目</option><option value="時事過期">短效時事</option>
+  <option value="內容過短">正文過短</option><option value="學習價值不足">缺乏學習內容</option>
+  <option value="資訊重複">資訊重複</option><option value="展示／遊戲">展示／遊戲</option>
+  <option value="閱讀障礙">閱讀困難</option><option value="其他">其他</option></select></label>
+ <label>排序<select id="direction"><option value="asc">低分優先</option><option value="desc">高分優先</option></select></label>
+ <label class="triage-check"><input type="checkbox" id="deferred">包含延後處理</label>
+</section>
+<section class="triage-progress" aria-label="評分進度">
+ <div><strong id="counts">載入中…</strong><p class="hint" id="progressHelp">規則初評供立即篩選；AI 評分會參考歷史決策，並將結果保留在資料庫。</p></div>
+ <div class="triage-buttons"><button type="button" id="evaluate">開始 AI 評分</button><button type="button" id="resort">套用最新排序</button><button type="button" id="reload">重新載入</button></div>
+</section>
+<p id="notice" role="status" aria-live="polite"></p>
+<main id="items"></main>
+<div class="triage-more"><button type="button" id="more" hidden>再顯示 20 筆</button></div>
+</div>
+<script type="module" src="/bookmarks/admin-triage.js?v=20261119"></script>
+</body>
+</html>
