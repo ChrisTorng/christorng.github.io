@@ -478,7 +478,7 @@ function deleteBookmark(b){
  });
 }
 $('app').innerHTML=
- '<header class="quick-header"><h1>書籤快速處理</h1><nav><a href="/bookmarks/admin/">完整管理</a> · <a href="/bookmarks/" target="_blank" rel="noopener">公開列表 ↗</a></nav></header>'+
+ '<header class="quick-header"><h1>書籤快速處理</h1><nav><a href="/bookmarks/admin/">完整管理</a> · <a href="/bookmarks/admin/triage/">閱讀預篩</a> · <a href="/bookmarks/" target="_blank" rel="noopener">公開列表 ↗</a></nav></header>'+
  '<div class="quick-toolbar"><select id="size" aria-label="顯示數量">'+
  '<option value="3">3＋3＋3</option><option value="6">6＋6＋6</option>'+
  '<option value="10">10＋10＋10</option></select></div>'+
