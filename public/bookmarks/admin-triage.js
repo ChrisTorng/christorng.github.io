@@ -40,10 +40,12 @@ function sortedItems(){
 function computeOrder(){
  const field=$('dimension').value;
  const direction=$('direction').value==='asc'?1:-1;
- state.orderIds=[...state.items].sort((a,b)=>(
-  (dimensionValue(a,field)-dimensionValue(b,field))*direction ||
-  a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id)
- )).map(x=>x.id);
+ state.orderIds=[...state.items].sort((a,b)=>{
+  const missingA=a.analysis?.basis==='insufficient', missingB=b.analysis?.basis==='insufficient';
+  if(missingA!==missingB)return missingA?1:-1;
+  return (dimensionValue(a,field)-dimensionValue(b,field))*direction ||
+   a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id);
+ }).map(x=>x.id);
 }
 function refreshCount(){
  const total=state.items.length, scored=state.items.filter(x=>x.assessed).length;
@@ -55,7 +57,7 @@ function refreshCount(){
 }
 function metricLine(label,value){
  return '<div class="triage-metric"><span>'+esc(label)+'</span><strong>'+value+'</strong>'+
-  '<div class="triage-bar"><i style="width:'+value+'%"></i></div></div>';
+  '<div class="triage-bar"><i style="width:'+(Number.isFinite(Number(value))?value:0)+'%"></i></div></div>';
 }
 function card(item){
  const a=item.analysis;
@@ -63,19 +65,20 @@ function card(item){
  const title=item.title_zh||item.title||item.title_original||'未命名';
  const summary=String(item.summary||'').trim();
  const score=dimensionValue(item,'score');
- const metrics=Object.entries(metricLabels).map(([name,label])=>metricLine(label,dimensionValue(item,name))).join('');
+ const unavailable=a?.basis==='insufficient';
+ const metrics=Object.entries(metricLabels).map(([name,label])=>metricLine(label,unavailable?'—':dimensionValue(item,name))).join('');
  const flags=(a?.flags||[]).map(x=>'<span>'+esc(x)+'</span>').join('');
  const words=[...summary].length;
  const full=a?.full_chars!=null
   ?'正文 '+Number(a.full_chars).toLocaleString('zh-TW')+' 字元 · 約 '+Math.max(1,Math.round(a.read_minutes*.8))+'–'+Math.max(1,Math.round(a.read_minutes*1.3))+' 分鐘'
   :'全文字數未知 · 尚未成功擷取';
- const basis=a?.basis==='fulltext'?'全文分析':'僅摘要'+(item.assessed?' AI 評估':'規則初評');
+ const basis=a?.basis==='insufficient'?'資料不足，請檢查原文':a?.basis==='fulltext'?'全文分析':'僅摘要'+(item.assessed?' AI 評估':'規則初評');
  const relative='摘要 '+words.toLocaleString('zh-TW')+' 字元 · '+basis;
  const id=esc(item.id);
  return '<article class="triage-card" data-id="'+id+'" data-busy="'+state.busy.has(item.id)+'">'+
   '<div class="triage-top"><div><div class="triage-title">'+(url?'<a href="'+esc(url)+'" rel="noopener noreferrer" target="_blank">'+esc(title)+' ↗</a>':esc(title))+'</div>'+
   (item.title_original&&item.title_original!==title?'<div class="triage-original">'+esc(item.title_original)+'</div>':'')+
-  '</div><div class="triage-score"><strong>'+score+'</strong><small>總分 / 100</small></div></div>'+
+  '</div><div class="triage-score"><strong>'+(unavailable?'—':score)+'</strong><small>'+(unavailable?'待核對正文':'總分 / 100')+'</small></div></div>'+
   '<div class="triage-flags">'+flags+'</div>'+
   '<p class="triage-summary">'+esc(summary||'（摘要缺漏：請先修復或查看原文）')+'</p>'+
   '<div class="triage-reason">'+esc(a?.reason||'尚未分析')+'</div>'+
