@@ -1,0 +1,66 @@
+#app{max-width:1180px;padding:12px 14px 65px}
+.triage-header{align-items:flex-start;margin-bottom:10px}
+.triage-header h1{font-size:1.35rem}
+.triage-header p{margin:2px 0}
+.triage-header nav{font-size:.84rem;text-align:right}
+.triage-toolbar{display:flex;align-items:end;gap:9px;flex-wrap:wrap;padding:10px 0}
+.triage-toolbar>label{font-size:.77rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:116px}
+.triage-toolbar select{font-size:.88rem;min-width:0;padding:6px 9px}
+.triage-toolbar .triage-check{flex-direction:row;align-items:center;gap:6px;min-width:auto;padding:4px}
+.triage-check input{width:17px;height:17px;accent-color:var(--accent)}
+.triage-progress{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:5px 0 10px;flex-wrap:wrap}
+.triage-progress p{margin:2px 0;font-size:.77rem}
+.triage-buttons{display:flex;flex-wrap:wrap;gap:6px}
+.triage-buttons button{font-size:.8rem;padding:6px 10px}
+#evaluate{background:var(--accent);color:white;border-color:var(--accent)}
+#evaluate:hover{color:white}
+#notice{font-size:.84rem;color:var(--muted);min-height:0;margin:8px 0}
+#notice:empty{display:none}
+#notice.error{color:#c12424}
+.triage-card{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;margin:9px 0;min-width:0}
+.triage-card[data-busy="true"]{opacity:.65}
+.triage-top{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.triage-title{font-size:1.03rem;font-weight:700;line-height:1.45;overflow-wrap:anywhere}
+.triage-original{font-size:.78rem;color:var(--muted);overflow-wrap:anywhere;margin-top:2px}
+.triage-score{min-width:72px;text-align:right;white-space:nowrap}
+.triage-score strong{font-size:1.5rem;font-variant-numeric:tabular-nums;line-height:1.2}
+.triage-score small{display:block;font-size:.68rem;color:var(--muted)}
+.triage-summary{white-space:pre-wrap;font-size:.87rem;line-height:1.62;color:var(--ink);margin:10px 0 7px}
+.triage-reason{font-size:.83rem;line-height:1.5;background:var(--soft);border-radius:7px;padding:9px 10px;margin:8px 0}
+.triage-flags{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}
+.triage-flags span{border:1px solid var(--line);border-radius:20px;font-size:.72rem;color:var(--muted);padding:2px 8px}
+.triage-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:11px 0}
+.triage-metric{font-size:.68rem;color:var(--muted);min-width:0}
+.triage-metric strong{float:right;color:var(--ink);font-variant-numeric:tabular-nums;font-size:.73rem}
+.triage-bar{background:var(--line);height:4px;border-radius:4px;clear:both;margin-top:3px;overflow:hidden}
+.triage-bar i{display:block;height:100%;background:var(--accent)}
+.triage-meta{font-size:.75rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.triage-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.triage-actions button,.triage-actions a{font-size:.78rem;padding:6px 9px}
+.triage-actions .discard{background:var(--soft);border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-weight:600}
+.triage-actions .discard:hover{background:var(--accent);color:white}
+.triage-actions .inspect{margin-left:auto}
+.triage-paste{margin-top:9px;border-top:1px dashed var(--line);padding-top:9px}
+.triage-paste textarea{width:100%;min-height:150px;font-size:.84rem}
+.triage-paste button{font-size:.78rem;margin:6px 0 0}
+.triage-more{text-align:center;padding:10px}
+.triage-more button{font-size:.83rem}
+[hidden]{display:none!important}
+@media(max-width:650px){
+ #app{padding:9px 8px 55px}
+ .triage-header{display:block}
+ .triage-header h1{font-size:1.2rem}
+ .triage-header nav{text-align:left;margin-top:7px}
+ .triage-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ .triage-toolbar>label{min-width:0}
+ .triage-toolbar select{width:100%;font-size:.82rem}
+ .triage-progress{display:block}
+ .triage-progress .triage-buttons{margin-top:7px}
+ .triage-card{padding:11px 10px}
+ .triage-metrics{gap:6px 3px}
+ .triage-metric{font-size:.62rem}
+ .triage-metric strong{float:none;display:block;font-size:.71rem}
+ .triage-actions .inspect{margin-left:0}
+ .triage-actions{gap:6px}
+ .triage-actions button,.triage-actions a{padding:6px 7px}
+}
