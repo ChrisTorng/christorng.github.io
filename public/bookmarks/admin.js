@@ -51,7 +51,7 @@ function headers(){const h={};if(local&&sessionStorage.getItem(tokenKey))h.Autho
 async function request(path, method='GET', body) {
  const r=await fetch('/bookmarks/api/admin'+path,{method,headers:{...headers(),...(body!==undefined?{'Content-Type':'application/json'}:{})},credentials:'same-origin',body:body===undefined?undefined:JSON.stringify(body),cache:'no-store'});
  const x=await r.json().catch(()=>({error:'伺服器回應格式錯誤'}));
- if(!r.ok)throw Error(x.error||'HTTP '+r.status);
+ if(!r.ok)throw Error((x.error||'HTTP '+r.status)+(x.code?' ['+x.code+']':'')+(x.ray?' · Ray '+x.ray:''));
  return x;
 }
 function status(msg,error=false){$('message').textContent=msg;$('message').classList.toggle('error',error);}
@@ -104,7 +104,10 @@ async function refresh() {
  const generation=++refreshGeneration;
  try {
   status('載入中…');
-  const [data,tags]=await Promise.all([request('/?'+options()),request('/tags')]);
+  const [data,tags]=await Promise.all([
+   request('/?'+options()).catch(error=>{throw Error('書籤清單查詢失敗：'+error.message);}),
+   request('/tags').catch(error=>{throw Error('書籤分類載入失敗：'+error.message);})
+  ]);
   if(generation!==refreshGeneration)return;
   if(state.page>data.pages){
    navigate({page:data.pages},{replace:true});
@@ -119,7 +122,15 @@ async function refresh() {
   $('tag').innerHTML='<option value="">全部標籤</option>'+tags.map(t=>'<option value="'+esc(t.id)+'"'+(state.tag===t.id?' selected':'')+'>'+esc(t.name_zh||t.name)+' ('+t.count+')</option>').join('');
   syncControls();
   status('');
- }catch(e){if(generation===refreshGeneration)status(e.message,true);}
+ }catch(e){
+  if(generation!==refreshGeneration)return;
+  status(e.message,true);
+  const retry=document.createElement('button');
+  retry.type='button';retry.textContent='重試載入';
+  retry.style.marginLeft='10px';
+  retry.onclick=()=>void refresh();
+  $('message').append(retry);
+ }
 }
 let summarizedArticleText='';
 function edit(b) {
@@ -349,4 +360,16 @@ window.addEventListener('popstate',()=>{
  void refresh();
  window.scrollTo({top:0,behavior:'auto'});
 });
-void refresh();
+// Open the exact bookmark independent of list pagination or search status.
+// Keeping the identifier in the link allows the editor to remain reachable
+// even when the list or category query fails.
+async function openRequestedEditor(){
+ const id=new URLSearchParams(location.search).get('edit');
+ if(!id||!/^[0-9a-f-]{36}$/i.test(id))return;
+ try{
+  const item=await request('/'+id);
+  if(!item?.id)throw Error('找不到這筆書籤');
+  edit(item);
+ }catch(error){status('指定書籤編輯失敗：'+error.message,true);}
+}
+void refresh().finally(()=>void openRequestedEditor());
