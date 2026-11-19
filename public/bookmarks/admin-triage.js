@@ -88,6 +88,7 @@ function card(item){
   '<span>加入 '+new Date(item.created_at).toLocaleDateString('zh-TW',{timeZone:'Asia/Taipei'})+'</span></div>'+
   '<div class="triage-actions">'+
   '<button class="discard" data-action="discard" type="button">不公開 · 下一筆</button>'+
+  '<button class="publish" data-action="publish" type="button">公開</button>'+
   (url?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">閱讀原文 ↗</a>':'')+
   '<a href="/bookmarks/admin/?edit='+encodeURIComponent(item.id)+'&q='+encodeURIComponent(title)+'">編輯／公開</a>'+
   '<button type="button" class="inspect" data-action="inspect">擷取全文重評</button>'+
@@ -173,6 +174,24 @@ async function discard(item){
  }catch(e){notice('未成功儲存「不公開」：'+e.message,true);}
  finally{state.busy.delete(item.id);render();}
 }
+async function publish(item){
+ state.busy.add(item.id);
+ render();
+ notice('正在公開：'+(item.title_zh||item.title));
+ try{
+  const result=await api('/'+item.id,'PATCH',{status:3});
+  if(![3,4].includes(result?.status))throw Error('後端未確認公開成功');
+  state.items=state.items.filter(x=>x.id!==item.id);
+  state.orderIds=state.orderIds.filter(id=>id!==item.id);
+  render();
+  notice((result.status===4?'已公開並推薦：':'已公開：')+(item.title_zh||item.title));
+ }catch(error){
+  notice('公開失敗，狀態沒有變更：'+error.message+'。若缺少分類或摘要，請使用「編輯」補齊。',true);
+ }finally{
+  state.busy.delete(item.id);
+  render();
+ }
+}
 async function inspect(item){
  state.busy.add(item.id);render();notice('正在從原始站點擷取正文：'+(item.title_zh||item.title));
  try{
@@ -217,6 +236,7 @@ $('items').addEventListener('click',event=>{
  const item=state.items.find(x=>x.id===node?.dataset.id);
  if(!item||state.busy.has(item.id))return;
  if(button.dataset.action==='discard')void discard(item);
+ if(button.dataset.action==='publish')void publish(item);
  if(button.dataset.action==='inspect')void inspect(item);
  if(button.dataset.action==='paste')void paste(item,node);
  if(button.dataset.action==='submit-paste')void submitPaste(item,node);
