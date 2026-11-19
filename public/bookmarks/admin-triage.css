@@ -64,3 +64,6 @@
  .triage-actions{gap:6px}
  .triage-actions button,.triage-actions a{padding:6px 7px}
 }
+
+.triage-actions .publish{background:var(--accent);border-color:var(--accent);color:#fff}
+.triage-actions .publish:hover{color:#fff;filter:brightness(.96)}
