@@ -89,7 +89,7 @@ function card(item){
   '<div class="triage-actions">'+
   '<button class="discard" data-action="discard" type="button">不公開 · 下一筆</button>'+
   (url?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">閱讀原文 ↗</a>':'')+
-  '<a href="/bookmarks/admin/?filter=pending&q='+encodeURIComponent(title)+'">編輯／公開</a>'+
+  '<a href="/bookmarks/admin/?edit='+encodeURIComponent(item.id)+'&q='+encodeURIComponent(title)+'">編輯／公開</a>'+
   '<button type="button" class="inspect" data-action="inspect">擷取全文重評</button>'+
   '<button type="button" data-action="paste">貼上全文</button>'+
   '</div><div class="triage-paste" data-paste-area hidden><textarea maxlength="150000" placeholder="貼入文章正文，不含導覽、留言、廣告。不會儲存原文，只用於本次評估。"></textarea>'+
