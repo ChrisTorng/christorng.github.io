@@ -1,7 +1,7 @@
 const $=id=>document.getElementById(id);
 const local=['localhost','127.0.0.1'].includes(location.hostname);
 const tokenKey='blog-bookmarks-admin-token';
-const metricLabels={learning:'學習價值',depth:'資訊深度',durability:'長期有效',novelty:'新知增量',fit:'適合度'};
+const metricLabels={learning:'學習方法',awareness:'資訊掌握',depth:'資訊深度',durability:'長期有效',novelty:'新知增量',fit:'適合度'};
 const state={items:[],orderIds:[],show:20,busy:new Set(),scoring:false,stop:false,deferred:false};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function notice(text='',error=false){$('notice').textContent=text;$('notice').classList.toggle('error',error);}
