@@ -152,3 +152,9 @@ dialog label.reference-hn-choice{display:flex;flex-direction:row;align-items:cen
 #editFullTextPanel #editArticleText{display:block;min-height:130px;max-height:42dvh;resize:vertical}
 #editFullTextPanel #regenerateSummary{margin-top:8px}
 #editFullTextPanel #summaryProgress{display:block;font-size:.8rem;color:var(--muted);margin-top:6px}
+
+/* Optional bookmark thumbnail and image URL preview. */
+.admin-thumb{float:right;width:144px;height:100px;object-fit:contain;object-position:center;border-radius:8px;margin:10px 0 7px 14px;background:var(--soft)}
+.item::after{content:"";display:block;clear:both}
+#editImagePreview:not([hidden]){display:block;max-width:220px;max-height:130px;object-fit:contain;align-self:flex-start;border:1px solid var(--line);border-radius:8px;padding:3px}
+@media(max-width:650px){.admin-thumb{width:92px;height:66px;margin:8px 0 5px 10px}}
