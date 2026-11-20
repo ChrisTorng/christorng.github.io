@@ -15,6 +15,9 @@ const state = {
  categoryTarget:null, categoryScrollY:0
 };
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const imageUrl = value => { try { const u=new URL(String(value||''));return u.protocol==='https:'&&!u.username&&!u.password&&u.href.length<=4096?u.href:''; } catch { return ''; } };
+const thumb = (url,cls) => imageUrl(url)?'<img class="'+cls+'" loading="lazy" decoding="async" alt="書籤圖片" src="'+esc(imageUrl(url))+'">':'';
+function imagePreview(){ const node=$('editImagePreview'); const url=imageUrl($('editImageUrl').value.trim());node.hidden=!url;if(url)node.src=url;else node.removeAttribute('src'); }
 const dateText = value => value ? new Intl.DateTimeFormat('zh-TW',{
  timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',
  hour:'2-digit',minute:'2-digit',hourCycle:'h23'
@@ -104,7 +107,7 @@ function card(b,kind,first=false){
  }).join('');
  return '<article class="quick-item '+kind+(first?' first-pending':'')+(kind==='deferred'?' expanded':'')+'" data-id="'+esc(b.id)+'" data-kind="'+kind+'" tabindex="-1">'+
   (kind==='deferred'?'<button type="button" class="quick-collapse" data-toggle-deferred aria-expanded="true">▾ 收合</button>':'')+
-  '<div class="quick-main"><div class="quick-content"><a class="quick-title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read>'+esc(b.title_zh||b.title)+' ↗</a>'+
+  '<div class="quick-main"><div class="quick-content">'+thumb(b.image_url,'quick-thumb')+'<a class="quick-title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read>'+esc(b.title_zh||b.title)+' ↗</a>'+
   original+'<div class="quick-source">'+sourceBadge(b.url)+'</div><div class="quick-date"><a href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer" title="預覽書籤單項頁">'+esc(dateText(b.created_at))+'</a></div>'+
   summaryMarkup(b)+
   '</div><div class="quick-actions">'+actions+
@@ -428,6 +431,8 @@ function edit(b){
  const mode=findRedirectOption(b.url||'',storedRedirect);
  manualRedirectValue=mode==='manual'?storedRedirect:'';
  renderRedirectModes(mode);
+ $('editImageUrl').value=b.image_url||'';
+ imagePreview();
  $('editSummary').value=b.summary||'';
  $('editArticleText').value='';
  $('editFullTextPanel').open=false;
@@ -491,6 +496,7 @@ $('app').innerHTML=
  '<label>原文標題<input id="editOriginalTitle" maxlength="500" autocomplete="off"></label>'+
  '<label>原始網址<input id="editUrl" type="url" required></label>'+
  '<div class="redirect-group"><div class="redirect-header"><span>重導向網址</span><div id="redirectModes" role="radiogroup" aria-label="重導向方式"></div></div><input id="editRedirectUrl" type="url" aria-label="重導向網址" autocomplete="off"></div>'+
+ '<label>圖片網址（選填，清空即可移除）<input id="editImageUrl" type="url" autocomplete="off" placeholder="https://..."></label><img id="editImagePreview" alt="圖片預覽" hidden>'+
  '<label id="editSummaryGroup">摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown；儲存後點日期預覽"></textarea></label>'+
  '<details id="editFullTextPanel"><summary>貼文章全文，重新產生摘要</summary>'+
  '<label>文章全文（僅用於此次 AI 處理，不儲存於資料庫）<textarea id="editArticleText" placeholder="貼入文章全文，最多 15 萬字元" spellcheck="false"></textarea></label>'+
@@ -506,6 +512,8 @@ $('app').innerHTML=
  '<div class="dialog-actions"><button id="saveCategory" type="submit">儲存並選取</button><button id="cancelCategory" type="button">取消</button></div>'+
  '</form></dialog>';
 const referenceEditor=createReferenceEditor(request,()=>({url:$('editUrl').value.trim(),redirect_url:$('editRedirectUrl').value.trim()}));
+$('editImageUrl').addEventListener('input',imagePreview);
+document.addEventListener('error',event=>{if(event.target.matches?.('img.quick-thumb, #editImagePreview'))event.target.hidden=true;},true);
 $('size').value=String(state.size);
 $('redirectModes').addEventListener('change',event=>{
  if(!event.target.matches('input[name="redirectMode"]'))return;
@@ -568,6 +576,7 @@ $('editForm').addEventListener('submit',async event=>{
   title_original:$('editOriginalTitle').value.trim(),
   url:$('editUrl').value.trim(),
   redirect_url:$('editRedirectUrl').value.trim(),
+  image_url:$('editImageUrl').value.trim(),
   summary:generatedSummary||$('editSummary').value.trim(),
   references:await referenceEditor.collect()
  };

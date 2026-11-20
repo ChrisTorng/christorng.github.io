@@ -291,3 +291,8 @@
 .quick-latest-group .quick-latest{justify-self:auto}
 .quick-write-note{font-size:.8rem;line-height:1.5;color:var(--accent);font-weight:650;white-space:nowrap;text-decoration:underline;text-underline-offset:2px}
 @media(max-width:650px){.quick-latest-group{gap:1px 8px}.quick-write-note{font-size:.75rem}}
+
+/* Small, non-intrusive thumbnails inside the existing summary scroller. */
+.quick-thumb{float:right;width:112px;height:78px;object-fit:contain;object-position:center;border-radius:6px;background:var(--soft);margin:1px 0 6px 9px}
+.quick-content::after{content:"";display:block;clear:both}
+@media(max-width:650px){.quick-thumb{width:70px;height:52px;margin:1px 0 4px 6px}}
