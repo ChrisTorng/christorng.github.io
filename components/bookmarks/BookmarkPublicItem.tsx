@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import BookmarkSource from './BookmarkSource'
 import SafeMarkdown from '@/components/notes/SafeMarkdown'
 
@@ -9,6 +12,7 @@ export type PublicBookmark = {
   title: string
   title_original?: string | null
   summary?: string | null
+  image_url?: string | null
   url: string
   preferred_url?: string | null
   redirect_url?: string | null
@@ -21,6 +25,16 @@ export type PublicBookmark = {
   published_at?: string | null
 }
 export type BookmarkCategory = { id: string; name: string; name_zh?: string | null }
+
+function safeImageUrl(value?: string | null) {
+  if (!value) return null
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' && !url.username && !url.password ? url.href : null
+  } catch {
+    return null
+  }
+}
 
 export default function BookmarkPublicItem({
   item,
@@ -40,6 +54,8 @@ export default function BookmarkPublicItem({
   const permalink = item.slug
     ? '/bookmarks/' + encodeURIComponent(item.slug) + '/'
     : '/bookmarks/view/?id=' + encodeURIComponent(item.id)
+  const image = safeImageUrl(item.image_url)
+  const [imageFailed, setImageFailed] = useState(false)
   const titleLink = (
     <a
       href={target}
@@ -72,21 +88,52 @@ export default function BookmarkPublicItem({
           <span className="text-gray-500">未公開</span>
         ) : null}
       </div>
-      {detail ? (
-        <h1 className="text-xl leading-snug font-bold">{titleLink}</h1>
-      ) : (
-        <h2 className="text-xl leading-snug font-bold">{titleLink}</h2>
-      )}
-      {item.title_original && item.title_original !== item.title && (
-        <p lang="en" className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300">
-          {item.title_original}
-        </p>
-      )}
-      {item.summary && (
-        <div className="my-2 text-gray-700 dark:text-gray-200">
-          <SafeMarkdown text={item.summary} baseUrl={item.url} />
+      <div
+        className={
+          image && !imageFailed
+            ? 'grid grid-cols-1 gap-x-4 md:grid-cols-[minmax(0,1fr)_11rem]'
+            : 'block'
+        }
+      >
+        <div className="min-w-0">
+          {detail ? (
+            <h1 className="text-xl leading-snug font-bold">{titleLink}</h1>
+          ) : (
+            <h2 className="text-xl leading-snug font-bold">{titleLink}</h2>
+          )}
+          {item.title_original && item.title_original !== item.title && (
+            <p lang="en" className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300">
+              {item.title_original}
+            </p>
+          )}
         </div>
-      )}
+        {image && !imageFailed && (
+          <a
+            href={target}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="開啟原始文章"
+            className="mt-2 block w-full max-w-56 md:col-start-2 md:row-span-2 md:mt-0 md:max-w-none"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={image}
+              alt=""
+              width={176}
+              loading="lazy"
+              decoding="async"
+              referrerPolicy="no-referrer"
+              className="max-h-40 w-full rounded-md object-contain"
+              onError={() => setImageFailed(true)}
+            />
+          </a>
+        )}
+        {item.summary && (
+          <div className="my-2 min-w-0 text-gray-700 dark:text-gray-200">
+            <SafeMarkdown text={item.summary} baseUrl={item.url} />
+          </div>
+        )}
+      </div>
       <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
         <BookmarkSource url={item.url} />
         {target !== item.url && (
