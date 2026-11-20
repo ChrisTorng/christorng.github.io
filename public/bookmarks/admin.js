@@ -46,6 +46,9 @@ function navigate(next,{scrollTop=false,replace=false}={}){
  if(scrollTop)window.scrollTo({top:0,behavior:'auto'});
 }
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const imageUrl = value => { try { const u=new URL(String(value||''));return u.protocol==='https:'&&!u.username&&!u.password&&u.href.length<=4096?u.href:''; } catch { return ''; } };
+const thumb = (url,cls) => imageUrl(url)?'<img class="'+cls+'" loading="lazy" decoding="async" alt="書籤圖片" src="'+esc(imageUrl(url))+'">':'';
+function imagePreview(){ const node=$('editImagePreview'); const url=imageUrl($('editImageUrl').value.trim());node.hidden=!url;if(url)node.src=url;else node.removeAttribute('src'); }
 const dateText = value => value ? new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(value)) : '';
 function headers(){const h={};if(local&&sessionStorage.getItem(tokenKey))h.Authorization='Bearer '+sessionStorage.getItem(tokenKey);return h;}
 async function request(path, method='GET', body) {
@@ -72,7 +75,7 @@ function itemHtml(b) {
  const disabled=blocked?' disabled title="請先選擇至少一個分類並完成儲存"':'';
  const preview='<a class="preview-link" href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer">預覽</a>';
  const actions='<div class="actions"><button type="button" data-decision="2">不公開</button><button type="button" data-decision="3"'+disabled+'>公開</button><button type="button" data-decision="4"'+disabled+'>推薦</button><button type="button" data-decision="5">稍後再決定</button><button type="button" data-edit>編輯</button>'+preview+note+'</div>';
- return '<article class="item" data-id="'+esc(b.id)+'"><div class="item-header"><div class="item-heading"><a class="title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read="'+esc(b.id)+'">'+esc(b.title)+' ↗</a>'+originalTitle+info+source+'</div><span class="status-name">'+label+'</span></div>'+(b.summary?'<p class="summary">'+esc(b.summary)+'</p>':'')+picker+actions+'</article>';
+ return '<article class="item" data-id="'+esc(b.id)+'"><div class="item-header"><div class="item-heading"><a class="title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read="'+esc(b.id)+'">'+esc(b.title)+' ↗</a>'+originalTitle+info+source+'</div><span class="status-name">'+label+'</span></div>'+thumb(b.image_url,'admin-thumb')+(b.summary?'<p class="summary">'+esc(b.summary)+'</p>':'')+picker+actions+'</article>';
 }
 function renderItem(b){
  const article=[...document.querySelectorAll('#items [data-id]')].find(el=>el.dataset.id===b.id);
@@ -139,6 +142,8 @@ function edit(b) {
  $('editOriginalTitle').value=b?.title_original||'';
  $('editRedirectUrl').value=b?.redirect_url||'';
  $('editUrl').value=b?.url||'';
+ $('editImageUrl').value=b?.image_url||'';
+ imagePreview();
  $('editSummary').value=b?.summary||'';
  $('editArticleText').value='';
  $('editFullTextPanel').open=false;
@@ -169,6 +174,7 @@ $('app').innerHTML=`
  <label>原文標題（例如英文）<input id="editOriginalTitle" maxlength="500" autocomplete="off"></label>
  <label>原始網址<input id="editUrl" type="url" required autocomplete="url"></label>
  <label>重導向網址（選填，優先開啟）<input id="editRedirectUrl" type="url" autocomplete="off"></label>
+ <label>圖片網址（選填，清空即可移除圖片）<input id="editImageUrl" type="url" autocomplete="off" placeholder="https://..."></label><img id="editImagePreview" alt="圖片預覽" hidden>
  <label>網站摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown：連結、清單、引用、粗體等"></textarea></label>
  <details id="editFullTextPanel"><summary>貼文章全文，重新產生摘要</summary>
  <label>文章全文（僅供此次 AI 處理，不儲存資料庫）<textarea id="editArticleText" spellcheck="false" placeholder="貼入全文，最多 15 萬字元"></textarea></label>
@@ -184,6 +190,8 @@ $('app').innerHTML=`
  <div class="dialog-actions"><button type="submit">儲存對照</button><button type="button" id="closeTags">關閉</button></div>
  </form></dialog>`;
 const referenceEditor=createReferenceEditor(request,()=>({url:$('editUrl').value.trim(),redirect_url:$('editRedirectUrl').value.trim()}));
+$('editImageUrl').addEventListener('input',imagePreview);
+document.addEventListener('error',event=>{if(event.target.matches?.('img.admin-thumb, #editImagePreview'))event.target.hidden=true;},true);
 if(local){
  $('auth').innerHTML='<input id="token" type="password" autocomplete="off" placeholder="本機管理 Token"><button id="login">登入</button><span class="hint">Token 僅儲存在此分頁</span>';
  $('token').value=sessionStorage.getItem(tokenKey)||'';
@@ -343,7 +351,7 @@ $('editForm').onsubmit=async e=>{
   if($('editArticleText').value.trim()&&$('editArticleText').value.trim()!==summarizedArticleText)
    summary=await regenerateSummary(id);
  }catch(error){$('summaryProgress').textContent='重新摘要失敗：'+error.message;return;}
- const body={title:$('editTitle').value,title_zh:$('editTitle').value,title_original:$('editOriginalTitle').value,url:$('editUrl').value,redirect_url:$('editRedirectUrl').value,summary,references:await referenceEditor.collect()};
+ const body={title:$('editTitle').value,title_zh:$('editTitle').value,title_original:$('editOriginalTitle').value,url:$('editUrl').value,redirect_url:$('editRedirectUrl').value,image_url:$('editImageUrl').value.trim(),summary,references:await referenceEditor.collect()};
  try{await request(id?'/'+id:'',id?'PATCH':'POST',body);$('editDialog').close();await refresh();status('已儲存');}
  catch(err){status(err.message,true);}
 };
