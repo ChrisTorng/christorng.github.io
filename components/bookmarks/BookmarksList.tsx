@@ -11,6 +11,7 @@ type Bookmark = {
   title: string
   title_original?: string | null
   summary?: string | null
+  image_url?: string | null
   url: string
   preferred_url?: string | null
   redirect_url?: string | null
