@@ -80,6 +80,13 @@ const projectCategories: ProjectCategory[] = [
     title: '工具',
     projects: [
       {
+        title: 'MaxContentView',
+        description:
+          'Visual Studio 擴充套件，可最大化內容檢視區，並可選擇隱藏標題列、選單列與文件分頁，降低開發時的介面干擾。',
+        href: 'https://github.com/ChrisTorng/MaxContentView',
+        demoHref: 'https://marketplace.visualstudio.com/items?itemName=ChrisTorng.MinimalisticView',
+      },
+      {
         title: 'cli-tools',
         description: '個人 CLI 工具集合，收納日常工作流程中常用的小型命令列輔助程式。',
         href: 'https://github.com/ChrisTorng/cli-tools',
@@ -139,6 +146,13 @@ const projectCategories: ProjectCategory[] = [
         href: 'https://github.com/ChrisTorng/zoom-chat-to-srt',
         imgSrc:
           'https://raw.githubusercontent.com/rasyidev/zoom-chat-to-subtitle/main/demo-zoom-chat-to-subtitle.gif',
+      },
+      {
+        title: 'Zoom Chat to Subtitle',
+        description: '將 Zoom 會議聊天文字檔轉為字幕檔，讓錄影播放時可以同步顯示會議聊天內容。',
+        href: 'https://github.com/ChrisTorng/zoom-chat-to-subtitle',
+        imgSrc:
+          'https://raw.githubusercontent.com/ChrisTorng/zoom-chat-to-subtitle/main/demo-zoom-chat-to-subtitle.gif',
       },
     ],
   },
@@ -228,6 +242,12 @@ const projectCategories: ProjectCategory[] = [
     title: 'LLM 語言模型',
     projects: [
       {
+        title: 'vllm-benchmarks',
+        description:
+          'vLLM 相關基準測試專案，用於觀察大型語言模型服務在不同設定下的推論效能與負載表現。',
+        href: 'https://github.com/ChrisTorng/vllm-benchmarks',
+      },
+      {
         title: 'llm-load-test',
         description:
           'LLM API 壓力測試程式碼產生器，支援平行處理、多批次呼叫、串流回應時間統計與結果分析。',
@@ -265,6 +285,12 @@ const projectCategories: ProjectCategory[] = [
   {
     title: '其他',
     projects: [
+      {
+        title: 'Docs to HTML Converter',
+        description:
+          'Google Docs 外掛，可將 Google 文件轉換為簡化的 Markdown 或 HTML，作為文件轉換流程的基礎工具。',
+        href: 'https://github.com/ChrisTorng/gd2md-html',
+      },
       {
         title: 'DocsConverter',
         description:
