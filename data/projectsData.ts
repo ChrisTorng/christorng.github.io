@@ -47,7 +47,7 @@ const projectCategories: ProjectCategory[] = [
         description:
           '整理 eBird 最近熱門地點與鳥訊快報的工具，將純文字鳥訊依地點群組、清理中外文混雜內容，讓鳥種與紀錄更容易瀏覽。',
         href: 'https://github.com/ChrisTorng/eBird',
-        demoHref: 'https://e-bird-christorngs-projects.vercel.app/',
+        demoHref: 'https://christorng.idv.tw/eBird/',
         imgSrc:
           'https://raw.githubusercontent.com/ChrisTorng/eBird/main/images/eBird-recent-hotspots.png',
       },
@@ -178,14 +178,14 @@ const projectCategories: ProjectCategory[] = [
         description:
           '使用 Three.js 建立的互動式 3D 手機展示平台，可切換模型、旋轉縮放、自動展示並查看手機規格。',
         href: 'https://github.com/ChrisTorng/3d-phone-show',
-        demoHref: 'https://3d-phone-show.vercel.app/',
+        demoHref: 'https://christorng.idv.tw/3d-phone-show/',
       },
       {
         title: '3d-phone-show2',
         description:
           '延伸版 3D 手機展示平台，支援滑鼠旋轉、滾輪縮放與控制面板調整手機顏色及視覺效果。',
         href: 'https://github.com/ChrisTorng/3d-phone-show2',
-        demoHref: 'https://3d-phone-show2.vercel.app/',
+        demoHref: 'https://christorng.idv.tw/3d-phone-show2/',
       },
     ],
   },
