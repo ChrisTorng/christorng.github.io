@@ -110,6 +110,24 @@ const projectCategories: ProjectCategory[] = [
           '批次翻譯工具，可將指定資料夾內的檔案透過 OpenAI 相容 LLM API 翻譯為繁體中文，適合大量文件本地化。',
         href: 'https://github.com/ChrisTorng/mass-translate',
       },
+      {
+        title: 'tailscale2pinokio',
+        description:
+          '讓 Pinokio 與執行中的應用透過 Tailscale Serve 使用專屬 HTTPS 網址，依應用狀態自動管理映射；不需要公開私人 Tailnet 或實際服務網址。',
+        href: 'https://github.com/ChrisTorng/tailscale2pinokio',
+      },
+      {
+        title: 'GitHub with Repo Creator',
+        description:
+          '使用個人 GitHub OAuth App 與官方託管 MCP，協助在 ChatGPT 執行 GitHub 建庫等操作的設定教學、權限說明與驗證紀錄。',
+        href: 'https://github.com/ChrisTorng/GitHubWithRepoCreator',
+      },
+      {
+        title: 'MSServiceTools',
+        description:
+          'Microsoft To Do／Graph／MCP 本機工具，支援帳號授權驗證、待辦清單操作及 CLI 輸入；仍屬持續開發的早期版本。',
+        href: 'https://github.com/ChrisTorng/MSServiceTools',
+      },
     ],
   },
   {
