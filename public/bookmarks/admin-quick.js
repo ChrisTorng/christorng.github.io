@@ -89,10 +89,14 @@ function summaryMarkup(b){
   '<p class="quick-summary missing-summary'+(activity?.startsWith('摘要失敗')?' error':'')+'" role="status">'+esc(activity||'尚無摘要')+'</p>'+
   '<button type="button" data-summarize-clipboard'+(state.busy.has(b.id)?' disabled':'')+'>從剪貼簿產生摘要</button></div>';
 }
+function writeNoteLink(b){
+ return '<a class="quick-write-note" href="/notes/editor/?bookmark='+encodeURIComponent(b.id)+
+  '" target="_blank" rel="noopener noreferrer" title="另開隨筆編輯器並引用這筆書籤；正式發佈隨筆時才公開並推薦書籤">寫隨筆 ↗</a>';
+}
 function card(b,kind,first=false){
  const target=b.preferred_url||b.redirect_url||b.url;
  const expanded=state.expanded.has(b.id);
- if(kind==='deferred'&&!expanded) return '<article class="quick-item deferred collapsed" data-id="'+esc(b.id)+'" data-kind="deferred"><button type="button" class="quick-expand" data-toggle-deferred aria-expanded="false">▸ '+esc(b.title_zh||b.title)+'</button></article>';
+ if(kind==='deferred'&&!expanded) return '<article class="quick-item deferred collapsed" data-id="'+esc(b.id)+'" data-kind="deferred"><button type="button" class="quick-expand" data-toggle-deferred aria-expanded="false">▸ '+esc(b.title_zh||b.title)+'</button>'+writeNoteLink(b)+'</article>';
  const original=b.title_original&&b.title_original!==(b.title_zh||b.title)
   ?'<div class="quick-original" lang="en">'+esc(b.title_original)+'</div>':'';
  const tags=new Set(b.tags.map(t=>t.toLowerCase()));
@@ -112,7 +116,7 @@ function card(b,kind,first=false){
   summaryMarkup(b)+
   '</div><div class="quick-actions">'+actions+
   '<button type="button" data-edit>編輯</button>'+
-  '<button type="button" class="quick-delete" data-delete>刪除</button></div></div>'+
+  '<button type="button" class="quick-delete" data-delete>刪除</button>'+writeNoteLink(b)+'</div></div>'+
   '<aside class="quick-categories" aria-label="分類">'+categoryButtons+
   '<div class="quick-add-category"><button type="button" data-show-add-category>＋新增分類</button></div></aside></article>';
 }
@@ -144,9 +148,9 @@ function render({focus=false,preserveId=null}={}){
   '<button type="button" class="quick-latest" data-scroll-previous title="查看上一筆已處理書籤">'+
    esc(last.status===4?'已推薦':last.status===3?'已公開':'不公開')+
    (lastTags?' · '+lastTags:'')+'</button>'+
-   (last.status===4&&!state.busy.has(last.id)
+   (!state.busy.has(last.id)
     ?'<a class="quick-write-note" href="/notes/editor/?bookmark='+encodeURIComponent(last.id)+
-      '" target="_blank" rel="noopener noreferrer" title="另開隨筆編輯器並引用這筆推薦書籤">另開寫隨筆 ↗</a>':'')+
+      '" target="_blank" rel="noopener noreferrer" title="另開隨筆編輯器並引用這筆書籤">另開寫隨筆 ↗</a>':'')+
    '</span>':'';
  $('items').innerHTML=
   (deferred.length?'<div class="quick-section-label">稍後再決定 · '+state.deferredRemaining+' 筆（點標題展開）</div>':'')+
