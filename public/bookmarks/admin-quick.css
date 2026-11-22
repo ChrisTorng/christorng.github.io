@@ -8,9 +8,10 @@
 .auth:empty,#message:empty{display:none}
 #message{margin:4px 0 8px;min-height:0}
 .quick-section-label{font-size:.83rem;color:var(--muted);font-weight:700;padding:9px 3px 4px}
-.pending-label{display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:start;gap:8px;scroll-margin-top:10px}
+.pending-label{display:grid;grid-template-columns:minmax(0,1fr) max-content;align-items:center;gap:8px;scroll-margin-top:10px}
 .pending-label>span:first-child{white-space:nowrap;color:var(--ink)}
-.quick-latest{justify-self:end;max-width:100%;text-align:right;font-size:.8rem;color:var(--accent);font-weight:560;line-height:1.5;overflow-wrap:anywhere;border:0;background:transparent;padding:0;cursor:pointer}
+.quick-latest{justify-self:end;white-space:nowrap;text-align:right;font-size:.8rem;color:var(--accent);font-weight:650;line-height:1.5;text-decoration:underline;text-underline-offset:2px}
+.quick-latest-inactive{color:var(--muted);text-decoration:none}
 .quick-item{display:grid;grid-template-columns:minmax(0,1fr) clamp(112px,17vw,178px);gap:11px;scroll-margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:7px 0;padding:12px 14px;overflow-wrap:anywhere}
 .quick-item:focus{outline:2px solid var(--accent);outline-offset:1px}
 .quick-item.recent{opacity:.8}
@@ -286,11 +287,9 @@
  #editFullTextPanel #editArticleText{min-height:120px}
 }
 
-/* Recommendation shortcut beside the last decided bookmark, never overlaid. */
-.quick-latest-group{justify-self:end;display:flex;align-items:center;justify-content:flex-end;gap:6px 10px;flex-wrap:wrap;min-width:0;text-align:right}
-.quick-latest-group .quick-latest{justify-self:auto}
+/* Write Note remains available in each bookmark card, not in the pending header. */
 .quick-write-note{font-size:.8rem;line-height:1.5;color:var(--accent);font-weight:650;white-space:nowrap;text-decoration:underline;text-underline-offset:2px}
-@media(max-width:650px){.quick-latest-group{gap:1px 8px}.quick-write-note{font-size:.75rem}}
+@media(max-width:650px){.quick-write-note{font-size:.75rem}}
 
 /* Small, non-intrusive thumbnails inside the existing summary scroller. */
 .quick-thumb{float:right;width:112px;height:78px;object-fit:contain;object-position:center;border-radius:6px;background:var(--soft);margin:1px 0 6px 9px}
