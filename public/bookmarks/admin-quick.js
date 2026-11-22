@@ -140,18 +140,14 @@ function render({focus=false,preserveId=null}={}){
  const recent=state.recent.slice(-state.size);
  const pending=state.pending.slice(0,state.size);
  const last=state.recent.at(-1);
- const lastTags=last?.tags.map(name=>{
-  const t=state.tags.find(t=>t.name.toLowerCase()===name.toLowerCase());
-  return esc(tagLabel(t,name));
- }).join('、');
- const lastLabel=last?'<span class="quick-latest-group">'+
-  '<button type="button" class="quick-latest" data-scroll-previous title="查看上一筆已處理書籤">'+
-   esc(last.status===4?'已推薦':last.status===3?'已公開':'不公開')+
-   (lastTags?' · '+lastTags:'')+'</button>'+
-   (!state.busy.has(last.id)
-    ?'<a class="quick-write-note" href="/notes/editor/?bookmark='+encodeURIComponent(last.id)+
-      '" target="_blank" rel="noopener noreferrer" title="另開隨筆編輯器並引用這筆書籤">另開寫隨筆 ↗</a>':'')+
-   '</span>':'';
+ const lastLabel=last
+  ?last.status>=3&&!state.busy.has(last.id)
+   ?'<a class="quick-latest" href="/bookmarks/view/?id='+encodeURIComponent(last.id)+
+    '" target="_blank" rel="noopener noreferrer" title="另開上一筆公開書籤的正式頁面">'+
+    esc(last.status===4?'已推薦':'已公開')+' ↗</a>'
+   :'<span class="quick-latest quick-latest-inactive">'+
+    esc(last.status===4?'已推薦':last.status===3?'已公開':'不公開')+'</span>'
+  :'';
  $('items').innerHTML=
   (deferred.length?'<div class="quick-section-label">稍後再決定 · '+state.deferredRemaining+' 筆（點標題展開）</div>':'')+
   deferred.map(b=>card(b,'deferred')).join('')+
@@ -623,11 +619,6 @@ if(local){
  });
 }
 $('items').addEventListener('click',event=>{
- if(event.target.closest('[data-scroll-previous]')){
-  const previous=[...$('items').querySelectorAll('.quick-item.recent')].at(-1);
-  previous?.scrollIntoView({block:'start',behavior:'smooth'});
-  return;
- }
  const element=event.target.closest('.quick-item');
  if(!element)return;
  const b=[...state.recent,...state.deferred,...state.pending].find(x=>x.id===element.dataset.id);
