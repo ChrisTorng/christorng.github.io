@@ -313,3 +313,28 @@
  .quick-actions .quick-write-note{font-size:.72rem;padding:6px 1px}
  .quick-item.deferred.collapsed .quick-write-note{font-size:.72rem}
 }
+
+/* Newly generated summaries must be visibly distinguishable from BetaCat text. */
+.quick-summary-generated{
+ margin:10px 0 12px;
+ border:2px solid var(--accent);
+ background:var(--soft);
+ border-radius:8px;
+ padding:9px 11px;
+ overflow-wrap:anywhere;
+}
+.quick-summary-generated .quick-summary{
+ margin:5px 0 0;
+ color:var(--ink);
+ line-height:1.7;
+}
+.quick-summary-origin{
+ color:var(--accent);
+ font-size:.81rem;
+ line-height:1.4;
+ font-weight:750;
+}
+@media(max-width:650px){
+ .quick-summary-generated{padding:7px 8px;margin:8px 0 10px}
+ .quick-summary-origin{font-size:.75rem}
+}
