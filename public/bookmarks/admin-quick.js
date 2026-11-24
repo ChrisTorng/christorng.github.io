@@ -94,7 +94,7 @@ function orderedTags(b) {
 }
 function decisionDisabled(b,level){
  return state.busy.has(b.id) ||
-  ([2,3,4].includes(level)&&!String(b.summary||'').trim()) ||
+  ([3,4].includes(level)&&!String(b.summary||'').trim()) ||
   ([3,4].includes(level)&&!b.tags.some(tag=>tag.toLowerCase()!=='default'));
 }
 function summaryMarkup(b){
