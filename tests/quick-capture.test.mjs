@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 
 const js=readFileSync(new URL('../public/bookmarks/admin-quick.js',import.meta.url),'utf8');
 const css=readFileSync(new URL('../public/bookmarks/admin-quick.css',import.meta.url),'utf8');
@@ -47,4 +48,12 @@ test('private and deferred decisions do not require a summary or category',()=>{
  }
  state.busy.add(b.id);
  assert.equal(decisionDisabled(b,2),true);
+});
+
+test('quick-review entry point invalidates cached JavaScript when its contents change',()=>{
+ const html=readFileSync(new URL('../public/bookmarks/admin/quick/index.html',import.meta.url),'utf8');
+ const bytes=Buffer.from(js,'utf8');
+ const version=createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex').slice(0,12);
+ assert.ok(html.includes('/bookmarks/admin-quick.js?v='+version),
+  'Update the script version to the first 12 characters of git hash-object public/bookmarks/admin-quick.js');
 });
