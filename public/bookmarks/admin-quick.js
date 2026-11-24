@@ -22,6 +22,21 @@ const dateText = value => value ? new Intl.DateTimeFormat('zh-TW',{
  timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',
  hour:'2-digit',minute:'2-digit',hourCycle:'h23'
 }).format(new Date(value)) : '';
+const generatedSummaryKey='quick-review-recent-summaries:v1';
+function recentSummaryOrigins(){
+ try{
+  const data=JSON.parse(sessionStorage.getItem(generatedSummaryKey)||'{}');
+  const values=Object.entries(data).filter(([,v])=>v&&Date.now()-v.at<6*3600000);
+  return new Map(values.map(([id,v])=>[id,v.source]));
+ }catch{return new Map();}
+}
+function noteSummaryOrigin(id,source){
+ if(source)state.summarySource.set(id,source);else state.summarySource.delete(id);
+ try{
+  const data=Object.fromEntries([...state.summarySource].map(([key,value])=>[key,{source:value,at:Date.now()}]));
+  sessionStorage.setItem(generatedSummaryKey,JSON.stringify(data));
+ }catch{}
+}
 const levels = ['未讀','已讀','不公開','公開','推薦','稍後再決定'];
 // Keep the stored default tag unchanged; display it as 未分類.
 const tagLabel = (tag,fallback='') =>
@@ -202,6 +217,7 @@ async function load(size=state.size,{focus=true}={}){
   state.loading=false;
   $('size').value=String(size);
   render({focus});
+  window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-deliver'));
   message('');
  }catch(error){
   if(generation===state.generation){state.loading=false;message(error.message,true);}
@@ -227,6 +243,7 @@ async function reconcile(){
   state.tags=tags;
   if(state.refreshTagOrder){state.tagOrders.clear();state.refreshTagOrder=false;}
   render({preserveId:anchor});
+  window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-deliver'));
  }catch(error){message('已儲存，但同步清單失敗：'+error.message,true);}
 }
 async function summarizeClipboard(b){
@@ -251,7 +268,7 @@ async function summarizeClipboard(b){
   updateCard(b);
   const result=await queueWrite(id,()=>request('/summary-repair','POST',{id,content},AbortSignal.timeout(35000)));
   b.summary=result.summary;
-  state.summarySource.set(id,'clipboard');
+  noteSummaryOrigin(id,'clipboard');
   state.summaryActivity.delete(id);
  }catch(error){
   const reason=error.name==='TimeoutError'?'等待摘要逾時，請重試。':error.message;
@@ -297,7 +314,7 @@ window.addEventListener('blog-bookmarks:capture-result',event=>{
  void queueWrite(id,()=>request('/summary-repair','POST',{id,content},AbortSignal.timeout(35000)))
   .then(result=>{
    b.summary=result.summary;
-   state.summarySource.set(id,'article');
+   noteSummaryOrigin(id,'article');
    state.summaryActivity.delete(id);
    capturedAck(id,nonce);
    message('已從原文產生摘要，請核對醒目框內的內容');
@@ -641,7 +658,7 @@ $('editForm').addEventListener('submit',async event=>{
   const updated=await queueWrite(id,()=>request('/'+id,'PATCH',raw));
   Object.assign(b,updated);
   state.summaryActivity.delete(id);
-  state.summarySource.delete(id);
+  noteSummaryOrigin(id,null);
   updateCard(b);
   closeEdit();
   message('已儲存');
@@ -667,7 +684,8 @@ if(local){
  $('token').value=sessionStorage.getItem(tokenKey)||'';
  $('login').addEventListener('click',()=>{
   sessionStorage.setItem(tokenKey,$('token').value);
-  void load();
+  state.summarySource=recentSummaryOrigins();
+void load();
  });
 }
 $('items').addEventListener('click',event=>{
