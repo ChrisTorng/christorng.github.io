@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {createRequire} from 'node:module';
 
 const js=readFileSync(new URL('../public/bookmarks/admin-quick.js',import.meta.url),'utf8');
 const css=readFileSync(new URL('../public/bookmarks/admin-quick.css',import.meta.url),'utf8');
