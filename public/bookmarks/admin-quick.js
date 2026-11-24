@@ -11,7 +11,7 @@ const state = {
  recent:[], pending:[], deferred:[], tags:[], remaining:0, deferredRemaining:0,
  expanded:new Set(),
  loading:false, inflight:0, generation:0, changeVersion:0,
- writes:new Map(), busy:new Set(), summaryActivity:new Map(), tagOrders:new Map(), refreshTagOrder:false,
+ writes:new Map(), busy:new Set(), summaryActivity:new Map(), summarySource:new Map(), tagOrders:new Map(), refreshTagOrder:false,
  categoryTarget:null, categoryScrollY:0
 };
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -22,6 +22,21 @@ const dateText = value => value ? new Intl.DateTimeFormat('zh-TW',{
  timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',
  hour:'2-digit',minute:'2-digit',hourCycle:'h23'
 }).format(new Date(value)) : '';
+const generatedSummaryKey='quick-review-recent-summaries:v1';
+function recentSummaryOrigins(){
+ try{
+  const data=JSON.parse(sessionStorage.getItem(generatedSummaryKey)||'{}');
+  const values=Object.entries(data).filter(([,v])=>v&&Date.now()-v.at<6*3600000);
+  return new Map(values.map(([id,v])=>[id,v.source]));
+ }catch{return new Map();}
+}
+function noteSummaryOrigin(id,source){
+ if(source)state.summarySource.set(id,source);else state.summarySource.delete(id);
+ try{
+  const data=Object.fromEntries([...state.summarySource].map(([key,value])=>[key,{source:value,at:Date.now()}]));
+  sessionStorage.setItem(generatedSummaryKey,JSON.stringify(data));
+ }catch{}
+}
 const levels = ['未讀','已讀','不公開','公開','推薦','稍後再決定'];
 // Keep the stored default tag unchanged; display it as 未分類.
 const tagLabel = (tag,fallback='') =>
@@ -83,7 +98,13 @@ function decisionDisabled(b,level){
   ([3,4].includes(level)&&!b.tags.some(tag=>tag.toLowerCase()!=='default'));
 }
 function summaryMarkup(b){
- if(String(b.summary||'').trim())return '<p class="quick-summary">'+esc(b.summary)+'</p>';
+ if(String(b.summary||'').trim()){
+  const origin=state.summarySource.get(b.id);
+  return origin?'<section class="quick-summary-generated" aria-label="新產生摘要，請檢查"><div class="quick-summary-origin">'+
+   (origin==='clipboard'?'剛從剪貼簿產生的摘要':'剛從原文自動產生的摘要')+' · 請確認內容</div>'+
+   '<p class="quick-summary">'+esc(b.summary)+'</p></section>'
+   :'<p class="quick-summary">'+esc(b.summary)+'</p>';
+ }
  const activity=state.summaryActivity.get(b.id);
  return '<div class="quick-summary-repair">'+
   '<p class="quick-summary missing-summary'+(activity?.startsWith('摘要失敗')?' error':'')+'" role="status">'+esc(activity||'尚無摘要')+'</p>'+
@@ -196,6 +217,7 @@ async function load(size=state.size,{focus=true}={}){
   state.loading=false;
   $('size').value=String(size);
   render({focus});
+  window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-deliver'));
   message('');
  }catch(error){
   if(generation===state.generation){state.loading=false;message(error.message,true);}
@@ -221,6 +243,7 @@ async function reconcile(){
   state.tags=tags;
   if(state.refreshTagOrder){state.tagOrders.clear();state.refreshTagOrder=false;}
   render({preserveId:anchor});
+  window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-deliver'));
  }catch(error){message('已儲存，但同步清單失敗：'+error.message,true);}
 }
 async function summarizeClipboard(b){
@@ -245,6 +268,7 @@ async function summarizeClipboard(b){
   updateCard(b);
   const result=await queueWrite(id,()=>request('/summary-repair','POST',{id,content},AbortSignal.timeout(35000)));
   b.summary=result.summary;
+  noteSummaryOrigin(id,'clipboard');
   state.summaryActivity.delete(id);
  }catch(error){
   const reason=error.name==='TimeoutError'?'等待摘要逾時，請重試。':error.message;
@@ -260,6 +284,50 @@ async function summarizeClipboard(b){
   if(!state.inflight)void reconcile();
  }
 }
+
+// The userscript returns text only for links opened here; the source page
+// never receives the administrator's authentication or API credentials.
+const capturedBookmark=id=>[...state.recent,...state.deferred,...state.pending].find(x=>x.id===id);
+function capturedAck(id,nonce){
+ window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-ack',{detail:{id,nonce}}));
+}
+window.addEventListener('blog-bookmarks:capture-queued',event=>{
+ const b=capturedBookmark(event.detail?.id);
+ if(!b||String(b.summary||'').trim())return;
+ state.summaryActivity.set(b.id,'原文已開啟，驗證完成後將自動擷取全文並產生摘要…');
+ updateCard(b);
+});
+window.addEventListener('blog-bookmarks:capture-result',event=>{
+ const {id,nonce,content}=event.detail||{};
+ if(!/^[a-f0-9-]{36}$/i.test(String(id||''))||!nonce||typeof content!=='string')return;
+ const b=capturedBookmark(id);
+ if(!b)return; // Retain the result across page refresh until its card is visible.
+ if(String(b.summary||'').trim()){capturedAck(id,nonce);return;}
+ if(state.busy.has(id)||state.loading)return;
+ if(content.length<60||content.length>150000){
+  state.summaryActivity.set(id,'摘要失敗：正文不完整，請改從剪貼簿產生摘要');
+  updateCard(b);capturedAck(id,nonce);return;
+ }
+ state.busy.add(id);state.inflight++;state.changeVersion++;
+ state.summaryActivity.set(id,'已取得正文，正在自動產生摘要…');
+ updateCard(b);
+ void queueWrite(id,()=>request('/summary-repair','POST',{id,content},AbortSignal.timeout(35000)))
+  .then(result=>{
+   b.summary=result.summary;
+   noteSummaryOrigin(id,'article');
+   state.summaryActivity.delete(id);
+   capturedAck(id,nonce);
+   message('已從原文產生摘要，請核對醒目框內的內容');
+  },error=>{
+   state.summaryActivity.set(id,'摘要失敗：'+(error.name==='TimeoutError'?'等待摘要逾時':error.message));
+   capturedAck(id,nonce);
+  }).finally(()=>{
+   state.busy.delete(id);state.inflight--;
+   updateCard(b);
+   if(!state.inflight)void reconcile();
+  });
+});
+
 function takeDecision(b,level){
  if(state.loading||decisionDisabled(b,level))return;
  const oldStatus=b.status;
@@ -590,6 +658,7 @@ $('editForm').addEventListener('submit',async event=>{
   const updated=await queueWrite(id,()=>request('/'+id,'PATCH',raw));
   Object.assign(b,updated);
   state.summaryActivity.delete(id);
+  noteSummaryOrigin(id,null);
   updateCard(b);
   closeEdit();
   message('已儲存');
@@ -615,7 +684,8 @@ if(local){
  $('token').value=sessionStorage.getItem(tokenKey)||'';
  $('login').addEventListener('click',()=>{
   sessionStorage.setItem(tokenKey,$('token').value);
-  void load();
+  state.summarySource=recentSummaryOrigins();
+void load();
  });
 }
 $('items').addEventListener('click',event=>{
@@ -637,7 +707,13 @@ $('items').addEventListener('click',event=>{
  if(tag){changeTag(b,tag.dataset.tagName);return;}
  const decision=event.target.closest('[data-decision]');
  if(decision){takeDecision(b,Number(decision.dataset.decision));return;}
- if(event.target.closest('[data-read]')&&b.status===0){
+ if(event.target.closest('[data-read]')){
+  if(!String(b.summary||'').trim()){
+   const link=event.target.closest('a[data-read]');
+   if(link)window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-request',
+    {detail:{id:b.id,url:link.href}}));
+  }
+  if(b.status!==0)return;
   // Opening the source does not advance the queue; it only marks it read.
   b.status=1;
   queueWrite(b.id,()=>request('/'+b.id,'PATCH',{status:1}))
