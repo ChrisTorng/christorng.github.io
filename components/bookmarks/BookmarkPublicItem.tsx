@@ -87,6 +87,16 @@ export default function BookmarkPublicItem({
         ) : detail && item.status < 3 ? (
           <span className="text-gray-500">未公開</span>
         ) : null}
+        {!embedded && (
+          <a
+            className="text-gray-500 hover:text-primary-500"
+            href={'/bookmarks/admin/?edit=' + encodeURIComponent(item.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            後台管理 ↗
+          </a>
+        )}
       </div>
       <div
         className={
