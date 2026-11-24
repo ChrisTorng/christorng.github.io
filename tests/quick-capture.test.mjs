@@ -24,5 +24,27 @@ test('fresh AI result is clearly labeled and does not auto-publish',()=>{
  assert.match(js,/quick-review-recent-summaries:v1/);
  assert.match(css,/\.quick-summary-generated\{/);
  assert.match(css,/border:2px solid var\(--accent\)/);
- assert.match(js,/\(\[2,3,4\]\.includes\(level\)&&!String\(b\.summary\|\|''\)\.trim\(\)\)/);
+
+});
+
+test('private and deferred decisions do not require a summary or category',()=>{
+ const source=js.match(/function decisionDisabled\(b,level\)\{[\s\S]*?\n\}/)?.[0];
+ assert.ok(source);
+ const state={busy:new Set(),summaryActivity:new Map()};
+ const decisionDisabled=new Function('state',source+';return decisionDisabled;')(state);
+ const b={id:'bookmark',summary:'',tags:[]};
+ for(const summary of ['',null,'   ','A summary']){
+  b.summary=summary;
+  for(const tags of [[],['default'],['AI']]){
+   b.tags=tags;
+   state.summaryActivity.set(b.id,'Waiting for article verification');
+   assert.equal(decisionDisabled(b,2),false);
+   assert.equal(decisionDisabled(b,5),false);
+   for(const level of [3,4]){
+    assert.equal(decisionDisabled(b,level),!String(summary||'').trim()||!tags.includes('AI'));
+   }
+  }
+ }
+ state.busy.add(b.id);
+ assert.equal(decisionDisabled(b,2),true);
 });
