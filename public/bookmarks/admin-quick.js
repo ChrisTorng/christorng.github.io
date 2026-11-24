@@ -12,7 +12,7 @@ const state = {
  expanded:new Set(),
  loading:false, inflight:0, generation:0, changeVersion:0,
  writes:new Map(), busy:new Set(), summaryActivity:new Map(), summarySource:new Map(), tagOrders:new Map(), refreshTagOrder:false,
- categoryTarget:null, categoryScrollY:0
+ categoryTarget:null, categoryScrollY:0, captureAttempts:new Map()
 };
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const imageUrl = value => { try { const u=new URL(String(value||''));return u.protocol==='https:'&&!u.username&&!u.password&&u.href.length<=4096?u.href:''; } catch { return ''; } };
@@ -108,6 +108,7 @@ function summaryMarkup(b){
  const activity=state.summaryActivity.get(b.id);
  return '<div class="quick-summary-repair">'+
   '<p class="quick-summary missing-summary'+(activity?.startsWith('摘要失敗')?' error':'')+'" role="status">'+esc(activity||'尚無摘要')+'</p>'+
+  '<button type="button" data-capture-now'+(state.busy.has(b.id)?' disabled':'')+'>立即擷取已開啟原文</button> '+
   '<button type="button" data-summarize-clipboard'+(state.busy.has(b.id)?' disabled':'')+'>從剪貼簿產生摘要</button></div>';
 }
 function writeNoteLink(b){
@@ -291,10 +292,24 @@ const capturedBookmark=id=>[...state.recent,...state.deferred,...state.pending].
 function capturedAck(id,nonce){
  window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-ack',{detail:{id,nonce}}));
 }
+function captureNow(b){
+ if(state.busy.has(b.id)||String(b.summary||'').trim())return;
+ state.summaryActivity.set(b.id,'正在要求已開啟的原文頁面立即擷取…');
+ updateCard(b);
+ const attempt={};state.captureAttempts.set(b.id,attempt);
+ window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-request',{detail:{id:b.id,url:b.preferred_url||b.redirect_url||b.url,manual:true}}));
+ setTimeout(()=>{
+  if(state.captureAttempts.get(b.id)!==attempt||state.busy.has(b.id))return;
+  const current=capturedBookmark(b.id);
+  if(!current||String(current.summary||'').trim())return;
+  state.summaryActivity.set(b.id,'尚未收到原文：請切換至原文頁面，確認已更新擷取腳本並重新整理；若有驗證請先完成。可再次立即擷取。');
+  updateCard(current);
+ },12000);
+}
 window.addEventListener('blog-bookmarks:capture-queued',event=>{
  const b=capturedBookmark(event.detail?.id);
  if(!b||String(b.summary||'').trim())return;
- state.summaryActivity.set(b.id,'原文已開啟，驗證完成後將自動擷取全文並產生摘要…');
+ if(!state.captureAttempts.has(b.id))state.summaryActivity.set(b.id,'已發出原文擷取要求，等待原文頁面回傳；若有驗證請先完成。');
  updateCard(b);
 });
 window.addEventListener('blog-bookmarks:capture-result',event=>{
@@ -304,6 +319,7 @@ window.addEventListener('blog-bookmarks:capture-result',event=>{
  if(!b)return; // Retain the result across page refresh until its card is visible.
  if(String(b.summary||'').trim()){capturedAck(id,nonce);return;}
  if(state.busy.has(id)||state.loading)return;
+ state.captureAttempts.delete(id);
  if(content.length<60||content.length>150000){
   state.summaryActivity.set(id,'摘要失敗：正文不完整，請改從剪貼簿產生摘要');
   updateCard(b);capturedAck(id,nonce);return;
@@ -699,6 +715,7 @@ $('items').addEventListener('click',event=>{
   updateCard(b);
   return;
  }
+ if(event.target.closest('[data-capture-now]')){captureNow(b);return;}
  if(event.target.closest('[data-summarize-clipboard]')){void summarizeClipboard(b);return;}
  if(event.target.closest('[data-show-add-category]')){openCategoryDialog(b);return;}
  if(event.target.closest('[data-edit]')){edit(b);return;}
