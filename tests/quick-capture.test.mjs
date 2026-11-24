@@ -57,3 +57,11 @@ test('quick-review entry point invalidates cached JavaScript when its contents c
  assert.ok(html.includes('/bookmarks/admin-quick.js?v='+version),
   'Update the script version to the first 12 characters of git hash-object public/bookmarks/admin-quick.js');
 });
+
+test('missing summaries offer direct capture without clipboard or reopening the article',()=>{
+ assert.match(js,/data-capture-now/);
+ assert.match(js,/立即擷取已開啟原文/);
+ assert.match(js,/manual:true/);
+ assert.match(js,/captureAttempts\.delete\(id\)/);
+ assert.doesNotMatch(js,/驗證完成後將自動擷取全文/);
+});
