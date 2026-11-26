@@ -97,6 +97,22 @@ function decisionDisabled(b,level){
   ([3,4].includes(level)&&!String(b.summary||'').trim()) ||
   ([3,4].includes(level)&&!b.tags.some(tag=>tag.toLowerCase()!=='default'));
 }
+const readingRepairAttempted=new Set();
+async function repairFromReading(b,force=false){
+ if(state.busy.has(b.id)||[3,4].includes(b.status)||String(b.summary||'').trim()||(!force&&!b.reading?.has_body)||(!force&&readingRepairAttempted.has(b.id)))return false;
+ readingRepairAttempted.add(b.id);
+ state.busy.add(b.id);state.inflight++;state.changeVersion++;
+ state.summaryActivity.set(b.id,'正在使用已取得的正文產生摘要…');updateCard(b);
+ try{
+  const result=await queueWrite(b.id,()=>request('/summary-repair/from-reading','POST',{id:b.id},AbortSignal.timeout(35000)));
+  if(result.summary){b.summary=result.summary;noteSummaryOrigin(b.id,'article');return true;}
+  return false;
+ }catch(e){message('重用正文失敗：'+e.message,true);return false;}
+ finally{state.busy.delete(b.id);state.inflight--;state.summaryActivity.delete(b.id);updateCard(b);}
+}
+async function repairVisibleReading(){
+ for(const b of state.pending.slice(0,state.size))await repairFromReading(b);
+}
 async function clearSummary(b){
  const id=b.id;
  if(state.loading||state.busy.has(id)||[3,4].includes(b.status)||!String(b.summary||'').trim())return;
@@ -116,7 +132,7 @@ async function clearSummary(b){
  finally{
   state.busy.delete(id);state.inflight--;
   updateCard(b);
-  if(cleared)captureNow(b);
+  if(cleared&&!(await repairFromReading(b,true)))captureNow(b);
  }
 }
 function summaryMarkup(b){
@@ -243,6 +259,7 @@ async function load(size=state.size,{focus=true}={}){
   $('size').value=String(size);
   render({focus});
   window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-deliver'));
+  void repairVisibleReading();
   message('');
  }catch(error){
   if(generation===state.generation){state.loading=false;message(error.message,true);}
@@ -269,6 +286,7 @@ async function reconcile(){
   if(state.refreshTagOrder){state.tagOrders.clear();state.refreshTagOrder=false;}
   render({preserveId:anchor});
   window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-deliver'));
+  void repairVisibleReading();
  }catch(error){message('已儲存，但同步清單失敗：'+error.message,true);}
 }
 async function summarizeClipboard(b){
@@ -321,7 +339,7 @@ function captureNow(b){
  state.summaryActivity.set(b.id,'正在要求已開啟的原文頁面立即擷取…');
  updateCard(b);
  const attempt={};state.captureAttempts.set(b.id,attempt);
- window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-request',{detail:{id:b.id,url:b.preferred_url||b.redirect_url||b.url,manual:true}}));
+ window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-request',{detail:{id:b.id,url:b.preferred_url||b.redirect_url||b.url,source:b.url,manual:true}}));
  setTimeout(()=>{
   if(state.captureAttempts.get(b.id)!==attempt||state.busy.has(b.id))return;
   const current=capturedBookmark(b.id);
@@ -755,7 +773,7 @@ $('items').addEventListener('click',event=>{
   if(!String(b.summary||'').trim()){
    const link=event.target.closest('a[data-read]');
    if(link)window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-request',
-    {detail:{id:b.id,url:link.href}}));
+    {detail:{id:b.id,url:link.href,source:b.url}}));
   }
   if(b.status!==0)return;
   // Opening the source does not advance the queue; it only marks it read.
