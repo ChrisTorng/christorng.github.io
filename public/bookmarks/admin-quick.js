@@ -97,13 +97,36 @@ function decisionDisabled(b,level){
   ([3,4].includes(level)&&!String(b.summary||'').trim()) ||
   ([3,4].includes(level)&&!b.tags.some(tag=>tag.toLowerCase()!=='default'));
 }
+async function clearSummary(b){
+ const id=b.id;
+ if(state.loading||state.busy.has(id)||[3,4].includes(b.status)||!String(b.summary||'').trim())return;
+ if(!confirm('清空這筆摘要並重新擷取原文？'))return;
+ state.busy.add(id);state.inflight++;state.changeVersion++;
+ updateCard(b);
+ let cleared=false;
+ try{
+  const result=await queueWrite(id,()=>request('/summary-repair/clear','POST',{id,summary:b.summary}));
+  b.summary=result.summary;
+  state.summaryActivity.delete(id);
+  state.captureAttempts.delete(id);
+  noteSummaryOrigin(id,null);
+  cleared=true;
+  message('已清空摘要，重新開啟原文即可自動擷取');
+ }catch(error){message('清空摘要失敗：'+error.message,true);}
+ finally{
+  state.busy.delete(id);state.inflight--;
+  updateCard(b);
+  if(cleared)captureNow(b);
+ }
+}
 function summaryMarkup(b){
  if(String(b.summary||'').trim()){
   const origin=state.summarySource.get(b.id);
-  return origin?'<section class="quick-summary-generated" aria-label="新產生摘要，請檢查"><div class="quick-summary-origin">'+
+  const clear=[3,4].includes(b.status)?'':'<button type="button" data-clear-summary'+(state.busy.has(b.id)?' disabled':'')+'>清空摘要並重抓</button>';
+  return (origin?'<section class="quick-summary-generated" aria-label="新產生摘要，請檢查"><div class="quick-summary-origin">'+
    (origin==='clipboard'?'剛從剪貼簿產生的摘要':'剛從原文自動產生的摘要')+' · 請確認內容</div>'+
    '<p class="quick-summary">'+esc(b.summary)+'</p></section>'
-   :'<p class="quick-summary">'+esc(b.summary)+'</p>';
+   :'<p class="quick-summary">'+esc(b.summary)+'</p>')+clear;
  }
  const activity=state.summaryActivity.get(b.id);
  return '<div class="quick-summary-repair">'+
@@ -716,6 +739,7 @@ $('items').addEventListener('click',event=>{
   updateCard(b);
   return;
  }
+ if(event.target.closest('[data-clear-summary]')){void clearSummary(b);return;}
  if(event.target.closest('[data-capture-now]')){captureNow(b);return;}
  if(event.target.closest('[data-summarize-clipboard]')){void summarizeClipboard(b);return;}
  if(event.target.closest('[data-show-add-category]')){openCategoryDialog(b);return;}
