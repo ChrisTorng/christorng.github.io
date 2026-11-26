@@ -44,21 +44,48 @@ function safeImageUrl(value?: string | null) {
 }
 
 function ReadingStats({ reading }: { reading: NonNullable<PublicBookmark['reading_summary']> }) {
-  const reduction = typeof reading.reduction_percent === 'number' && Number.isFinite(reading.reduction_percent)
-    ? reading.reduction_percent : null
+  const reduction =
+    typeof reading.reduction_percent === 'number' && Number.isFinite(reading.reduction_percent)
+      ? reading.reduction_percent
+      : null
   const green = Math.max(0, Math.min(100, reduction ?? 0))
-  const fmt = (n?: number | null) => typeof n === 'number' && Number.isFinite(n) && n >= 0 ? String(n) : '未知'
+  const fmt = (n?: number | null) =>
+    typeof n === 'number' && Number.isFinite(n) && n >= 0 ? String(n) : '未知'
   return (
-    <div className="mb-2 mt-1 text-xs text-gray-600 dark:text-gray-300">
+    <div className="mt-1 mb-2 text-xs text-gray-600 dark:text-gray-300">
       {reduction !== null && (
-        <div aria-hidden="true" style={{ display: 'flex', justifyContent: 'flex-end', background: '#64748b', height: 8, borderRadius: 4, overflow: 'hidden', marginBottom: 4 }}>
+        <div
+          aria-hidden="true"
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            background: '#64748b',
+            height: 8,
+            borderRadius: 4,
+            overflow: 'hidden',
+            marginBottom: 4,
+          }}
+        >
           <span style={{ background: '#22a06b', width: green + '%', height: '100%' }} />
         </div>
       )}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 2, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', fontSize: 'clamp(9px, 3vw, 12px)' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3,minmax(0,1fr))',
+          gap: 2,
+          fontVariantNumeric: 'tabular-nums',
+          whiteSpace: 'nowrap',
+          fontSize: 'clamp(9px, 3vw, 12px)',
+        }}
+      >
         <span>原文 {fmt(reading.original?.chars)} 字</span>
         <span style={{ textAlign: 'center' }}>摘要 {fmt(reading.summary_metrics?.chars)} 字</span>
-        <span style={{ textAlign: 'right' }}>{reduction === null ? '縮減未知' : (reduction >= 0 ? '縮減 ' : '增加 ') + Math.abs(reduction) + '%'}</span>
+        <span style={{ textAlign: 'right' }}>
+          {reduction === null
+            ? '縮減未知'
+            : (reduction >= 0 ? '縮減 ' : '增加 ') + Math.abs(reduction) + '%'}
+        </span>
       </div>
     </div>
   )
