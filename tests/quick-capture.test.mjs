@@ -65,3 +65,13 @@ test('missing summaries offer direct capture without clipboard or reopening the 
  assert.match(js,/captureAttempts\.delete\(id\)/);
  assert.doesNotMatch(js,/驗證完成後將自動擷取全文/);
 });
+
+
+test('manual clear persists before requesting capture and leaves public summaries intact',()=>{
+ const body=js.match(/async function clearSummary\(b\)\{[\s\S]*?\n\}/)?.[0];
+ assert.ok(body);
+ assert.match(body,/\[3,4\]\.includes\(b\.status\)/);
+ assert.match(body,/request\('\/summary-repair\/clear','POST',\{id,summary:b\.summary\}\)/);
+ assert.ok(body.indexOf('b.summary=result.summary')<body.indexOf('captureNow(b)'));
+ assert.match(js,/data-clear-summary/);
+});
