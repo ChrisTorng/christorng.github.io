@@ -115,6 +115,7 @@ function writeNoteLink(b){
  return '<a class="quick-write-note" href="/notes/editor/?bookmark='+encodeURIComponent(b.id)+
   '" target="_blank" rel="noopener noreferrer" title="另開隨筆編輯器並引用這筆書籤；正式發佈隨筆時才公開並推薦書籤">寫隨筆 ↗</a>';
 }
+function readingLabel(b){const r=b.reading;if(!r||r.minutes==null)return '長度未知';return (r.cjk>0?r.cjk+' 字'+(r.english?' / '+r.english+' words':''):r.english+' words')+' · 約 '+r.minutes+' 分鐘';}
 function card(b,kind,first=false){
  const target=b.preferred_url||b.redirect_url||b.url;
  const expanded=state.expanded.has(b.id);
@@ -134,7 +135,7 @@ function card(b,kind,first=false){
  return '<article class="quick-item '+kind+(first?' first-pending':'')+(kind==='deferred'?' expanded':'')+'" data-id="'+esc(b.id)+'" data-kind="'+kind+'" tabindex="-1">'+
   (kind==='deferred'?'<button type="button" class="quick-collapse" data-toggle-deferred aria-expanded="true">▾ 收合</button>':'')+
   '<div class="quick-main"><div class="quick-content">'+thumb(b.image_url,'quick-thumb')+'<a class="quick-title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read>'+esc(b.title_zh||b.title)+' ↗</a>'+
-  original+'<div class="quick-source">'+sourceBadge(b.url)+'</div><div class="quick-date"><a href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer" title="預覽書籤單項頁">'+esc(dateText(b.created_at))+'</a></div>'+
+  original+'<div class="quick-source">'+sourceBadge(b.url)+' · '+esc(readingLabel(b))+'</div><div class="quick-date"><a href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer" title="預覽書籤單項頁">'+esc(dateText(b.created_at))+'</a></div>'+
   summaryMarkup(b)+
   '</div><div class="quick-actions">'+actions+
   '<button type="button" data-edit>編輯</button>'+
@@ -725,6 +726,8 @@ $('items').addEventListener('click',event=>{
  const decision=event.target.closest('[data-decision]');
  if(decision){takeDecision(b,Number(decision.dataset.decision));return;}
  if(event.target.closest('[data-read]')){
+  const readingLink=event.target.closest('a[data-read]');
+  if(readingLink)window.dispatchEvent(new CustomEvent('blog-bookmarks:reading-open',{detail:{source:b.url,target:readingLink.href}}));
   if(!String(b.summary||'').trim()){
    const link=event.target.closest('a[data-read]');
    if(link)window.dispatchEvent(new CustomEvent('blog-bookmarks:capture-request',

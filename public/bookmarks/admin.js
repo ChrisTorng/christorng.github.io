@@ -60,13 +60,14 @@ async function request(path, method='GET', body) {
 function status(msg,error=false){$('message').textContent=msg;$('message').classList.toggle('error',error);}
 function options(){const q=new URLSearchParams();for(const k of ['filter','sort','tag','q','page'])q.set(k,state[k]);return q.toString();}
 const levelName=['未讀','已讀 · 待決定','已讀 · 確定不公開','已公開','★ 已推薦','稍後再決定'];
+function readingLabel(b){const r=b.reading;if(!r||r.minutes==null)return '長度未知';return (r.cjk>0?r.cjk+' 字'+(r.english?' / '+r.english+' words':''):r.english+' words')+' · 約 '+r.minutes+' 分鐘';}
 function itemHtml(b) {
  const label=levelName[b.status]||'';
  const target=b.preferred_url||b.redirect_url||b.url;
  const source=target!==b.url?'<div class="source-reference">原始網址：<a href="'+esc(b.url)+'" target="_blank" rel="noopener noreferrer">'+esc(b.url)+'</a></div>':'';
  const originalTitle=b.title_original&&b.title_original!==b.title?'<div class="original-title" lang="en">'+esc(b.title_original)+'</div>':'';
  const statusDate=[3,4].includes(b.status)?' · '+(b.status===4?'推薦':'公開')+' '+dateText(b.status_at||b.starred_at||b.published_at):'';
- const info='<div class="meta">加入 '+esc(dateText(b.created_at))+' · '+sourceBadge(b.url)+esc(statusDate)+'</div>';
+ const info='<div class="meta">加入 '+esc(dateText(b.created_at))+' · '+sourceBadge(b.url)+esc(statusDate)+' · '+esc(readingLabel(b))+'</div>';
  const tagNames=new Set(b.tags.map(x=>x.toLowerCase()));
  const choices=state.tags.map(t=>'<button type="button" data-tag-name="'+esc(t.name)+'" aria-pressed="'+String(tagNames.has(t.name.toLowerCase()))+'">'+esc(t.name_zh||t.name)+'</button>').join('');
  const picker='<details class="category-picker"><summary>分類：'+(b.tags.length?b.tags.map(t=>esc(state.tags.find(x=>x.name.toLowerCase()===t.toLowerCase())?.name_zh||t)).join('、'):'未分類')+' · 點擊選擇</summary><div class="category-choices">'+choices+'</div><form class="add-category" data-add-tag><input name="newtag" maxlength="80" placeholder="新增分類名稱" aria-label="新增分類"><button type="submit">新增並選取</button></form></details>';
@@ -276,6 +277,8 @@ $('items').addEventListener('click',async e=>{
  const itemElement=e.target.closest('[data-id]');if(!itemElement)return;
  const b=state.items.find(x=>x.id===itemElement.dataset.id);if(!b)return;
  if(e.target.closest('[data-read]')){
+  const link=e.target.closest('a[data-read]');
+  if(link)window.dispatchEvent(new CustomEvent('blog-bookmarks:reading-open',{detail:{source:b.url,target:link.href}}));
   if(b.status===0)persistStatus(b,1).then(()=>{if(state.filter==='unread')void refresh();}).catch(()=>{});
   return;
  }
