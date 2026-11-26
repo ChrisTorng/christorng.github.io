@@ -12,6 +12,7 @@ export type PublicBookmark = {
   title: string
   title_original?: string | null
   summary?: string | null
+  reading_summary?: { summary: string; stats_lines: string[] } | null
   image_url?: string | null
   url: string
   preferred_url?: string | null
@@ -144,6 +145,17 @@ export default function BookmarkPublicItem({
           </div>
         )}
       </div>
+      {item.reading_summary?.summary && (
+        <section className="my-3 min-w-0" aria-label="精讀摘要">
+          <p className="font-bold">精讀摘要</p>
+          <div className="mb-2 text-xs text-gray-600 dark:text-gray-300">
+            {item.reading_summary.stats_lines.map((line) => (
+              <div key={line}>{line}</div>
+            ))}
+          </div>
+          <SafeMarkdown text={item.reading_summary.summary} baseUrl={item.url} />
+        </section>
+      )}
       <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
         <BookmarkSource url={item.url} />
         {target !== item.url && (
