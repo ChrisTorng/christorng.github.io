@@ -10,7 +10,7 @@ test('only opening an article with a missing summary registers a capture',()=>{
  assert.match(js,/if\(!String\(b\.summary\|\|''\)\.trim\(\)\)/);
  assert.match(js,/event\.target\.closest\('a\[data-read\]'\)/);
  assert.match(js,/blog-bookmarks:capture-request/);
- assert.match(js,/detail:\{id:b\.id,url:link\.href\}/);
+ assert.match(js,/detail:\{id:b\.id,url:link\.href,source:b\.url\}/);
 });
 test('captured text passes through existing authenticated summary repair endpoint',()=>{
  assert.match(js,/blog-bookmarks:capture-result/);
@@ -74,4 +74,10 @@ test('manual clear persists before requesting capture and leaves public summarie
  assert.match(body,/request\('\/summary-repair\/clear','POST',\{id,summary:b\.summary\}\)/);
  assert.ok(body.indexOf('b.summary=result.summary')<body.indexOf('captureNow(b)'));
  assert.match(js,/data-clear-summary/);
+});
+
+test('short summary uses existing browser body before reopening the article',()=>{
+ assert.match(js,/summary-repair\/from-reading/);
+ assert.match(js,/await repairFromReading\(b,true\)/);
+ assert.match(js,/void repairVisibleReading\(\)/);
 });
