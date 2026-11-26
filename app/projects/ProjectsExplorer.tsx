@@ -31,12 +31,7 @@ export default function ProjectsExplorer({
     const filtered = projects.filter((project) => {
       if (category && project.category !== category) return false
       if (!terms.length) return true
-      const searchable = [
-        project.title,
-        project.description,
-        project.category,
-        project.href || '',
-      ]
+      const searchable = [project.title, project.description, project.category, project.href || '']
         .join(' ')
         .toLocaleLowerCase('zh-TW')
       return terms.every((term) => searchable.includes(term))
@@ -51,14 +46,17 @@ export default function ProjectsExplorer({
       // Unknown timestamps always sort last, even when sorting oldest first.
       if (!a.updatedAt && b.updatedAt) return 1
       if (a.updatedAt && !b.updatedAt) return -1
-      const difference = (Date.parse(b.updatedAt || '') || 0) -
-        (Date.parse(a.updatedAt || '') || 0)
+      const difference = (Date.parse(b.updatedAt || '') || 0) - (Date.parse(a.updatedAt || '') || 0)
       return (order === 'oldest' ? -difference : difference) || nameComparison
     })
   }, [projects, query, category, order])
 
   const hasFilters = Boolean(query || category || order !== 'newest')
-  const reset = () => { setQuery(''); setCategory(''); setOrder('newest') }
+  const reset = () => {
+    setQuery('')
+    setCategory('')
+    setOrder('newest')
+  }
 
   return (
     <section className="py-6 sm:py-8" aria-label="專案搜尋與清單">
@@ -73,7 +71,7 @@ export default function ProjectsExplorer({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="搜尋名稱、說明、分類或 Repo"
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 placeholder:text-gray-500 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 placeholder:text-gray-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
           />
         </div>
         <div>
@@ -84,11 +82,13 @@ export default function ProjectsExplorer({
             id="project-category"
             value={category}
             onChange={(event) => setCategory(event.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           >
             <option value="">全部分類</option>
             {categories.map((item) => (
-              <option value={item} key={item}>{item}</option>
+              <option value={item} key={item}>
+                {item}
+              </option>
             ))}
           </select>
         </div>
@@ -100,7 +100,7 @@ export default function ProjectsExplorer({
             id="project-sort"
             value={order}
             onChange={(event) => setOrder(event.target.value as SortOrder)}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           >
             <option value="newest">最後更新：新到舊</option>
             <option value="oldest">最後更新：舊到新</option>
@@ -145,7 +145,7 @@ export default function ProjectsExplorer({
           <p>沒有符合條件的專案。</p>
           <button
             type="button"
-            className="mt-3 text-primary-600 underline dark:text-primary-400"
+            className="text-primary-600 dark:text-primary-400 mt-3 underline"
             onClick={reset}
           >
             清除搜尋與篩選

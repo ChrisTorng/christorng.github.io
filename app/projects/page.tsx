@@ -10,7 +10,8 @@ const dates: Record<string, string> = projectUpdateDates
 export default function Projects() {
   const projects = projectCategories.flatMap((category) =>
     category.projects.map((project) => {
-      const repoName = project.href?.match(/^https:\/\/github\.com\/ChrisTorng\/([^/?#]+)/i)?.[1] ?? ''
+      const repoName =
+        project.href?.match(/^https:\/\/github\.com\/ChrisTorng\/([^/?#]+)/i)?.[1] ?? ''
       return {
         ...project,
         category: category.title,

@@ -76,7 +76,9 @@ const Card = ({ title, description, imgSrc, href, demoHref, category, updatedAt 
       <div className="p-6">
         {category && (
           <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
-            <span className="rounded bg-gray-100 px-2 py-1 font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300">{category}</span>
+            <span className="rounded bg-gray-100 px-2 py-1 font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+              {category}
+            </span>
             {updatedAt && !Number.isNaN(Date.parse(updatedAt)) ? (
               <time dateTime={updatedAt} title={updatedAt}>
                 更新：{updatedDateFormat.format(new Date(updatedAt))}
