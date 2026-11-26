@@ -5,6 +5,8 @@ on:
   push:
     branches: main
   workflow_dispatch:
+  schedule:
+    - cron: '15 1 * * *' # daily at 09:15 Asia/Taipei
 
 permissions:
   contents: read
@@ -34,6 +36,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - run: npm ci
+      - name: Refresh GitHub project dates
+        run: node scripts/refresh-project-dates.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify project metadata
+        run: node --test tests/projects-listing.test.mjs
       - run: npm run build
         env:
           EXPORT: 1
