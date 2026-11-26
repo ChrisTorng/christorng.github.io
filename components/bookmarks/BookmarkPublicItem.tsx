@@ -12,7 +12,13 @@ export type PublicBookmark = {
   title: string
   title_original?: string | null
   summary?: string | null
-  reading_summary?: { summary: string; stats_lines: string[] } | null
+  reading_summary?: {
+    summary: string
+    original?: { chars: number | null }
+    summary_metrics?: { chars: number }
+    reduction_percent?: number | null
+    stats_lines?: string[]
+  } | null
   image_url?: string | null
   url: string
   preferred_url?: string | null
@@ -35,6 +41,27 @@ function safeImageUrl(value?: string | null) {
   } catch {
     return null
   }
+}
+
+function ReadingStats({ reading }: { reading: NonNullable<PublicBookmark['reading_summary']> }) {
+  const reduction = typeof reading.reduction_percent === 'number' && Number.isFinite(reading.reduction_percent)
+    ? reading.reduction_percent : null
+  const green = Math.max(0, Math.min(100, reduction ?? 0))
+  const fmt = (n?: number | null) => typeof n === 'number' && Number.isFinite(n) && n >= 0 ? String(n) : '未知'
+  return (
+    <div className="mb-2 mt-1 text-xs text-gray-600 dark:text-gray-300">
+      {reduction !== null && (
+        <div aria-hidden="true" style={{ display: 'flex', justifyContent: 'flex-end', background: '#64748b', height: 8, borderRadius: 4, overflow: 'hidden', marginBottom: 4 }}>
+          <span style={{ background: '#22a06b', width: green + '%', height: '100%' }} />
+        </div>
+      )}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 2, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', fontSize: 'clamp(9px, 3vw, 12px)' }}>
+        <span>原文 {fmt(reading.original?.chars)} 字</span>
+        <span style={{ textAlign: 'center' }}>摘要 {fmt(reading.summary_metrics?.chars)} 字</span>
+        <span style={{ textAlign: 'right' }}>{reduction === null ? '縮減未知' : (reduction >= 0 ? '縮減 ' : '增加 ') + Math.abs(reduction) + '%'}</span>
+      </div>
+    </div>
+  )
 }
 
 export default function BookmarkPublicItem({
@@ -148,11 +175,7 @@ export default function BookmarkPublicItem({
       {item.reading_summary?.summary && (
         <section className="my-3 min-w-0" aria-label="精讀摘要">
           <p className="font-bold">精讀摘要</p>
-          <div className="mb-2 text-xs text-gray-600 dark:text-gray-300">
-            {item.reading_summary.stats_lines.map((line) => (
-              <div key={line}>{line}</div>
-            ))}
-          </div>
+          <ReadingStats reading={item.reading_summary} />
           <SafeMarkdown text={item.reading_summary.summary} baseUrl={item.url} />
         </section>
       )}
