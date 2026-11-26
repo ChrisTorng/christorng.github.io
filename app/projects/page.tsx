@@ -1,48 +1,35 @@
 import projectCategories from '@/data/projectsData'
-import Card from '@/components/Card'
+import projectUpdateDates from '@/data/projectUpdatedDates.json'
+import ProjectsExplorer from './ProjectsExplorer'
 import { genPageMetadata } from 'app/seo'
 
 export const metadata = genPageMetadata({ title: '專案' })
 
+const dates: Record<string, string> = projectUpdateDates
+
 export default function Projects() {
+  const projects = projectCategories.flatMap((category) =>
+    category.projects.map((project) => {
+      const repoName = project.href?.match(/^https:\/\/github\.com\/ChrisTorng\/([^/?#]+)/i)?.[1] ?? ''
+      return {
+        ...project,
+        category: category.title,
+        updatedAt: dates[repoName] || null,
+      }
+    })
+  )
+
   return (
-    <>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        <div className="space-y-2 pt-6 pb-8 md:space-y-5">
-          <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            專案
-          </h1>
-          {/* <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            Showcase your projects with a hero image (16 x 9)
-          </p> */}
-        </div>
-        <div className="container space-y-14 py-12">
-          {projectCategories.map((category) => (
-            <section key={category.title} aria-labelledby={`project-category-${category.title}`}>
-              <div className="mb-6 border-b border-gray-200 pb-3 dark:border-gray-700">
-                <h2
-                  id={`project-category-${category.title}`}
-                  className="text-2xl leading-8 font-bold tracking-tight text-gray-800 dark:text-gray-200"
-                >
-                  {category.title}
-                </h2>
-              </div>
-              <div className="-m-4 flex flex-wrap">
-                {category.projects.map((d) => (
-                  <Card
-                    key={d.href ?? d.title}
-                    title={d.title}
-                    description={d.description}
-                    imgSrc={d.imgSrc}
-                    href={d.href}
-                    demoHref={d.demoHref}
-                  />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
+    <div className="divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="space-y-2 pt-6 pb-8 md:space-y-5">
+        <h1 className="heading-accent text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+          專案
+        </h1>
       </div>
-    </>
+      <ProjectsExplorer
+        projects={projects}
+        categories={projectCategories.map((category) => category.title)}
+      />
+    </div>
   )
 }

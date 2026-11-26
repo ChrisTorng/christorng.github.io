@@ -29,7 +29,24 @@ const CardLink = ({ href, ariaLabel, children, className, variant = 'primary' }:
   </Link>
 )
 
-const Card = ({ title, description, imgSrc, href, demoHref }) => (
+interface CardProps {
+  title: string
+  description: string
+  imgSrc?: string
+  href?: string
+  demoHref?: string
+  category?: string
+  updatedAt?: string | null
+}
+
+const updatedDateFormat = new Intl.DateTimeFormat('zh-TW', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  timeZone: 'Asia/Taipei',
+})
+
+const Card = ({ title, description, imgSrc, href, demoHref, category, updatedAt }: CardProps) => (
   <div className="w-full max-w-[544px] p-4 md:w-1/2">
     <div
       className={`${
@@ -57,6 +74,18 @@ const Card = ({ title, description, imgSrc, href, demoHref }) => (
           />
         ))}
       <div className="p-6">
+        {category && (
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+            <span className="rounded bg-gray-100 px-2 py-1 font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300">{category}</span>
+            {updatedAt && !Number.isNaN(Date.parse(updatedAt)) ? (
+              <time dateTime={updatedAt} title={updatedAt}>
+                更新：{updatedDateFormat.format(new Date(updatedAt))}
+              </time>
+            ) : (
+              <span>更新時間未取得</span>
+            )}
+          </div>
+        )}
         <h2 className="mb-3 text-2xl leading-8 font-bold tracking-tight">
           {href ? (
             <CardLink
