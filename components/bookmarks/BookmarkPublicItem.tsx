@@ -89,7 +89,7 @@ export default function BookmarkPublicItem({
         ) : null}
         {!embedded && (
           <a
-            className="text-gray-500 hover:text-primary-500"
+            className="hover:text-primary-500 text-gray-500"
             href={'/bookmarks/admin/?edit=' + encodeURIComponent(item.id)}
             target="_blank"
             rel="noopener noreferrer"
