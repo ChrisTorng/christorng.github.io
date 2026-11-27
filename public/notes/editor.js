@@ -1,3 +1,4 @@
+import { renderMathTitle, truncateMathTitle } from '/shared/math-v1/admin-math.mjs'
 import {
   editableSnapshot,
   historyGroups,
@@ -147,7 +148,7 @@ function unmarkedQuoteContinuation(markdown) {
 async function preview() {
   const version = ++state.preview
   previewRequest?.abort()
-  $('previewTitle').textContent = $('title').value.trim() || '隨筆'
+  $('previewTitle').innerHTML = renderMathTitle($('title').value.trim() || '隨筆')
   if (!state.authorized) {
     $('preview').textContent = '登入後即可即時預覽。'
     return
@@ -161,7 +162,7 @@ async function preview() {
       previewRequest.signal
     )
     if (version !== state.preview) return
-    $('previewTitle').textContent = result.title
+    $('previewTitle').innerHTML = renderMathTitle(result.title)
     const pane = $('preview')
     pane.replaceChildren()
 
@@ -310,7 +311,7 @@ async function refreshList() {
     const optgroup = document.createElement('optgroup')
     optgroup.label = group.label
     for (const item of group.items)
-      optgroup.append(new Option(historyLabel(item), item.id))
+      optgroup.append(new Option(historyLabel(item, truncateMathTitle), item.id))
     $('noteSelect').append(optgroup)
   }
   selectCurrent()
