@@ -11,7 +11,9 @@ export function MathFormula({ tex, display = false }: { tex: string; display?: b
     })
     return (
       <span
-        className={display ? 'block max-w-full overflow-x-auto not-prose notranslate' : 'notranslate'}
+        className={
+          display ? 'not-prose notranslate block max-w-full overflow-x-auto' : 'notranslate'
+        }
         dangerouslySetInnerHTML={{ __html: html }}
       />
     )
@@ -23,7 +25,8 @@ export function MathFormula({ tex, display = false }: { tex: string; display?: b
 // A title is plain text apart from complete math spans, not arbitrary HTML or Markdown links.
 export function titleParts(text: string) {
   const parts: { value: string; math: boolean }[] = []
-  const pattern = /(?<!\\)\\\((.+?)\\\)|(?<!\\)\\\[(.+?)\\\]|(?<![\\$])\$\$([^$\r\n]+?)\$\$|(?<![\\$])\$(?![\s$])([^$\r\n]+?)(?<![\s\\])\$(?![\d$])/g
+  const pattern =
+    /(?<!\\)\\\((.+?)\\\)|(?<!\\)\\\[(.+?)\\\]|(?<![\\$])\$\$([^$\r\n]+?)\$\$|(?<![\\$])\$(?![\s$])([^$\r\n]+?)(?<![\s\\])\$(?![\d$])/g
   let start = 0
   for (const match of text.matchAll(pattern)) {
     const index = match.index!
@@ -47,7 +50,8 @@ export function truncateMathTitle(text: string, limit: number) {
       result += part.value
       remaining -= chars.length
     } else {
-      if (chars.length > remaining) return (result + chars.slice(0, remaining).join('')).trimEnd() + '…'
+      if (chars.length > remaining)
+        return (result + chars.slice(0, remaining).join('')).trimEnd() + '…'
       result += part.value
       remaining -= chars.length
     }
@@ -60,7 +64,13 @@ export function MathTitle({ text }: { text: string }) {
     <>
       {titleParts(text).map((part, index) =>
         part.math ? (
-          <MathFormula key={index} tex={part.value.slice(part.value.startsWith('$$') || part.value.startsWith('\\') ? 2 : 1, part.value.startsWith('$$') || part.value.startsWith('\\') ? -2 : -1)} />
+          <MathFormula
+            key={index}
+            tex={part.value.slice(
+              part.value.startsWith('$$') || part.value.startsWith('\\') ? 2 : 1,
+              part.value.startsWith('$$') || part.value.startsWith('\\') ? -2 : -1
+            )}
+          />
         ) : (
           <span key={index}>{part.value}</span>
         )
