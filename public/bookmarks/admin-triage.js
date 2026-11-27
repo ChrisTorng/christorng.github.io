@@ -1,3 +1,4 @@
+import { renderMathTitle, renderAdminMarkdown } from '/shared/math-v1/admin-math.mjs';
 const $=id=>document.getElementById(id);
 const local=['localhost','127.0.0.1'].includes(location.hostname);
 const tokenKey='blog-bookmarks-admin-token';
@@ -76,11 +77,11 @@ function card(item){
  const relative='摘要 '+words.toLocaleString('zh-TW')+' 字元 · '+basis;
  const id=esc(item.id);
  return '<article class="triage-card" data-id="'+id+'" data-busy="'+state.busy.has(item.id)+'">'+
-  '<div class="triage-top"><div><div class="triage-title">'+(url?'<a href="'+esc(url)+'" rel="noopener noreferrer" target="_blank">'+esc(title)+' ↗</a>':esc(title))+'</div>'+
-  (item.title_original&&item.title_original!==title?'<div class="triage-original">'+esc(item.title_original)+'</div>':'')+
+  '<div class="triage-top"><div><div class="triage-title">'+(url?'<a href="'+esc(url)+'" rel="noopener noreferrer" target="_blank">'+renderMathTitle(title)+' ↗</a>':renderMathTitle(title))+'</div>'+
+  (item.title_original&&item.title_original!==title?'<div class="triage-original">'+renderMathTitle(item.title_original)+'</div>':'')+
   '</div><div class="triage-score"><strong>'+(unavailable?'—':score)+'</strong><small>'+(unavailable?'待核對正文':'總分 / 100')+'</small></div></div>'+
   '<div class="triage-flags">'+flags+'</div>'+
-  '<p class="triage-summary">'+esc(summary||'（摘要缺漏：請先修復或查看原文）')+'</p>'+
+  '<div class="triage-summary admin-math-body">'+renderAdminMarkdown(summary||'（摘要缺漏：請先修復或查看原文）')+'</div>'+
   '<div class="triage-reason">'+esc(a?.reason||'尚未分析')+'</div>'+
   '<div class="triage-metrics">'+metrics+'</div>'+
   '<div class="triage-meta"><span>'+esc(relative)+'</span><span>'+esc(full)+'</span>'+
