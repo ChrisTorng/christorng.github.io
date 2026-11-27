@@ -1,5 +1,6 @@
 'use client'
 
+import { MathTitle } from '@/components/notes/MathContent'
 import { useEffect, useMemo, useState } from 'react'
 import Link from '@/components/Link'
 import { formatDate } from '@/utils/formatDate'
@@ -91,7 +92,7 @@ export default function DraftTimeline({ articles }: { articles: Entry[] }) {
     () =>
       [...articles, ...notes]
         .filter((entry) =>
-          `${entry.title} ${entry.summary}`.toLowerCase().includes(query.toLowerCase())
+          `$<MathTitle text={entry.title} /> ${entry.summary}`.toLowerCase().includes(query.toLowerCase())
         )
         .sort((a, b) => b.date.localeCompare(a.date)),
     [articles, notes, query]
