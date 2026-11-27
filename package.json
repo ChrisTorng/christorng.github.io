@@ -11,7 +11,10 @@
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prebuild": "node scripts/build-admin-math.mjs",
+    "prestart": "node scripts/build-admin-math.mjs",
+    "predev": "node scripts/build-admin-math.mjs"
   },
   "dependencies": {
     "@headlessui/react": "2.2.9",
@@ -47,7 +50,8 @@
     "remark-github-blockquote-alert": "^2.0.1",
     "remark-math": "^6.0.0",
     "tailwindcss": "^4.1.18",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "markdown-it": "14.3.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
