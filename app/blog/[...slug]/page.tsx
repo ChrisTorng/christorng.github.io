@@ -121,7 +121,10 @@ function AdjacentNavigation({
 }) {
   if (!prev && !next) return null
   return (
-    <nav aria-label="上下一篇" className="my-2 grid grid-cols-1 gap-1 text-sm sm:grid-cols-2 sm:gap-3">
+    <nav
+      aria-label="上下一篇"
+      className="my-2 grid grid-cols-1 gap-1 text-sm sm:grid-cols-2 sm:gap-3"
+    >
       {prev ? (
         <Link
           href={`/${prev.path}/`}
