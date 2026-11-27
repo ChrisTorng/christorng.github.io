@@ -1,4 +1,4 @@
-import { renderMathTitle, renderAdminMarkdown, editMathPreviewMarkup, bindBookmarkMathPreview, refreshBookmarkMathPreview } from '/shared/math-v1/admin-math.mjs';
+import { renderMathTitle, renderAdminMarkdown, editMathPreviewMarkup, bindBookmarkMathPreview, refreshBookmarkMathPreview, openBookmarkMathPreview } from '/shared/math-v1/admin-math.mjs';
 import { redirectOptions, findRedirectOption } from './redirect-options.mjs';
 import { sourceBadge } from './source-meta.mjs';
 import {createReferenceEditor,referenceEditorMarkup} from './reference-editor.mjs';
@@ -566,7 +566,7 @@ function edit(b){
  $('summaryProgress').textContent='';
  summarizedArticleText='';
  referenceEditor.reset(b.references||[]);
- refreshBookmarkMathPreview();
+ openBookmarkMathPreview();
  $('editDialog').showModal();
  // A same-URL history entry makes the Android browser Back key close editing.
  // Keep focus on a non-input element so opening the dialog never raises the IME.
