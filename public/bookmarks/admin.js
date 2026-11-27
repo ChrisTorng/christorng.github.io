@@ -1,4 +1,4 @@
-import { renderMathTitle, renderAdminMarkdown, editMathPreviewMarkup, bindBookmarkMathPreview, refreshBookmarkMathPreview } from '/shared/math-v1/admin-math.mjs';
+import { renderMathTitle, renderAdminMarkdown, editMathPreviewMarkup, bindBookmarkMathPreview, refreshBookmarkMathPreview, openBookmarkMathPreview } from '/shared/math-v1/admin-math.mjs';
 import { sourceBadge } from './source-meta.mjs';
 import {createReferenceEditor,referenceEditorMarkup} from './reference-editor.mjs';
 const $ = id => document.getElementById(id);
@@ -154,7 +154,7 @@ function edit(b) {
  referenceEditor.reset(b?.references||[]);
  $('editHeading').textContent=b?'編輯書籤':'新增書籤';
  $('deleteItem').disabled=!b;
- refreshBookmarkMathPreview();
+ openBookmarkMathPreview();
  $('editDialog').showModal();
 }
 $('app').innerHTML=`
