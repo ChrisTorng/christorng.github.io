@@ -53,3 +53,7 @@ npm-debug.log*
 
 # TypeScript compiled output
 *.tsbuildinfo
+
+/public/shared/math-v1/admin-math.mjs
+/public/shared/math-v1/katex.min.css
+/public/shared/math-v1/fonts/
