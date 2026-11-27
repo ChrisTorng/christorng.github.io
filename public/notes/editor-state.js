@@ -33,7 +33,7 @@ export function historyGroups(items) {
   ].filter((group) => group.items.length)
 }
 
-export function historyLabel(item) {
+export function historyLabel(item, truncate = (text, limit) => text.slice(0, limit)) {
   const date =
     item.status === 'draft'
       ? item.updated_at || item.created_at
@@ -48,5 +48,5 @@ export function historyLabel(item) {
     second: '2-digit',
     hour12: false,
   }).format(new Date(date))
-  return `${time}　${item.title || item.markdown.replace(/\s+/g, ' ').slice(0, 50)}`
+  return `${time}　${item.title || truncate(item.markdown.replace(/\s+/g, ' '), 50)}`
 }
