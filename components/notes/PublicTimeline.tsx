@@ -272,12 +272,16 @@ export default function PublicTimeline({
                         </div>
                       </div>
                       {entry.kind === 'note' ? (
-                        <div>
-                          {entry.bookmark_id && <BookmarkInline id={entry.bookmark_id} />}
-                          <div className="mt-3">
-                            <SafeMarkdown text={entry.markdown || ''} />
+                        entry.html !== undefined ? (
+                          <div dangerouslySetInnerHTML={{ __html: entry.html }} />
+                        ) : (
+                          <div>
+                            {entry.bookmark_id && <BookmarkInline id={entry.bookmark_id} />}
+                            <div className="mt-3">
+                              <SafeMarkdown text={entry.markdown || ''} />
+                            </div>
                           </div>
-                        </div>
+                        )
                       ) : (
                         <p className="text-gray-500 dark:text-gray-400">{entry.summary}</p>
                       )}

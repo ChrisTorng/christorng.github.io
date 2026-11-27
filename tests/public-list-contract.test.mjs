@@ -8,6 +8,7 @@ test('mixed timeline links its note title and uses the canonical short bookmark 
   const timeline = read('components/notes/PublicTimeline.tsx')
   const embed = read('components/notes/BookmarkInline.tsx')
   assert.match(timeline, /<Link href=\{url\} className="title-link">/)
+  assert.match(timeline, /entry\.html !== undefined/)
   assert.match(timeline, /<BookmarkInline id=\{entry.bookmark_id\} \/>/)
   assert.match(embed, /showReading = false/)
   assert.match(embed, /\/bookmarks\/api\/embed\//)
