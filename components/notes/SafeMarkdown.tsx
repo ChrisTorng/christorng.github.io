@@ -3,6 +3,8 @@
 import { Fragment, useMemo, type ReactNode } from 'react'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
+import { MathFormula } from './MathContent'
 
 type MdNode = {
   type: string
@@ -58,6 +60,10 @@ function render(node: MdNode, key: number, baseUrl: string): ReactNode {
       return <em key={key}>{children}</em>
     case 'delete':
       return <del key={key}>{children}</del>
+    case 'inlineMath':
+      return <MathFormula key={key} tex={node.value || ''} />
+    case 'math':
+      return <MathFormula key={key} tex={node.value || ''} display />
     case 'inlineCode':
       return <code key={key}>{node.value}</code>
     case 'code':
@@ -150,6 +156,7 @@ export default function SafeMarkdown({
     () =>
       remark()
         .use(remarkGfm)
+        .use(remarkMath)
         .parse(text || '') as MdNode,
     [text]
   )
