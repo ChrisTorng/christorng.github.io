@@ -92,7 +92,7 @@ export default function DraftTimeline({ articles }: { articles: Entry[] }) {
     () =>
       [...articles, ...notes]
         .filter((entry) =>
-          `$<MathTitle text={entry.title} /> ${entry.summary}`
+          `${entry.title} ${entry.summary}`
             .toLowerCase()
             .includes(query.toLowerCase())
         )
