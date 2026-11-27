@@ -1,4 +1,5 @@
 import SafeMarkdown from './SafeMarkdown'
+import { MathTitle, truncateMathTitle } from './MathContent'
 import BookmarkInline from './BookmarkInline'
 
 export type PublicNote = {
@@ -18,10 +19,7 @@ export function publicNoteTitle(note: PublicNote) {
   return (
     note.title ||
     note.bookmark_title ||
-    note.markdown
-      .split('\n')
-      .find((line) => line.trim())
-      ?.slice(0, 160) ||
+    truncateMathTitle(note.markdown.split('\n').find((line) => line.trim()) || '', 160) ||
     '隨筆'
   )
 }
@@ -49,7 +47,7 @@ export default function NotePublicItem({
         className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
         href={href}
       >
-        {title}
+        <MathTitle text={title} />
       </a>
     </h1>
   ) : (
@@ -58,7 +56,7 @@ export default function NotePublicItem({
         className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
         href={href}
       >
-        {title}
+        <MathTitle text={title} />
       </a>
     </h2>
   )
