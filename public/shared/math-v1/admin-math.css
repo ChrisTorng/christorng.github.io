@@ -1,0 +1,16 @@
+/* Shared administrative math layout. KaTeX CSS/fonts are served by this site. */
+.admin-math-body,.admin-math-preview{min-width:0;max-width:100%;overflow-wrap:anywhere;white-space:normal}
+.admin-math-body p{margin:.35em 0}
+.admin-math-body p:first-child{margin-top:0}
+.admin-math-body p:last-child{margin-bottom:0}
+.admin-math-body ul,.admin-math-body ol{padding-inline-start:1.4em;margin:.4em 0}
+.admin-math-body pre,.admin-math-body table{max-width:100%;overflow-x:auto}
+.admin-math-body table{display:block;border-collapse:collapse}
+.admin-math-body td,.admin-math-body th{padding:.25em .4em;border:1px solid currentColor}
+.admin-math-body .katex-display,.admin-math-preview .katex-display,#preview .katex-display{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:.2em 0;margin:.5em 0}
+.admin-math-body .katex,.admin-math-preview .katex,.quick-title .katex,.quick-original .katex,.quick-expand .katex,.item-heading .katex,.triage-title .katex,.triage-original .katex,#previewTitle .katex{font-size:1.05em;white-space:nowrap}
+.admin-math-preview{border:1px solid var(--line,currentColor);border-radius:8px;padding:7px 9px}
+.admin-math-preview>summary{cursor:pointer;color:var(--accent,currentColor);font-size:.85rem}
+.admin-math-preview>div{margin-top:6px}
+.admin-math-title{font-weight:600}
+.admin-math-preview .admin-math-body{font-size:.9rem;line-height:1.55;color:var(--ink,inherit)}
