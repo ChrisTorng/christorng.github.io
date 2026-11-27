@@ -171,6 +171,19 @@ export default function BookmarkPublicItem({
               />
             </a>
           </p>
+          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
+            <BookmarkSource url={item.url} />
+            {target !== item.url && (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden max-w-full truncate underline md:inline"
+              >
+                原始網址：{item.url}
+              </a>
+            )}
+          </div>
         </div>
         {image && !imageFailed && (
           <a
@@ -206,19 +219,6 @@ export default function BookmarkPublicItem({
           <SafeMarkdown text={item.reading_summary.summary} baseUrl={item.url} />
         </section>
       )}
-      <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300">
-        <BookmarkSource url={item.url} />
-        {target !== item.url && (
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden max-w-full truncate underline md:inline"
-          >
-            原始網址：{item.url}
-          </a>
-        )}
-      </div>
       {!!item.references?.length && (
         <div
           className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm"
