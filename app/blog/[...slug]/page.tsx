@@ -112,6 +112,19 @@ export const generateStaticParams = async () => {
   })
 }
 
+function AdjacentNavigation({ prev, next }: {
+  prev?: { path: string; title: string }
+  next?: { path: string; title: string }
+}) {
+  if (!prev && !next) return null
+  return (
+    <nav aria-label="上下一篇" className="my-3 grid grid-cols-2 gap-3 text-sm">
+      {prev ? <Link href={`/${prev.path}/`} rel="prev" className="min-w-0 break-words text-primary-500 hover:text-primary-600">← 上一篇：{prev.title}</Link> : <span />}
+      {next ? <Link href={`/${next.path}/`} rel="next" className="min-w-0 break-words text-right text-primary-500 hover:text-primary-600">下一篇：{next.title} →</Link> : <span />}
+    </nav>
+  )
+}
+
 export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
   const params = await props.params
   const slug = decodeURI(params.slug.join('/'))
@@ -156,9 +169,11 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
+      <AdjacentNavigation prev={prev} next={next} />
+      <Layout content={mainContent} authorDetails={authorDetails}>
         <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
       </Layout>
+      <AdjacentNavigation prev={prev} next={next} />
     </>
   )
 }
