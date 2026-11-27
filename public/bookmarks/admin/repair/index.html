@@ -209,9 +209,13 @@ $('retry').addEventListener('click',async()=>{
   const result=await api('/enrich','POST',{id:item.id});
   report=result.verified&&result.proposed?.summary?result:null;
   $('usemeta').hidden=!report;
-  $('metadata').textContent=report
-   ?'來源：'+(result.source||'')+'\n原始標題：'+(result.title_original||'')+'\n可採用描述：'+result.proposed.summary
-   :'未找到足夠可信的原文描述；請開啟原始網站或轉址網頁，複製全文貼入下方。';
+  if(report){
+   const metadata=$('metadata');
+   const source=document.createElement('div');source.textContent='來源：'+(result.source||'');
+   const title=document.createElement('div');title.innerHTML='原始標題：'+renderMathTitle(result.title_original||'');
+   const summary=document.createElement('div');summary.className='admin-math-body';summary.innerHTML=renderAdminMarkdown(result.proposed.summary);
+   metadata.replaceChildren(source,title,summary);
+  }else $('metadata').textContent='未找到足夠可信的原文描述；請開啟原始網站或轉址網頁，複製全文貼入下方。';
  }catch(err){$('metadata').textContent='來源檢查失敗：'+err.message;}
  finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
 });
