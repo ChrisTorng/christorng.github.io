@@ -162,7 +162,13 @@ export default function BookmarkPublicItem({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <MathTitle text={item.title_original && item.title_original !== item.title ? item.title_original : '原始網頁'} />
+              <MathTitle
+                text={
+                  item.title_original && item.title_original !== item.title
+                    ? item.title_original
+                    : '原始網頁'
+                }
+              />
             </a>
           </p>
         </div>
