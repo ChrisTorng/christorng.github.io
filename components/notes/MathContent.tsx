@@ -60,7 +60,7 @@ export function MathTitle({ text }: { text: string }) {
     <>
       {titleParts(text).map((part, index) =>
         part.math ? (
-          <MathFormula key={index} tex={part.value.slice(part.value.startsWith('$') || part.value.startsWith('\\') ? 2 : 1, part.value.startsWith('$') || part.value.startsWith('\\') ? -2 : -1)} />
+          <MathFormula key={index} tex={part.value.slice(part.value.startsWith('$$') || part.value.startsWith('\\') ? 2 : 1, part.value.startsWith('$$') || part.value.startsWith('\\') ? -2 : -1)} />
         ) : (
           <span key={index}>{part.value}</span>
         )
