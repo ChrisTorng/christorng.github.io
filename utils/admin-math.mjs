@@ -96,6 +96,12 @@ export function refreshBookmarkMathPreview(doc=document){
  }
 }
 export const editMathPreviewMarkup='<details id="editMathPreview" class="admin-math-preview"><summary>標題與摘要預覽</summary><div id="editMathTitle" class="admin-math-title"></div><div id="editMathOriginal"></div><div id="editMathSummary" class="admin-math-body"></div></details>';
+export function openBookmarkMathPreview(doc=document){
+ const preview=doc.getElementById('editMathPreview');
+ if(!preview)return;
+ preview.open=['editTitle','editOriginalTitle','editSummary'].some(id=>mathParts(doc.getElementById(id)?.value).some(p=>p.tex!==undefined));
+ refreshBookmarkMathPreview(doc);
+}
 export function bindBookmarkMathPreview(doc=document){
  const preview=doc.getElementById('editMathPreview');
  if(!preview)return;
