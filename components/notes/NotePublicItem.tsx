@@ -44,10 +44,14 @@ export default function NotePublicItem({
     ? '/notes/' + encodeURIComponent(note.slug) + '/'
     : '/notes/view/?id=' + encodeURIComponent(note.id)
   const titleMarkup = detail ? (
-    <h1 className="mt-2 text-xl leading-snug font-bold">{title}</h1>
+    <h1 className="mt-2 text-xl leading-snug font-bold">
+      <a className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400" href={href}>
+        {title}
+      </a>
+    </h1>
   ) : (
     <h2 className="mt-2 text-xl leading-snug font-bold">
-      <a className="hover:text-primary-500" href={href}>
+      <a className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400" href={href}>
         {title}
       </a>
     </h2>

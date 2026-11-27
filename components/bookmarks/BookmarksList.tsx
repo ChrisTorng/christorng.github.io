@@ -314,8 +314,9 @@ export default function BookmarksList() {
               <button
                 disabled={filters.page <= 1}
                 onClick={() => select({ page: filters.page - 1 })}
+                aria-label="上一頁"
               >
-                ← 上一頁
+                ←
               </button>
               <span className="text-sm">
                 {result.page} / {result.pages}
@@ -323,8 +324,9 @@ export default function BookmarksList() {
               <button
                 disabled={filters.page >= result.pages}
                 onClick={() => select({ page: filters.page + 1 })}
+                aria-label="下一頁"
               >
-                下一頁 →
+                →
               </button>
             </nav>
           )}

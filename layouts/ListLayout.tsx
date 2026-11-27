@@ -35,29 +35,38 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
     <div className="space-y-2 pt-6 pb-8 md:space-y-5">
       <nav className="flex justify-between">
         {!prevPage && (
-          <button className="cursor-auto disabled:opacity-50" disabled={!prevPage}>
-            上一頁
+          <button
+            className="cursor-auto disabled:opacity-50"
+            disabled={!prevPage}
+            aria-label="上一頁"
+          >
+            ←
           </button>
         )}
         {prevPage && (
           <Link
             href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
             rel="prev"
+            aria-label="上一頁"
           >
-            上一頁
+            ←
           </Link>
         )}
         <span>
           {currentPage}/{totalPages}
         </span>
         {!nextPage && (
-          <button className="cursor-auto disabled:opacity-50" disabled={!nextPage}>
-            下一頁
+          <button
+            className="cursor-auto disabled:opacity-50"
+            disabled={!nextPage}
+            aria-label="下一頁"
+          >
+            →
           </button>
         )}
         {nextPage && (
-          <Link href={`/${basePath}/page/${currentPage + 1}`} rel="next">
-            下一頁
+          <Link href={`/${basePath}/page/${currentPage + 1}`} rel="next" aria-label="下一頁">
+            →
           </Link>
         )}
       </nav>

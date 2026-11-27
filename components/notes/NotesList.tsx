@@ -156,8 +156,12 @@ export default function NotesList() {
             ))}
           {!busy && data.pages > 1 && (
             <nav className="mt-6 flex justify-between" aria-label="分頁">
-              <button disabled={filter.page <= 1} onClick={() => change({ page: filter.page - 1 })}>
-                ← 上一頁
+              <button
+                disabled={filter.page <= 1}
+                onClick={() => change({ page: filter.page - 1 })}
+                aria-label="上一頁"
+              >
+                ←
               </button>
               <span>
                 {data.page} / {data.pages}
@@ -165,8 +169,9 @@ export default function NotesList() {
               <button
                 disabled={filter.page >= data.pages}
                 onClick={() => change({ page: filter.page + 1 })}
+                aria-label="下一頁"
               >
-                下一頁 →
+                →
               </button>
             </nav>
           )}

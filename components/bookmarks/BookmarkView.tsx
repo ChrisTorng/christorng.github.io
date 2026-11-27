@@ -1,5 +1,6 @@
 'use client'
 
+import ListIcon from '@/components/ListIcon'
 import { useEffect, useState } from 'react'
 import BookmarkPublicItem, {
   type BookmarkCategory,
@@ -62,7 +63,7 @@ export default function BookmarkView() {
   return (
     <section className="w-full py-5 pb-12">
       <a className="text-primary-500 text-sm" href="/bookmarks/">
-        ← 書籤列表
+        <ListIcon /> 書籤列表
       </a>
       {error && (
         <p role="alert" className="mt-6 text-red-500">

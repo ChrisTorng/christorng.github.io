@@ -121,28 +121,30 @@ function AdjacentNavigation({
 }) {
   if (!prev && !next) return null
   return (
-    <nav aria-label="上下一篇" className="my-3 grid grid-cols-2 gap-3 text-sm">
+    <nav aria-label="上下一篇" className="my-2 grid grid-cols-1 gap-1 text-sm sm:grid-cols-2 sm:gap-3">
       {prev ? (
         <Link
           href={`/${prev.path}/`}
           rel="prev"
+          aria-label={`上一篇：${prev.title}`}
           className="text-primary-500 hover:text-primary-600 min-w-0 break-words"
         >
-          ← 上一篇：{prev.title}
+          ← {prev.title}
         </Link>
       ) : (
-        <span />
+        <span className="hidden sm:block" />
       )}
       {next ? (
         <Link
           href={`/${next.path}/`}
           rel="next"
+          aria-label={`下一篇：${next.title}`}
           className="text-primary-500 hover:text-primary-600 min-w-0 text-right break-words"
         >
-          下一篇：{next.title} →
+          {next.title} →
         </Link>
       ) : (
-        <span />
+        <span className="hidden sm:block" />
       )}
     </nav>
   )

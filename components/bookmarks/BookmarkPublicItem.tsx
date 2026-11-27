@@ -113,9 +113,7 @@ export default function BookmarkPublicItem({
   const [imageFailed, setImageFailed] = useState(false)
   const titleLink = (
     <a
-      href={target}
-      target="_blank"
-      rel="noopener noreferrer"
+      href={permalink}
       className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
     >
       {item.title}
@@ -166,11 +164,18 @@ export default function BookmarkPublicItem({
           ) : (
             <h2 className="text-xl leading-snug font-bold">{titleLink}</h2>
           )}
-          {item.title_original && item.title_original !== item.title && (
-            <p lang="en" className="mt-1 text-sm leading-snug text-gray-600 dark:text-gray-300">
-              {item.title_original}
-            </p>
-          )}
+          <p className="mt-1 text-sm leading-snug">
+            <a
+              className="text-primary-500 hover:text-primary-600"
+              href={target}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {item.title_original && item.title_original !== item.title
+                ? item.title_original
+                : '原始網頁'}
+            </a>
+          </p>
         </div>
         {image && !imageFailed && (
           <a
@@ -199,7 +204,7 @@ export default function BookmarkPublicItem({
           </div>
         )}
       </div>
-      {item.reading_summary?.summary && (
+      {detail && item.reading_summary?.summary && (
         <section className="my-3 min-w-0" aria-label="精讀摘要">
           <p className="font-bold">精讀摘要</p>
           <ReadingStats reading={item.reading_summary} />
@@ -219,13 +224,6 @@ export default function BookmarkPublicItem({
           </a>
         )}
       </div>
-      {embedded && (
-        <p className="mt-2 text-xs">
-          <a className="text-primary-500" href={permalink}>
-            書籤永久連結
-          </a>
-        </p>
-      )}
       {!!item.references?.length && (
         <div
           className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm"

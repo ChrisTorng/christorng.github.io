@@ -1,3 +1,4 @@
+import ListIcon from '@/components/ListIcon'
 import { ReactNode } from 'react'
 import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog, Authors } from 'contentlayer/generated'
@@ -142,7 +143,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                   className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                   aria-label="回到文章列表"
                 >
-                  &larr; 回到文章列表
+                  <ListIcon /> 文章列表
                 </Link>
               </div>
             </footer>
