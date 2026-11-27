@@ -92,9 +92,7 @@ export default function DraftTimeline({ articles }: { articles: Entry[] }) {
     () =>
       [...articles, ...notes]
         .filter((entry) =>
-          `${entry.title} ${entry.summary}`
-            .toLowerCase()
-            .includes(query.toLowerCase())
+          `${entry.title} ${entry.summary}`.toLowerCase().includes(query.toLowerCase())
         )
         .sort((a, b) => b.date.localeCompare(a.date)),
     [articles, notes, query]
