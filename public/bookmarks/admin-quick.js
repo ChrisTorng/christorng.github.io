@@ -1,3 +1,4 @@
+import { renderMathTitle, renderAdminMarkdown, editMathPreviewMarkup, bindBookmarkMathPreview, refreshBookmarkMathPreview } from '/shared/math-v1/admin-math.mjs';
 import { redirectOptions, findRedirectOption } from './redirect-options.mjs';
 import { sourceBadge } from './source-meta.mjs';
 import {createReferenceEditor,referenceEditorMarkup} from './reference-editor.mjs';
@@ -141,8 +142,8 @@ function summaryMarkup(b){
   const clear=[3,4].includes(b.status)?'':'<button type="button" data-clear-summary'+(state.busy.has(b.id)?' disabled':'')+'>清空摘要並重抓</button>';
   return (origin?'<section class="quick-summary-generated" aria-label="新產生摘要，請檢查"><div class="quick-summary-origin">'+
    (origin==='clipboard'?'剛從剪貼簿產生的摘要':'剛從原文自動產生的摘要')+' · 請確認內容</div>'+
-   '<p class="quick-summary">'+esc(b.summary)+'</p></section>'
-   :'<p class="quick-summary">'+esc(b.summary)+'</p>')+clear;
+   '<div class="quick-summary admin-math-body">'+renderAdminMarkdown(b.summary)+'</div></section>'
+   :'<div class="quick-summary admin-math-body">'+renderAdminMarkdown(b.summary)+'</div>')+clear;
  }
  const activity=state.summaryActivity.get(b.id);
  return '<div class="quick-summary-repair">'+
@@ -158,9 +159,9 @@ function readingLabel(b){const r=b.reading;if(!r||r.minutes==null)return '長度
 function card(b,kind,first=false){
  const target=b.preferred_url||b.redirect_url||b.url;
  const expanded=state.expanded.has(b.id);
- if(kind==='deferred'&&!expanded) return '<article class="quick-item deferred collapsed" data-id="'+esc(b.id)+'" data-kind="deferred"><button type="button" class="quick-expand" data-toggle-deferred aria-expanded="false">▸ '+esc(b.title_zh||b.title)+'</button>'+writeNoteLink(b)+'</article>';
+ if(kind==='deferred'&&!expanded) return '<article class="quick-item deferred collapsed" data-id="'+esc(b.id)+'" data-kind="deferred"><button type="button" class="quick-expand" data-toggle-deferred aria-expanded="false">▸ '+renderMathTitle(b.title_zh||b.title)+'</button>'+writeNoteLink(b)+'</article>';
  const original=b.title_original&&b.title_original!==(b.title_zh||b.title)
-  ?'<div class="quick-original" lang="en">'+esc(b.title_original)+'</div>':'';
+  ?'<div class="quick-original" lang="en">'+renderMathTitle(b.title_original)+'</div>':'';
  const tags=new Set(b.tags.map(t=>t.toLowerCase()));
  const categoryButtons=orderedTags(b).map(t=>{
   const selected=tags.has(t.name.toLowerCase());
@@ -173,7 +174,7 @@ function card(b,kind,first=false){
  }).join('');
  return '<article class="quick-item '+kind+(first?' first-pending':'')+(kind==='deferred'?' expanded':'')+'" data-id="'+esc(b.id)+'" data-kind="'+kind+'" tabindex="-1">'+
   (kind==='deferred'?'<button type="button" class="quick-collapse" data-toggle-deferred aria-expanded="true">▾ 收合</button>':'')+
-  '<div class="quick-main"><div class="quick-content">'+thumb(b.image_url,'quick-thumb')+'<a class="quick-title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read>'+esc(b.title_zh||b.title)+' ↗</a>'+
+  '<div class="quick-main"><div class="quick-content">'+thumb(b.image_url,'quick-thumb')+'<a class="quick-title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read>'+renderMathTitle(b.title_zh||b.title)+' ↗</a>'+
   original+'<div class="quick-source">'+sourceBadge(b.url)+' · '+esc(readingLabel(b))+'</div><div class="quick-date"><a href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer" title="預覽書籤單項頁">'+esc(dateText(b.created_at))+'</a></div>'+
   summaryMarkup(b)+
   '</div><div class="quick-actions">'+actions+
@@ -565,6 +566,7 @@ function edit(b){
  $('summaryProgress').textContent='';
  summarizedArticleText='';
  referenceEditor.reset(b.references||[]);
+ refreshBookmarkMathPreview();
  $('editDialog').showModal();
  // A same-URL history entry makes the Android browser Back key close editing.
  // Keep focus on a non-input element so opening the dialog never raises the IME.
@@ -623,7 +625,7 @@ $('app').innerHTML=
  '<label>原始網址<input id="editUrl" type="url" required></label>'+
  '<div class="redirect-group"><div class="redirect-header"><span>重導向網址</span><div id="redirectModes" role="radiogroup" aria-label="重導向方式"></div></div><input id="editRedirectUrl" type="url" aria-label="重導向網址" autocomplete="off"></div>'+
  '<label>圖片網址（選填，清空即可移除）<input id="editImageUrl" type="url" autocomplete="off" placeholder="https://..."></label><img id="editImagePreview" alt="圖片預覽" hidden>'+
- '<label id="editSummaryGroup">摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown；儲存後點日期預覽"></textarea></label>'+
+ '<label id="editSummaryGroup">摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown；儲存後點日期預覽"></textarea></label>'+editMathPreviewMarkup+
  '<details id="editFullTextPanel"><summary>貼文章全文，重新產生摘要</summary>'+
  '<label>文章全文（僅用於此次 AI 處理，不儲存於資料庫）<textarea id="editArticleText" placeholder="貼入文章全文，最多 15 萬字元" spellcheck="false"></textarea></label>'+
  '<button type="button" id="regenerateSummary">重新摘要並填入上方欄位</button><span id="summaryProgress" role="status"></span></details>'+
@@ -639,6 +641,7 @@ $('app').innerHTML=
  '</form></dialog>';
 const referenceEditor=createReferenceEditor(request,()=>({url:$('editUrl').value.trim(),redirect_url:$('editRedirectUrl').value.trim()}));
 $('editImageUrl').addEventListener('input',imagePreview);
+bindBookmarkMathPreview();
 document.addEventListener('error',event=>{if(event.target.matches?.('img.quick-thumb, #editImagePreview'))event.target.hidden=true;},true);
 $('size').value=String(state.size);
 $('redirectModes').addEventListener('change',event=>{
@@ -673,6 +676,7 @@ async function regenerateSummary(id){
  try{
   const result=await request('/summary-repair/preview','POST',{id,content});
   $('editSummary').value=result.summary;
+  refreshBookmarkMathPreview();
   summarizedArticleText=content;
   $('summaryProgress').textContent='已重新摘要；請檢查上方欄位，再按儲存';
   return result.summary;
