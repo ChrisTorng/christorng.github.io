@@ -68,7 +68,7 @@ export default function NotePublicItem({
         {date}
       </time>
       {titleMarkup}
-      {note.bookmark_id && <BookmarkInline id={note.bookmark_id} />}
+      {note.bookmark_id && <BookmarkInline id={note.bookmark_id} showReading={detail} />}
       <div className="mt-3">
         <SafeMarkdown text={note.markdown} />
       </div>

@@ -68,7 +68,7 @@ export default function PublicCategorySidebar({
           const selected = activeTag === id
           const content = (
             <>
-              <span className="min-w-0 break-words">{label}</span>
+              <span className="min-w-0 break-words">#{label}</span>
               {count !== undefined && (
                 <span className="shrink-0 text-xs tabular-nums opacity-60">{count}</span>
               )}

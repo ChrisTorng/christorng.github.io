@@ -223,6 +223,14 @@ export async function generateRssItem(config, post) {
   const postUrl = absolutePostUrl(config, post)
   const description = post.summary ? `<description>${escapeXml(post.summary)}</description>` : ''
   const content = await renderPostContent(config, post)
+  const tagsHtml = (post.tags || [])
+    .map((tag) => {
+      const id = tagIdByDisplayName.get(tag)
+      if (!id) throw new Error(`Unknown RSS category "${tag}".`)
+      return `<a href="${escapeXml(getSiteUrl(config).replace(/\/$/, '') + '/tags/' + encodeURIComponent(id) + '/')}">#${escapeXml(tag)}</a>`
+    })
+    .join(' ')
+  const fullContent = content + (tagsHtml ? `<p>${tagsHtml}</p>` : '')
   const categories = post.tags
     ? post.tags
         .map((tag) => {
@@ -241,7 +249,7 @@ export async function generateRssItem(config, post) {
     <title>${escapeXml(post.title)}</title>
     <link>${escapeXml(postUrl)}</link>
     ${description}
-    <content:encoded>${cdata(content)}</content:encoded>
+    <content:encoded>${cdata(fullContent)}</content:encoded>
     <pubDate>${new Date(post.date).toUTCString()}</pubDate>
     ${authorXml(config)}
     ${categories}

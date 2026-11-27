@@ -122,19 +122,9 @@ export default function BookmarkPublicItem({
   return (
     <article className="border-b border-gray-300/40 py-4 dark:border-gray-700">
       <div className="mb-2 flex items-center justify-between gap-3 text-xs">
-        {detail ? (
-          <time className="text-gray-500" dateTime={date}>
-            {date}
-          </time>
-        ) : (
-          <a
-            className="hover:text-primary-500 text-gray-500"
-            href={permalink}
-            aria-label={date + ' · 書籤永久連結'}
-          >
-            <time dateTime={date}>{date}</time>
-          </a>
-        )}
+        <time className="text-gray-500" dateTime={date}>
+          {date}
+        </time>
         {item.status === 4 ? (
           <span className="text-primary-500">☆ 推薦</span>
         ) : detail && item.status < 3 ? (
