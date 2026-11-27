@@ -1,3 +1,5 @@
+import remarkMath from 'remark-math'
+import { rssMathImage, plainRssMathTitle } from './rss-math.mjs'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
@@ -204,12 +206,30 @@ function normalizeMdxComponents(markdown) {
   })
 }
 
+// Replace parsed math nodes before HTML conversion; code blocks and inline code stay literal.
+function rssMathNodes() {
+  return (tree) => {
+    function walk(node) {
+      if (!node.children) return
+      node.children = node.children.map((child) => {
+        if (child.type === 'math' || child.type === 'inlineMath')
+          return { type: 'html', value: rssMathImage(child.value, child.type === 'math') }
+        walk(child)
+        return child
+      })
+    }
+    walk(tree)
+  }
+}
+
 export async function renderPostContent(config, post) {
   const postUrl = absolutePostUrl(config, post)
   const html = String(
     await unified()
       .use(remarkParse)
       .use(remarkGfm)
+      .use(remarkMath)
+      .use(rssMathNodes)
       .use(remarkAlert)
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeStringify, { allowDangerousHtml: true })
@@ -221,7 +241,7 @@ export async function renderPostContent(config, post) {
 
 export async function generateRssItem(config, post) {
   const postUrl = absolutePostUrl(config, post)
-  const description = post.summary ? `<description>${escapeXml(post.summary)}</description>` : ''
+  const description = post.summary ? `<description>${escapeXml(plainRssMathTitle(post.summary))}</description>` : ''
   const content = await renderPostContent(config, post)
   const tagsHtml = (post.tags || [])
     .map((tag) => {
@@ -246,7 +266,7 @@ export async function generateRssItem(config, post) {
   return `
   <item>
     <guid isPermaLink="true">${escapeXml(postUrl)}</guid>
-    <title>${escapeXml(post.title)}</title>
+    <title>${escapeXml(plainRssMathTitle(post.title))}</title>
     <link>${escapeXml(postUrl)}</link>
     ${description}
     <content:encoded>${cdata(fullContent)}</content:encoded>
