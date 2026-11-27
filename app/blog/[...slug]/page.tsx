@@ -112,15 +112,38 @@ export const generateStaticParams = async () => {
   })
 }
 
-function AdjacentNavigation({ prev, next }: {
+function AdjacentNavigation({
+  prev,
+  next,
+}: {
   prev?: { path: string; title: string }
   next?: { path: string; title: string }
 }) {
   if (!prev && !next) return null
   return (
     <nav aria-label="上下一篇" className="my-3 grid grid-cols-2 gap-3 text-sm">
-      {prev ? <Link href={`/${prev.path}/`} rel="prev" className="min-w-0 break-words text-primary-500 hover:text-primary-600">← 上一篇：{prev.title}</Link> : <span />}
-      {next ? <Link href={`/${next.path}/`} rel="next" className="min-w-0 break-words text-right text-primary-500 hover:text-primary-600">下一篇：{next.title} →</Link> : <span />}
+      {prev ? (
+        <Link
+          href={`/${prev.path}/`}
+          rel="prev"
+          className="text-primary-500 hover:text-primary-600 min-w-0 break-words"
+        >
+          ← 上一篇：{prev.title}
+        </Link>
+      ) : (
+        <span />
+      )}
+      {next ? (
+        <Link
+          href={`/${next.path}/`}
+          rel="next"
+          className="text-primary-500 hover:text-primary-600 min-w-0 text-right break-words"
+        >
+          下一篇：{next.title} →
+        </Link>
+      ) : (
+        <span />
+      )}
     </nav>
   )
 }
