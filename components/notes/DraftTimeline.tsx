@@ -1,5 +1,6 @@
 'use client'
 
+import { MathTitle } from '@/components/notes/MathContent'
 import { useEffect, useMemo, useState } from 'react'
 import Link from '@/components/Link'
 import { formatDate } from '@/utils/formatDate'

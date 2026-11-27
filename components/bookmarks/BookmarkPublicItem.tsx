@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import BookmarkSource from './BookmarkSource'
 import SafeMarkdown from '@/components/notes/SafeMarkdown'
+import { MathTitle } from '@/components/notes/MathContent'
 
 // The public list and the legacy /view/ page must render the same complete
 // record. The Cloudflare slug page mirrors this presentation contract.
@@ -116,7 +117,7 @@ export default function BookmarkPublicItem({
       href={permalink}
       className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
     >
-      {item.title}
+      <MathTitle text={item.title} />
     </a>
   )
   return (
@@ -161,9 +162,13 @@ export default function BookmarkPublicItem({
               target="_blank"
               rel="noopener noreferrer"
             >
-              {item.title_original && item.title_original !== item.title
-                ? item.title_original
-                : '原始網頁'}
+              <MathTitle
+                text={
+                  item.title_original && item.title_original !== item.title
+                    ? item.title_original
+                    : '原始網頁'
+                }
+              />
             </a>
           </p>
         </div>

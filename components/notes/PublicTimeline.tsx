@@ -1,4 +1,5 @@
 'use client'
+import { MathTitle } from '@/components/notes/MathContent'
 import { notesDiscoveryEnabled } from '@/data/notesSettings'
 
 import { Suspense, useEffect, useMemo, useState } from 'react'
@@ -253,11 +254,13 @@ export default function PublicTimeline({
                       <div>
                         <h2 className="text-2xl leading-8 font-bold tracking-tight">
                           <Link href={url} className="title-link">
-                            {entry.displayTitle || entry.title || '隨筆'}
+                            <MathTitle text={entry.displayTitle || entry.title || '隨筆'} />
                           </Link>
                         </h2>
                         {entry.subtitle ? (
-                          <p className="mt-1 text-lg font-semibold">{entry.subtitle}</p>
+                          <p className="mt-1 text-lg font-semibold">
+                            <MathTitle text={entry.subtitle} />
+                          </p>
                         ) : null}
                         <div className="mt-2 flex flex-wrap">
                           {entry.tags.map((value) => (
@@ -283,7 +286,9 @@ export default function PublicTimeline({
                           </div>
                         )
                       ) : (
-                        <p className="text-gray-500 dark:text-gray-400">{entry.summary}</p>
+                        <p className="text-gray-500 dark:text-gray-400">
+                          <MathTitle text={entry.summary || ''} />
+                        </p>
                       )}
                       {entry.kind === 'blog' || admin ? (
                         <div className="flex gap-5 text-sm">

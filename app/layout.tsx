@@ -1,4 +1,5 @@
 import 'css/tailwind.css'
+import 'katex/dist/katex.css'
 import 'pliny/search/algolia.css'
 import 'remark-github-blockquote-alert/alert.css'
 
