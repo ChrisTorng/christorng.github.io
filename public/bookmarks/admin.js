@@ -1,3 +1,4 @@
+import { renderMathTitle, renderAdminMarkdown, editMathPreviewMarkup, bindBookmarkMathPreview, refreshBookmarkMathPreview, openBookmarkMathPreview } from '/shared/math-v1/admin-math.mjs';
 import { sourceBadge } from './source-meta.mjs';
 import {createReferenceEditor,referenceEditorMarkup} from './reference-editor.mjs';
 const $ = id => document.getElementById(id);
@@ -65,7 +66,7 @@ function itemHtml(b) {
  const label=levelName[b.status]||'';
  const target=b.preferred_url||b.redirect_url||b.url;
  const source=target!==b.url?'<div class="source-reference">原始網址：<a href="'+esc(b.url)+'" target="_blank" rel="noopener noreferrer">'+esc(b.url)+'</a></div>':'';
- const originalTitle=b.title_original&&b.title_original!==b.title?'<div class="original-title" lang="en">'+esc(b.title_original)+'</div>':'';
+ const originalTitle=b.title_original&&b.title_original!==b.title?'<div class="original-title" lang="en">'+renderMathTitle(b.title_original)+'</div>':'';
  const statusDate=[3,4].includes(b.status)?' · '+(b.status===4?'推薦':'公開')+' '+dateText(b.status_at||b.starred_at||b.published_at):'';
  const info='<div class="meta">加入 '+esc(dateText(b.created_at))+' · '+sourceBadge(b.url)+esc(statusDate)+' · '+esc(readingLabel(b))+'</div>';
  const tagNames=new Set(b.tags.map(x=>x.toLowerCase()));
@@ -76,7 +77,7 @@ function itemHtml(b) {
  const disabled=blocked?' disabled title="請先選擇至少一個分類並完成儲存"':'';
  const preview='<a class="preview-link" href="/bookmarks/view/?id='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener noreferrer">預覽</a>';
  const actions='<div class="actions"><button type="button" data-decision="2">不公開</button><button type="button" data-decision="3"'+disabled+'>公開</button><button type="button" data-decision="4"'+disabled+'>推薦</button><button type="button" data-decision="5">稍後再決定</button><button type="button" data-edit>編輯</button>'+preview+note+'</div>';
- return '<article class="item" data-id="'+esc(b.id)+'"><div class="item-header"><div class="item-heading"><a class="title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read="'+esc(b.id)+'">'+esc(b.title)+' ↗</a>'+originalTitle+info+source+'</div><span class="status-name">'+label+'</span></div>'+thumb(b.image_url,'admin-thumb')+(b.summary?'<p class="summary">'+esc(b.summary)+'</p>':'')+picker+actions+'</article>';
+ return '<article class="item" data-id="'+esc(b.id)+'"><div class="item-header"><div class="item-heading"><a class="title" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer" data-read="'+esc(b.id)+'">'+renderMathTitle(b.title)+' ↗</a>'+originalTitle+info+source+'</div><span class="status-name">'+label+'</span></div>'+thumb(b.image_url,'admin-thumb')+(b.summary?'<div class="summary admin-math-body">'+renderAdminMarkdown(b.summary)+'</div>':'')+picker+actions+'</article>';
 }
 function renderItem(b){
  const article=[...document.querySelectorAll('#items [data-id]')].find(el=>el.dataset.id===b.id);
@@ -153,6 +154,7 @@ function edit(b) {
  referenceEditor.reset(b?.references||[]);
  $('editHeading').textContent=b?'編輯書籤':'新增書籤';
  $('deleteItem').disabled=!b;
+ openBookmarkMathPreview();
  $('editDialog').showModal();
 }
 $('app').innerHTML=`
@@ -176,7 +178,7 @@ $('app').innerHTML=`
  <label>原始網址<input id="editUrl" type="url" required autocomplete="url"></label>
  <label>重導向網址（選填，優先開啟）<input id="editRedirectUrl" type="url" autocomplete="off"></label>
  <label>圖片網址（選填，清空即可移除圖片）<input id="editImageUrl" type="url" autocomplete="off" placeholder="https://..."></label><img id="editImagePreview" alt="圖片預覽" hidden>
- <label>網站摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown：連結、清單、引用、粗體等"></textarea></label>
+ <label>網站摘要（Markdown）<textarea id="editSummary" maxlength="5000" placeholder="支援 Markdown：連結、清單、引用、粗體等"></textarea></label>${editMathPreviewMarkup}
  <details id="editFullTextPanel"><summary>貼文章全文，重新產生摘要</summary>
  <label>文章全文（僅供此次 AI 處理，不儲存資料庫）<textarea id="editArticleText" spellcheck="false" placeholder="貼入全文，最多 15 萬字元"></textarea></label>
  <button type="button" id="regenerateSummary">重新摘要並填入上方欄位</button><span id="summaryProgress" role="status"></span></details>
@@ -192,6 +194,7 @@ $('app').innerHTML=`
  </form></dialog>`;
 const referenceEditor=createReferenceEditor(request,()=>({url:$('editUrl').value.trim(),redirect_url:$('editRedirectUrl').value.trim()}));
 $('editImageUrl').addEventListener('input',imagePreview);
+bindBookmarkMathPreview();
 document.addEventListener('error',event=>{if(event.target.matches?.('img.admin-thumb, #editImagePreview'))event.target.hidden=true;},true);
 if(local){
  $('auth').innerHTML='<input id="token" type="password" autocomplete="off" placeholder="本機管理 Token"><button id="login">登入</button><span class="hint">Token 僅儲存在此分頁</span>';
@@ -262,6 +265,7 @@ async function regenerateSummary(id) {
  try{
   const result=await request('/summary-repair/preview','POST',{id,content});
   $('editSummary').value=result.summary;
+  refreshBookmarkMathPreview();
   summarizedArticleText=content;
   $('summaryProgress').textContent='摘要完成，請檢查上方內容並按儲存書籤';
   return result.summary;

@@ -32,7 +32,7 @@ textarea{display:block;width:100%;height:38vh;min-height:210px;resize:vertical;b
 [hidden]{display:none!important}
 @media(max-width:600px){body{padding:10px 10px 50px}h1{font-size:1.2rem}fieldset{padding:10px}textarea{height:39vh}button{padding:9px 11px}}
 </style>
-</head>
+<link rel="stylesheet" href="/shared/math-v1/katex.min.css"><link rel="stylesheet" href="/shared/math-v1/admin-math.css"></head>
 <body>
 <header>
  <h1>書籤摘要修復</h1>
@@ -78,6 +78,7 @@ textarea{display:block;width:100%;height:38vh;min-height:210px;resize:vertical;b
  <div id="repaired-items"></div>
 </section>
 <script type="module">
+import { renderMathTitle, renderAdminMarkdown } from "/shared/math-v1/admin-math.mjs";
 const $=id=>document.getElementById(id);
 const local=['localhost','127.0.0.1'].includes(location.hostname);
 const lastKey='blog-bookmarks-summary-repair-last-id';
@@ -125,13 +126,13 @@ function render(){
  $('next').disabled=working||index>=items.length-1;
  if(!item){message('目前沒有需要人工補上原文的摘要。');return;}
  try{localStorage.setItem(lastKey,item.id)}catch{}
- $('title').textContent=item.title_zh||item.title;
- $('original').textContent=item.title_original||'（未儲存英文原始標題）';
+ $('title').innerHTML=renderMathTitle(item.title_zh||item.title);
+ $('original').innerHTML=renderMathTitle(item.title_original||'（未儲存英文原始標題）');
  $('created').textContent='加入時間：'+new Date(item.created_at).toLocaleString('zh-TW');
  $('links').replaceChildren();
  link('原始網頁 ↗',item.url);
  if(item.redirect_url&&item.redirect_url!==item.url)link('轉址網址 ↗',item.redirect_url);
- $('old').textContent=item.summary?.trim()||'（空白）';
+ $('old').innerHTML=renderAdminMarkdown(item.summary?.trim()||'（空白）');
  try{$('content').value=localStorage.getItem(draftKey(item.id))||''}catch{$('content').value=''}
  report=null;$('usemeta').hidden=true;$('metadata').textContent='先嘗試從原網站及經驗證的轉址取得描述，無法取得再貼入原文。';
  saveDraft();
@@ -150,17 +151,17 @@ function renderLastRepair(repair){
   const article=document.createElement('article');
   article.className='repaired-item';
   const title=document.createElement('h3');
-  title.textContent=item.title;
+  title.innerHTML=renderMathTitle(item.title);
   article.append(title);
   if(item.title_original&&item.title_original!==item.title){
    const original=document.createElement('p');
    original.className='original';
-   original.textContent=item.title_original;
+   original.innerHTML=renderMathTitle(item.title_original);
    article.append(original);
   }
   link(item.url,item.url,article);
-  const summary=document.createElement('p');
-  summary.textContent=item.summary;
+  const summary=document.createElement('div');
+  summary.innerHTML=renderAdminMarkdown(item.summary);
   article.append(summary);
   container.append(article);
  }
@@ -208,9 +209,13 @@ $('retry').addEventListener('click',async()=>{
   const result=await api('/enrich','POST',{id:item.id});
   report=result.verified&&result.proposed?.summary?result:null;
   $('usemeta').hidden=!report;
-  $('metadata').textContent=report
-   ?'來源：'+(result.source||'')+'\n原始標題：'+(result.title_original||'')+'\n可採用描述：'+result.proposed.summary
-   :'未找到足夠可信的原文描述；請開啟原始網站或轉址網頁，複製全文貼入下方。';
+  if(report){
+   const metadata=$('metadata');
+   const source=document.createElement('div');source.textContent='來源：'+(result.source||'');
+   const title=document.createElement('div');title.innerHTML='原始標題：'+renderMathTitle(result.title_original||'');
+   const summary=document.createElement('div');summary.className='admin-math-body';summary.innerHTML=renderAdminMarkdown(result.proposed.summary);
+   metadata.replaceChildren(source,title,summary);
+  }else $('metadata').textContent='未找到足夠可信的原文描述；請開啟原始網站或轉址網頁，複製全文貼入下方。';
  }catch(err){$('metadata').textContent='來源檢查失敗：'+err.message;}
  finally{setBusy(false);$('previous').disabled=index<=0;$('next').disabled=index>=items.length-1;}
 });
