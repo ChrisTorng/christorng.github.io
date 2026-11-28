@@ -10,6 +10,8 @@ on:
       - 'components/**'
       - 'public/shared/**'
       - 'utils/admin-math.mjs'
+      - 'utils/rss*.mjs'
+      - 'tests/rss-math.test.mjs'
       - 'scripts/build-admin-math.mjs'
       - 'tests/admin-math.test.mjs'
       - 'public/bookmarks/**'
@@ -33,7 +35,7 @@ jobs:
           node-version: '20'
           cache: npm
       - run: npm ci
-      - run: node --test tests/redirect-options.test.mjs tests/mobile-editor-layout.test.mjs tests/quick-capture.test.mjs tests/projects-listing.test.mjs tests/admin-math.test.mjs
+      - run: node --test tests/redirect-options.test.mjs tests/mobile-editor-layout.test.mjs tests/quick-capture.test.mjs tests/projects-listing.test.mjs tests/admin-math.test.mjs tests/rss-math.test.mjs
       - run: npm run build
         env:
           EXPORT: '1'
